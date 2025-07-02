@@ -9,15 +9,24 @@ use Throwable;
 class XMLHttpRequest implements Requests
 {
     public bool $success;
-    private array $params;
-    private string $action;
+    private array $params {
+        get {
+            return $this->params;
+        }
+    }
+    public string $action {
+        get {
+            return $this->action;
+        }
+    }
 
-    public function __construct()
+    public function __construct(array $params = [])
     {
-        $this->params = json_decode(file_get_contents('php://input'), true);
+        App::$localization->setFile("XMLRequestMessages");
+        $this->params = $params;
         $this->action = $this->params['action'];
         try {
-            if (is_logged_in()) {
+            if (App::isLoggedIn()) {
                 $this->success = match ($this->action) {
                     'logout' => User::logout(),
                     default => false
@@ -29,8 +38,11 @@ class XMLHttpRequest implements Requests
                     default => false
                 };
             }
+            if (!$this->success) {
+                App::setFailed();
+            }
         } catch (Throwable) {
-            $this->success = false;
+            App::setFailed();
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace traits;
 
+use core\App;
 use models\User;
 
 trait UserUpdates
@@ -12,14 +13,14 @@ trait UserUpdates
             return false; // Email already exists
         }
 
-        $result = db()->update("user", [ "email" => $new_email ], [ "ID" => $this->id ]);
+        $result = App::$db->update("user", [ "email" => $new_email ], [ "ID" => $this->id ]);
         return $result > 0;
     }
 
     public function updatePassword(string $new_password): bool
     {
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        $result = db()->update("user", [ "password" => $hashed_password ], [ "ID" => $this->id ]);
+        $result = App::$db->update("user", [ "password" => $hashed_password ], [ "ID" => $this->id ]);
         return $result > 0;
     }
 
@@ -30,7 +31,7 @@ trait UserUpdates
             return false; // Invalid role
         }
 
-        $result = db()->update("user", [ "role" => $new_role ], [ "ID" => $this->id ]);
+        $result = App::$db->update("user", [ "role" => $new_role ], [ "ID" => $this->id ]);
         return $result > 0;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace traits;
 
+use core\App;
 use models\User;
 
 trait UserGetters
@@ -11,12 +12,12 @@ trait UserGetters
      *
      * @return User[]|null
      */
-    public static function getAllUsersByRole(string $role): array|null
+    public static function getAllByRole(string $role): array|null
     {
-        $userIDs = db()->selectAll("user", "ID", [ "role" => $role ]);
+        $userIDs = App::$db->selectAll("users", "id", [ "role" => $role ]);
         $users   = [];
         foreach ($userIDs as $userID) {
-            $users[] = self::getUserByID($userID['ID']);
+            $users[] = self::getById($userID['id']);
         }
         if (count($users) > 0) {
             return null;
@@ -25,30 +26,30 @@ trait UserGetters
         return $users;
     }
 
-    public static function getUserByID(int $user_id): User|null
+    public static function getById(int $user_id): User|null
     {
-        $user_row = db()->selectSingle("user", "*", [ "ID" => $user_id ]);
+        $user_row = App::$db->selectSingle("users", "*", [ "id" => $user_id ]);
 
         return new User($user_row["id"], $user_row["email"], $user_row["password"], $user_row["role"]);
     }
 
 
-    public static function getUserByEmail(string $email): User|null
+    public static function getByEmail(string $email): User|null
     {
-        $user = db()->selectSingle("user", "ID", [ "email" => $email ]);
-        if (isset($user["ID"])) {
-            return self::getUserByID($user['ID']);
+        $user = App::$db->selectSingle("users", "id", [ "email" => $email ]);
+        if (isset($user["id"])) {
+            return self::getById($user['id']);
         }
 
         return null;
     }
 
 
-    public static function getUserByToken(string $token): User|null
+    public static function getByToken(string $token): User|null
     {
-        $row = db()->selectSingle("token", "*", [ "token" => $token ]);
+        $row = App::$db->selectSingle("tokens", "*", [ "token" => $token ]);
         if ($row) {
-            return self::getUserByID($row['userID']);
+            return self::getById($row['user_id']);
         }
 
         return null;

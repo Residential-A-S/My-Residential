@@ -12,8 +12,8 @@ use templates\pages\Settings;
 class PageRequest implements Requests
 {
     private array $path;
-    private Page $page;
-    public bool   $success = false;
+    private ?Page $page    = null;
+    public bool $success = false;
 
     public function __construct()
     {
@@ -24,7 +24,7 @@ class PageRequest implements Requests
             }
         }
         $this->path = array_values($this->path);
-        if (is_logged_in()) {
+        if (App::isLoggedIn()) {
             if (count($this->path) === 1) { // e.g. /properties
                 $this->page = match ($this->path[0]) {
                     'properties' => new Properties(),
@@ -49,9 +49,12 @@ class PageRequest implements Requests
         } else {
             $this->page = new Login();
         }
+        if (!($this->page instanceof Page)) {
+            App::setFailed();
+        }
     }
 
-    private function head_defaults(): string
+    private function headDefaults(): string
     {
         ob_start();
         ?>
@@ -69,7 +72,7 @@ class PageRequest implements Requests
                 transition: opacity 0.3s;
             }
         </style>
-        <link rel="stylesheet" href="/public/assets/style/default.css">
+        <link rel="stylesheet" href="/assets/style/default.css">
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.remove('unloaded');
@@ -84,21 +87,20 @@ class PageRequest implements Requests
         ob_start();
         ?>
         <!DOCTYPE html>
-        <html lang="<?= LOCALIZATION->language ?>">
+        <html lang="<?php echo App::$localization->language; ?>">
         <head>
-            <title><?php _e("__HEADTITLE__") ?></title>
+            <title><?php App::_e("__HEADTITLE__") ?></title>
             <?php
-            $this->head_defaults();
+            $this->headDefaults();
             $this->page->getHead();
             ?>
         </head>
         <body class="unloaded">
-        <?= $this->page->getBody() ?>
-        <script src="/public/assets/script/navbar.mjs" type="module"></script>
+        <?php echo $this->page->getBody() ?>
+        <script src="/assets/script/navbar.mjs" type="module"></script>
         </body>
         </html>
         <?php
         return ob_get_clean();
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace models;
 
+use core\App;
 use core\Validate;
 use traits\UserAuthentication;
 use traits\UserGetters;
@@ -46,31 +47,44 @@ class User
         $this->role     = $role;
     }
 
-    public static function create(string $email, string $password, string $role): bool
+    /**
+     * Create a new user
+     *
+     * @param mixed $email
+     * @param mixed $password
+     * @param mixed $role
+     *
+     * @return array{false, string}|User
+     */
+    public static function create(mixed $email, mixed $password, mixed $role): array|User
     {
         if (!Validate::email($email) || !Validate::role($role) || !Validate::password($password)) {
-            return false; // Invalid email format
+            return [false, "invalid_input_format"]; // Invalid input format
         }
         // Check if email already exists
         if (self::emailExists($email)) {
-            return false; // Email already exists
+            return [false, "email_exists"]; // Email already exists
         }
 
-        $user_id = db()->insert("user", [
+        $user_id = App::$db->insert("users", [
             "email"    => $email,
             "password" => password_hash($password, PASSWORD_DEFAULT),
             "role"     => $role
         ]);
         if (is_int($user_id)) {
-            return true;
+            $user = self::getById($user_id);
+            if (!$user) {
+                return [false, "user_id_not_found"]; // User creation failed
+            }
+            return $user;
         }
-
-        return false;
+        return [false, "user_creation_failed"]; // User creation failed
     }
 
     public function delete(): bool
     {
-        $result = db()->delete("user", [ "id" => $this->id ]);
+        $this->deleteToken();
+        $result = App::$db->delete("users", [ "id" => $this->id ]);
         if ($result) {
             return true;
         }
@@ -80,7 +94,7 @@ class User
 
     public static function emailExists(string $email): bool
     {
-        $result = db()->selectSingle("user", "id", [ "email" => $email ]);
+        $result = App::$db->selectSingle("users", "id", [ "email" => $email ]);
         if ($result) {
             return true;
         }

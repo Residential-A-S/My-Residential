@@ -4,26 +4,30 @@ namespace core;
 
 class Validate
 {
-    public static function email(string $email): bool
+    public static function email(mixed $email): bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
-    public static function password(string $password): bool
+    public static function password(mixed $password): bool
     {
         /*
-        Password must be at least 8 characters long, contain at least one uppercase letter,
-        one lowercase letter, one number, and one special character
+        Password must be at least 8 characters long and contain at least:
+        - one lowercase letter
+        - one uppercase letter
+        - one digit
+        - one special character from @#$%^&*()-_+={}[]|\;:"<>,./?
         */
-        return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $password) === 1;
+        $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_+={}[\]\\|;:"<>,.\/\?]).{8,}$/';
+        return preg_match($pattern, $password) === 1;
     }
-    public static function role(string $role): bool
+    public static function role(mixed $role): bool
     {
         $validRoles = ['admin'];
         return in_array($role, $validRoles, true);
     }
 
-    public static function string(string $string): bool
+    public static function string(mixed $string): bool
     {
-        return !empty($string);
+        return !empty($string) && is_string($string) && trim($string) !== '';
     }
 }

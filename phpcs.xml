@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="MyProjectStandard">
+    <phpcs>
+        <config name="php_version" value="8.4"/>
+    </phpcs>
+
+    <description>Custom coding standard for My Propeteer</description>
+
+    <!-- Mapper eller filer der skal tjekkes -->
+    <file>includes/</file>
+    <file>assets/</file>
+
+    <!-- Ekskludér fx tredjeparts-filer -->
+    <exclude-pattern>**/vendor/*</exclude-pattern>
+
+    <!-- Brug PSR12 som base -->
+    <rule ref="PSR12"/>
+
+    <!-- Tilføj evt. dine egne regler -->
+    <arg name="encoding" value="utf-8"/>
+    <arg name="tab-width" value="4"/>
+    <arg name="colors"/>
+</ruleset>

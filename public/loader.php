@@ -39,8 +39,6 @@ spl_autoload_register(function (string $class) {
 
 $files = [
     "config.php",
-    "includes/core/functions.php",
-    "includes/core/init.php"
 ];
 foreach ($files as $file) {
     if (file_exists($file)) {

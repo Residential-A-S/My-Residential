@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ruleset name="My Propeteer Rules">
+    <description>Custom rules for Propeteer</description>
+
+    <rule ref="rulesets/naming.xml/ShortVariable">
+        <properties>
+            <property name="minimum" value="2"/>
+            <property name="exceptions" value="id"/>
+        </properties>
+    </rule>
+
+    <!-- Variabelnavne skal være snake_case -->
+    <rule ref="rulesets/naming.xml/VariableNamingConventions">
+        <properties>
+            <!-- Lokale variabler -->
+            <property name="local" value="^[a-z]+(_[a-z0-9]+)*$"/>
+
+            <!-- Objektfelter (private/public) -->
+            <property name="member" value="^_?[a-z]+(_[a-z0-9]+)*$"/>
+
+            <!-- Statiske konstanter eller egenskaber -->
+            <property name="static" value="^[a-z]+(_[a-z0-9]+)*$"/>
+        </properties>
+    </rule>
+</ruleset>

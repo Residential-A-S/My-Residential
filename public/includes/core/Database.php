@@ -84,6 +84,7 @@ class Database
      * @param array $data
      *
      * @return int|false
+     *
      * Method to insert data into the database
      */
     public function insert(string $table, array $data): int|false

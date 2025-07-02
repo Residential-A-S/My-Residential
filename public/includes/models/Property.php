@@ -3,6 +3,7 @@
 namespace models;
 
 use abstract\Meta;
+use core\App;
 use core\Validate;
 
 class Property extends Meta
@@ -55,15 +56,15 @@ class Property extends Meta
         Organization $organization
     ): bool {
         if (
-            !Validate::country($country) ||
-            !Validate::postalCode($postal_code) ||
-            !Validate::city($city) ||
-            !Validate::address($address)
+            !Validate::string($country) ||
+            !Validate::string($postal_code) ||
+            !Validate::string($city) ||
+            !Validate::string($address)
         ) {
             return false; // Invalid input
         }
 
-        $property_id = db()->insert("property", [
+        $property_id = App::$db->insert("property", [
             "country"       => $country,
             "postal_code"   => $postal_code,
             "city"          => $city,

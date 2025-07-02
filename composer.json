@@ -1,0 +1,30 @@
+{
+  "name": "propeteer/propeteer",
+  "description": "Propeteer is a property management system",
+  "license": "AGPL-3.0-or-later",
+  "version": "0.1.0",
+  "autoload": {
+    "psr-4": {
+      "models\\": "public/includes/models/",
+      "traits\\": "public/includes/traits/",
+      "abstracts\\": "public/includes/abstracts/",
+      "core\\": "public/includes/core/",
+      "interfaces\\": "public/includes/interfaces/",
+      "templates\\": "public/templates/"
+    },
+    "files": [
+      "public/config.php"
+    ]
+  },
+  "require": {
+    "ext-curl": "*",
+    "ext-pdo": "*",
+    "php": ">=8.4"
+  },
+  "require-dev": {
+    "phpmd/phpmd": "@stable",
+    "vimeo/psalm": ">=7.0.0-beta7",
+    "phpunit/phpunit": "@stable",
+    "squizlabs/php_codesniffer": "4.0.0beta1"
+  }
+}

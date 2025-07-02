@@ -2,10 +2,14 @@
 
 namespace models;
 
+use core\App;
 use core\Validate;
+use traits\OrganizationGetters;
 
 class Organization
 {
+    use OrganizationGetters;
+
     public int $id {
         get => $this->id;
         set => $this->id = $value;
@@ -31,22 +35,26 @@ class Organization
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
-        $this->created_at = $created_at;
     }
 
-    public static function create(string $name, string $description): bool
+    public static function create(string $name, string $description, User $user): false|Organization
     {
         if (!Validate::string($name) || !Validate::string($description)) {
             return false; // Invalid input format
         }
 
-        $organization_id = db()->insert("organization", [
+        $org_id = App::$db->insert("organization", [
             "name"    => $name,
             "description" => $description
         ]);
 
-        if (is_int($organization_id)) {
-            return true;
+        if (is_int($org_id)) {
+            $org = self::getById($org_id);
+            if (!$org) {
+                return false; // Organization creation failed
+            }
+            $org->addUser($user->id);
+            return $org;
         }
 
         return false;
@@ -54,7 +62,7 @@ class Organization
 
     public function delete(): bool
     {
-        $result = db()->delete("organization", ["id" => $this->id]);
+        $result = App::$db->delete("organization", ["id" => $this->id]);
         if ($result) {
             return true;
         }
@@ -64,7 +72,7 @@ class Organization
 
     public function addProperty(int $property_id): bool
     {
-        $result = db()->insert("organization_property_relations", [
+        $result = App::$db->insert("organization_property_relations", [
             "organization_id" => $this->id,
             "property_id" => $property_id
         ]);
@@ -74,7 +82,7 @@ class Organization
 
     public function addUser(int $user_id): bool
     {
-        $result = db()->insert("user_organization_relations", [
+        $result = App::$db->insert("user_organization_relations", [
             "user_id" => $user_id,
             "organization_id" => $this->id
         ]);

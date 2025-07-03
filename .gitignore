@@ -3,3 +3,4 @@ vendor
 node_modules
 mysql_data
 public/config.php
+.phpunit.result.cache

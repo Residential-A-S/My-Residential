@@ -1,31 +1,31 @@
-version: '3.9'
-
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    image: php:8.4-apache
+    image: my-propeteer-web:latest
     ports:
       - "80:80"
+    volumes:
+      # Mount entire project → container sees public/, src/, tests/, vendor/, etc.
+      - ./:/var/www/html:cached
+      # your custom php.ini settings
+      - ./docker-php-errors.ini:/usr/local/etc/php/conf.d/docker-php-errors.ini
     depends_on:
       - db
-    volumes:
-      - ./public:/var/www/html
-      - ./docker-php-errors.ini:/usr/local/etc/php/conf.d/docker-php-errors.ini
-    restart: unless-stopped
 
   db:
     image: mysql:8.1
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: 2AraeHnRkwbEFD5Gm6cp
+      MYSQL_ROOT_PASSWORD: rootStrongPass123
       MYSQL_DATABASE: propeteer_app_db
       MYSQL_USER: appuser
       MYSQL_PASSWORD: securepassword
     volumes:
-      - ./mysql_data:/var/lib/mysql
-    restart: unless-stopped
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"   # expose for host-based tools if you need
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -36,5 +36,7 @@ services:
     environment:
       PMA_HOST: db
       PMA_USER: root
-      PMA_PASSWORD: 2AraeHnRkwbEFD5Gm6cp
-    restart: unless-stopped
+      PMA_PASSWORD: rootStrongPass123
+
+volumes:
+  mysql_data:

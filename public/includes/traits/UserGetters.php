@@ -48,8 +48,14 @@ trait UserGetters
     public static function getByToken(string $token): User|null
     {
         $row = App::$db->selectSingle("tokens", "*", [ "token" => $token ]);
-        if ($row) {
+        // Check if the token exists and is not expired
+        // Tokens are valid for 1 hour
+        if ($row && $row["created_at"] > date("Y-m-d H:i:s", strtotime("-1 hour"))) {
             return self::getById($row['user_id']);
+        }
+        else if ($row) {
+            // If the token is expired, delete it
+            App::$db->delete("tokens", [ "token" => $token ]);
         }
 
         return null;

@@ -31,6 +31,7 @@ trait AppInit
         self::$db->query("CREATE TABLE IF NOT EXISTS tokens (
             token varchar(255) UNIQUE NOT NULL,
             user_id INT(16) UNSIGNED UNIQUE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )");
 

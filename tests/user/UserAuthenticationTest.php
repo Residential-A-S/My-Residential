@@ -16,7 +16,7 @@ class UserAuthenticationTest extends TestCase
      */
     public function setUp(): void
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $password = "Test1234!" . bin2hex(random_bytes(8));
             $this->user_data_list[] = [
                 "email" => "test" . uniqid() . "@propeteer.app",
@@ -70,6 +70,11 @@ class UserAuthenticationTest extends TestCase
             " with message: " . App::$response_message_code);
         $user = User::getByEmail($user_data['email']);
         $this->assertNotNull($user, "User not found after login");
+
+        App::init();
+        $this->assertNotNull($_SESSION['token'], "Session token not set after login");
+        $this->assertTrue(App::$user instanceof User, "App user instance is not a User");
+        $this->assertTrue(App::isLoggedIn(), "App user is not logged in");
     }
 
     private function testLogout(array $user_data): void

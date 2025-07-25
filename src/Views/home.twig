@@ -1,0 +1,17 @@
+{% extends 'layouts/base.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/assets/css/default.css">
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
+
+{% block content %}
+    <form class="login-form" action="/logout" method="post">
+        <button type="submit">Logout</button>
+    </form>
+{% endblock %}

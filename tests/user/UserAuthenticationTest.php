@@ -2,9 +2,9 @@
 
 namespace user;
 
-use core\App;
-use core\Validate;
-use models\User;
+use Core\App;
+use Core\Validate;
+use src\Models\User;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 

@@ -2,7 +2,7 @@
 
 namespace request;
 
-use core\Request;
+use Core\Request;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase

@@ -2,8 +2,8 @@
 
 namespace organization;
 
-use models\Organization;
-use models\User;
+use src\Models\Organization;
+use src\Models\User;
 use PHPUnit\Framework\TestCase;
 use user\UserTest;
 

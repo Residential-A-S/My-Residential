@@ -2,8 +2,8 @@
 
 namespace user;
 
-use core\App;
-use models\User;
+use Core\App;
+use src\Models\User;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 

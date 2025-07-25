@@ -2,8 +2,8 @@
 
 namespace property;
 
-use core\Request;
-use models\Property;
+use Core\Request;
+use src\Models\Property;
 use PHPUnit\Framework\TestCase;
 
 class PropertyTest extends TestCase

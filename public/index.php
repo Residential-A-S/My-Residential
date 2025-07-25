@@ -1,8 +1,24 @@
 <?php
+declare(strict_types=1);
 
-require_once 'loader.php';
+require_once '../vendor/autoload.php';
 
-use core\App;
+use src\Core\Application;
+use src\Exceptions\HttpExceptionInterface;
+use src\Core\Request;
+use src\Core\Response;
 
-App::init();
-App::run();
+
+
+try {
+    $request  = Request::capture();
+    $app = Application::bootstrap($request);
+    $response = $app->handle($request);
+} catch (HttpExceptionInterface $e) {
+    $response = Response::json(
+        ['error' => $e->getMessage()],
+        $e->getCode()
+    );
+}
+
+$response->send();

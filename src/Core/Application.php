@@ -10,6 +10,7 @@ use src\Controllers\Web\HomeController;
 use src\Enums\RouteNames;
 use src\Repositories\OrganizationRepository;
 use src\Repositories\PropertyRepository;
+use src\Repositories\RelationRepository;
 use src\Repositories\UserRepository;
 use src\Services\AuthService;
 
@@ -42,9 +43,10 @@ final readonly class Application
         ]);
 
         // Initialize repositories
+        $relationRepo = new RelationRepository($db);
         $userRepo = new UserRepository($db);
-        $propertyRepo = new PropertyRepository($db);
-        $organizationRepo = new OrganizationRepository($db);
+        $propertyRepo = new PropertyRepository($db, $relationRepo);
+        $organizationRepo = new OrganizationRepository($db, $relationRepo);
 
         // Initialize services
         $authService = new AuthService($request->session, $userRepo);

@@ -20,9 +20,15 @@ final class ServerException extends RuntimeException implements HttpExceptionInt
     public const int ORGANIZATION_FIND_FAILED = 3002;
     public const int ORGANIZATION_UPDATE_FAILED = 3003;
     public const int ORGANIZATION_DELETE_FAILED = 3004;
-
+    public const int ORGANIZATION_USER_LINK_FAILED = 3005;
+    public const int ORGANIZATION_USER_UNLINK_FAILED = 3006;
+    public const int ORGANIZATION_PROPERTY_LINK_FAILED = 3007;
+    public const int ORGANIZATION_PROPERTY_UNLINK_FAILED = 3008;
+    public const int ORGANIZATION_TRANSFER_FAILED = 3009;
 
     private const int HTTP_STATUS_CODE = 500; // Internal Server Error
+
+
     public int $reasonCode;
     public function __construct(int $reasonCode)
     {

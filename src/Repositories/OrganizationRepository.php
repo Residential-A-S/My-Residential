@@ -4,7 +4,6 @@ namespace src\Repositories;
 
 use PDO;
 use src\Exceptions\ServerException;
-use src\Models\ModelInterface;
 use src\Models\Organization;
 
 final readonly class OrganizationRepository
@@ -50,44 +49,28 @@ final readonly class OrganizationRepository
     public function hydrate(array $data): Organization {
         return new Organization(
             $data['id'],
-            $data['name'],
-            $data['description']
+            $data['name']
         );
     }
 
-    public function create(string $name, string $description, int $userId): Organization {
-        $stmt = $this->db->prepare('INSERT INTO organizations (name, description) VALUES (:name, :description)');
-        $stmt->execute([
-            ':name' => $name,
-            ':description' => $description
-        ]);
+    public function create(string $name): Organization {
+        $stmt = $this->db->prepare('INSERT INTO organizations (name) VALUES (:name)');
+        $stmt->execute([':name' => $name]);
         if( $stmt->rowCount() === 0) {
             throw new ServerException(ServerException::ORGANIZATION_CREATE_FAILED);
         }
-
-        $org = $this->findById((int)$this->db->lastInsertId());
-        $stmt = $this->db->prepare('INSERT INTO user_organization_relations (organization_id, user_id) VALUES (:organization_id, :user_id)');
-        $stmt->execute([
-            ':organization_id' => $org->id,
-            ':user_id' => $userId
+        return $this->hydrate([
+            'id' => (int)$this->db->lastInsertId(),
+            'name' => $name
         ]);
-        if( $stmt->rowCount() === 0) {
-            $this->delete($org->id);
-            throw new ServerException(ServerException::ORGANIZATION_CREATE_FAILED);
-        }
-        return $org;
     }
 
-    /**
-     * @param Organization $entity
-     * @return void
-     */
-    public function update(ModelInterface $entity): void {
-        $stmt = $this->db->prepare('UPDATE organizations SET name = :name, description = :description WHERE id = :id');
+
+    public function update(Organization $org): void {
+        $stmt = $this->db->prepare('UPDATE organizations SET name = :name WHERE id = :id');
         $stmt->execute([
-            ':id' => $entity->id,
-            ':name' => $entity->name,
-            ':description' => $entity->description
+            ':id' => $org->id,
+            ':name' => $org->name
         ]);
         if ($stmt->rowCount() === 0) {
             throw new ServerException(ServerException::ORGANIZATION_UPDATE_FAILED);

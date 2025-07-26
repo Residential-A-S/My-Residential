@@ -94,6 +94,11 @@ final readonly class PropertyRepository
         }
     }
 
+    /** Finds all properties assigned to a specific organization.
+     *
+     * @param int $organizationId
+     * @return Property[]
+     */
     public function findByOrganizationId(int $organizationId): array
     {
         $sql = <<<'SQL'

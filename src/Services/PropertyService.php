@@ -15,13 +15,13 @@ final readonly class PropertyService
         $this->propertyRepo->create($country, $postalCode, $city, $address);
     }
 
-    public function update(array $data): void
+    public function update(int $id, string $country, string $postalCode, string $city, string $address): void
     {
-        $property = $this->propertyRepo->findById($data['id']);
-        $property->address = $data['address'];
-        $property->city = $data['city'];
-        $property->postalCode = $data['postalCode'];
-        $property->country = $data['country'];
+        $property = $this->propertyRepo->findById($id);
+        $property->address = $address;
+        $property->city = $city;
+        $property->postalCode = $postalCode;
+        $property->country = $country;
         $this->propertyRepo->update($property);
     }
 

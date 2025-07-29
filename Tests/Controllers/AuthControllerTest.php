@@ -3,6 +3,7 @@
 namespace Tests\Controllers;
 
 use src\Core\Request;
+use src\Exceptions\ValidationException;
 use Tests\BaseTest;
 
 class AuthControllerTest extends BaseTest
@@ -18,17 +19,26 @@ class AuthControllerTest extends BaseTest
         ];
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function testLogin() {
         $this->registerUser($this->userData);
         $this->loginUser($this->userData);
         $this->assertIsInt($this->nativeSession->get('user_id'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function testRegister() {
         $this->registerUser($this->userData);
         $this->assertTrue($this->userRepo->existsByEmail($this->userData['email']));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function testLogout() {
         $this->registerUser($this->userData);
         $this->loginUser($this->userData);

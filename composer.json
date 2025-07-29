@@ -21,7 +21,7 @@
       "src\\Views\\": "src/Views/"
     },
     "files": [
-      "public/config.php"
+      "src/Core/config.php"
     ]
   },
   "autoload-dev": {
@@ -33,7 +33,8 @@
     "ext-curl": "*",
     "ext-pdo": "*",
     "php": ">=8.4",
-    "twig/twig": "v3.21.1"
+    "twig/twig": "v3.21.1",
+    "phpmailer/phpmailer": "^6.10"
   },
   "require-dev": {
     "phpmd/phpmd": "@stable",

@@ -2,30 +2,22 @@
 
 namespace src\Exceptions;
 
-use src\Exceptions\HttpExceptionInterface;
-use RuntimeException;
-
-final class ConflictException extends RuntimeException implements HttpExceptionInterface
+final class ConflictException extends BaseException
 {
-    public const int USER_ALREADY_EXISTS = 1;
+    public const int EMAIL_ALREADY_EXISTS = 1;
 
+    private const array MESSAGES = [
+        self::EMAIL_ALREADY_EXISTS => 'Email already exists.',
+    ];
 
-    private const int HTTP_STATUS_CODE = 409; // Conflict
-    public int $reasonCode;
-    public function __construct(int $reasonCode)
+    private const array HTTP_STATUS_CODES = [
+        self::EMAIL_ALREADY_EXISTS => 409, // Conflict
+    ];
+
+    public function __construct(int $code)
     {
-        $this->reasonCode = $reasonCode;
-        parent::__construct($this->buildMessage($reasonCode));
-    }
-
-    private function buildMessage(int $code): string
-    {
-        return match ($code) {
-            self::USER_ALREADY_EXISTS => "User already exists",
-        };
-    }
-
-    public function getHttpStatusCode(): int {
-        return $this::HTTP_STATUS_CODE;
+        $message = self::MESSAGES[$code] ?? 'An unhandled conflict error occurred.';
+        $httpCode = self::HTTP_STATUS_CODES[$code] ?? 409;
+        parent::__construct($message, $httpCode);
     }
 }

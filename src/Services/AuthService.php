@@ -7,15 +7,14 @@ use src\Enums\Role;
 use src\Exceptions\AuthenticationException;
 use src\Exceptions\ConflictException;
 use src\Exceptions\ServerException;
-use src\Factories\UserFactory;
+use src\Exceptions\UserException;
 use src\Models\User;
 use src\Repositories\UserRepository;
 
 final readonly class AuthService {
     public function __construct(
         private SessionInterface $session,
-        private UserRepository $userRepository,
-        private UserFactory $userFactory,
+        private UserRepository $userRepository
     ) {}
 
     /**
@@ -29,17 +28,9 @@ final readonly class AuthService {
         }
         try {
             return $this->userRepository->findById((int)$id);
-        } catch (ServerException) {
+        } catch (ServerException|UserException) {
             return null;
         }
-    }
-
-    /**
-     * @return bool  True if there is a valid logged-in user.
-     */
-    public function isAuthenticated(): bool
-    {
-        return $this->getCurrentUser() !== null;
     }
 
     /**
@@ -60,7 +51,7 @@ final readonly class AuthService {
     {
         try {
             $user = $this->userRepository->findByEmail($email);
-        } catch (ServerException){
+        } catch (ServerException|UserException){
             throw new AuthenticationException(AuthenticationException::USER_NOT_FOUND);
         }
 
@@ -70,10 +61,15 @@ final readonly class AuthService {
         return $user;
     }
 
+    /**
+     * @throws UserException
+     * @throws ServerException
+     * @throws ConflictException
+     */
     public function register(string $email, string $password, string $name): User
     {
         if ($this->userRepository->existsByEmail($email)){
-            throw new ConflictException(ConflictException::USER_ALREADY_EXISTS);
+            throw new ConflictException(ConflictException::EMAIL_ALREADY_EXISTS);
         }
 
         $password = password_hash($password, PASSWORD_DEFAULT);
@@ -85,13 +81,5 @@ final readonly class AuthService {
         $this->requireUser();
         $session->clear();
         $session->regenerate();
-    }
-
-    public function resetPassword(string $password): void
-    {
-        $user = $this->requireUser();
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $updatedUser = $this->userFactory->withUpdatedPassword($user, $passwordHash);
-        $this->userRepository->update($updatedUser);
     }
 }

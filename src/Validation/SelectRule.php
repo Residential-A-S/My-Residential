@@ -8,6 +8,9 @@ final readonly class SelectRule implements RuleInterface
 {
     public function __construct(private array $values) {}
 
+    /**
+     * @throws ValidationException
+     */
     public function validate(mixed $value): void
     {
         if (!in_array($value, $this->values, true)) {

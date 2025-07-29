@@ -8,6 +8,7 @@ use src\Controllers\Api\AuthController as AuthController;
 use src\Controllers\Api\UserController;
 use src\Core\NativeSession;
 use src\Core\Request;
+use src\Exceptions\ValidationException;
 use src\Factories\UserFactory;
 use src\Repositories\UserRepository;
 use src\Services\AuthService;
@@ -33,6 +34,10 @@ class BaseTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]);
+
+        // Clear tables
+        $this->db->exec("DELETE FROM users WHERE true");
+
         $this->nativeSession = new NativeSession($this->session);
 
         $userFactory = new UserFactory();
@@ -48,12 +53,9 @@ class BaseTest extends TestCase
         $this->userController = new UserController($this->userService);
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        $this->db->exec("TRUNCATE TABLE users");
-    }
-
+    /**
+     * @throws ValidationException
+     */
     protected function registerUser(array $userData): void {
         $request = new Request(
             "POST",
@@ -68,6 +70,9 @@ class BaseTest extends TestCase
         $this->authCtrl->register($request);
     }
 
+    /**
+     * @throws ValidationException
+     */
     protected function loginUser(array $userData): void {
         $request = new Request(
             "POST",

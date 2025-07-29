@@ -9,6 +9,7 @@ use DateTime;
 use Exception;
 use src\Enums\Role;
 use src\Exceptions\ServerException;
+use src\Exceptions\UserException;
 use src\Models\User;
 use PDO;
 use PDOException;
@@ -17,7 +18,11 @@ final readonly class UserRepository
 {
     public function __construct(private PDO $db) {}
 
-    /** Finds a user by their ID. */
+    /** Finds a user by their ID.
+     *
+     * @throws ServerException
+     * @throws UserException
+     */
     public function findById(int $id): User
     {
         try {
@@ -31,19 +36,23 @@ final readonly class UserRepository
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
-                throw new ServerException(ServerException::USER_FIND_FAILED);
+                throw new UserException(UserException::FIND_FAILED);
             }
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $stmt->closeCursor();
 
             return $this->hydrate($row);
-        } catch (PDOException) {
-            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
-    /** Finds a user by their email. */
+    /** Finds a user by their email.
+     *
+     * @throws ServerException
+     * @throws UserException
+     */
     public function findByEmail(string $email): User
     {
         try{
@@ -57,19 +66,22 @@ final readonly class UserRepository
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
-                throw new ServerException(ServerException::USER_FIND_FAILED);
+                throw new UserException(UserException::FIND_FAILED);
             }
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $stmt->closeCursor();
 
             return $this->hydrate($row);
-        } catch (PDOException) {
-            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
-    /** Finds all users*/
+    /** Finds all users*
+     *
+     * @throws ServerException
+     */
     public function findAll(): array
     {
         try{
@@ -83,8 +95,8 @@ final readonly class UserRepository
             $stmt->closeCursor();
 
             return array_map([$this, 'hydrate'], $rows);
-        } catch (PDOException) {
-            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
@@ -98,6 +110,7 @@ final readonly class UserRepository
      *     name:string,
      *     role:string
      * } $data
+     * @throws ServerException
      */
     public function hydrate(array $data): User
     {
@@ -115,13 +128,15 @@ final readonly class UserRepository
                 name: (string)$data['name'],
                 role: $role
             );
-        } catch (DateMalformedStringException) {
-            throw new ServerException(ServerException::DATE_MALFORMED);
-        } catch (Exception) {
-            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        } catch (DateMalformedStringException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
+    /**
+     * @throws UserException
+     * @throws ServerException
+     */
     public function update(User $user): void
     {
         try {
@@ -149,13 +164,17 @@ final readonly class UserRepository
             $stmt->execute();
 
             if($stmt->rowCount() === 0) {
-                throw new ServerException(ServerException::USER_UPDATE_FAILED);
+                throw new UserException(UserException::UPDATE_FAILED);
             }
-        } catch (PDOException) {
-            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
+    /**
+     * @throws UserException
+     * @throws ServerException
+     */
     public function create(string $email, string $hashedPassword, string $name, Role $role): User
     {
         try {
@@ -171,17 +190,21 @@ final readonly class UserRepository
             $stmt->execute();
 
             if($stmt->rowCount() === 0) {
-                throw new ServerException(ServerException::USER_CREATE_FAILED);
+                throw new UserException(UserException::CREATE_FAILED);
             }
 
             $data = $this->findById((int) $this->db->lastInsertId());
             $stmt->closeCursor();
             return $data;
-        } catch (PDOException) {
-            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
+    /**
+     * @throws UserException
+     * @throws ServerException
+     */
     public function delete(int $id): void
     {
         try {
@@ -194,12 +217,12 @@ final readonly class UserRepository
             $stmt->execute();
 
             if($stmt->rowCount() === 0) {
-                throw new ServerException(ServerException::USER_DELETE_FAILED);
+                throw new UserException(UserException::DELETE_FAILED);
             }
 
             $stmt->closeCursor();
-        } catch (PDOException) {
-            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 

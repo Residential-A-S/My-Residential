@@ -4,6 +4,8 @@ namespace src\Controllers\Api;
 
 use src\Core\Request;
 use src\Core\Response;
+use src\Exceptions\ValidationException;
+use src\Forms\ChangePasswordForm;
 use src\Forms\UpdateUserForm;
 use src\Services\UserService;
 
@@ -23,6 +25,19 @@ final readonly class UserController
             $updateUserForm->data['email']
         );
         return Response::json(['message' => 'User update successful.']);
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function changePassword(Request $request): Response
+    {
+        $changePasswordForm = new ChangePasswordForm();
+        $changePasswordForm->handle($request->body);
+
+        $this->userService->updatePassword($changePasswordForm->data['password']);
+
+        return Response::json(['message' => 'Password reset successful.']);
     }
 
     public function delete(Request $request): Response

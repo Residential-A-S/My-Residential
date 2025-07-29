@@ -6,7 +6,9 @@ use src\Exceptions\ValidationException;
 
 final readonly class StrongPasswordRule implements RuleInterface {
 
-
+    /**
+     * @throws ValidationException
+     */
     public function validate(mixed $value): void
     {
         $strongPasswordPattern = '/

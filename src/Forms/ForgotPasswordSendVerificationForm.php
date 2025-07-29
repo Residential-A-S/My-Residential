@@ -9,7 +9,7 @@ use src\Validation\MinRule;
 use src\Validation\RequiredRule;
 use src\Validation\StrongPasswordRule;
 
-class ResetPasswordForm extends AbstractForm
+class ForgotPasswordSendVerificationForm extends AbstractForm
 {
     public function __construct()
     {
@@ -17,12 +17,10 @@ class ResetPasswordForm extends AbstractForm
 
         $this
             ->addField(
-                'password',
+                'email',
                 [
                     new RequiredRule(),
-                    new MinRule(8),
-                    new MaxRule(255),
-                    new StrongPasswordRule()
+                    new MaxRule(255)
                 ]
             );
     }

@@ -1,11 +1,7 @@
 <?php
 
-
-
 namespace src\Core;
 
-use src\Controllers\Api\OrganizationController;
-use src\Controllers\Api\PropertyController;
 use src\Controllers\Api\UserController;
 use src\Controllers\Web\HomeController;
 use src\Enums\RouteNames;
@@ -19,7 +15,6 @@ use src\Services\AuthService;
 use src\Controllers\Web\LoginController as WebLoginController;
 use src\Controllers\Api\AuthController as AuthController;
 use PDO;
-use src\Services\OrganizationService;
 use src\Services\PropertyService;
 use src\Services\UserService;
 use Twig\Environment;
@@ -77,6 +72,7 @@ final readonly class Application
         $router->map(RouteNames::Login_POST, [$authCtrl, 'login']);
         $router->map(RouteNames::Logout, [$authCtrl, 'logout']);
         $router->map(RouteNames::Register, [$authCtrl, 'register']);
+        $router->map(RouteNames::Forgot_Password, [$authCtrl, 'resetPassword']);
         $router->map(RouteNames::User_Update, [$userCtrl, 'update']);
         $router->map(RouteNames::User_Delete, [$userCtrl, 'delete']);
 

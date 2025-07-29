@@ -4,9 +4,9 @@ namespace src\Controllers\Api;
 
 use src\Core\Request;
 use src\Core\Response;
+use src\Exceptions\ValidationException;
 use src\Forms\LoginForm;
 use src\Forms\RegisterForm;
-use src\Forms\ResetPasswordForm;
 use src\Services\AuthService;
 
 final readonly class AuthController
@@ -15,6 +15,9 @@ final readonly class AuthController
         private AuthService $authService
     ) {}
 
+    /**
+     * @throws ValidationException
+     */
     public function login(Request $request): Response
     {
         $loginForm = new LoginForm();
@@ -35,6 +38,9 @@ final readonly class AuthController
         return Response::json(['message' => 'Logout successful.']);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function register(Request $request): Response
     {
         $registerForm = new RegisterForm();
@@ -48,15 +54,5 @@ final readonly class AuthController
         $request->session->regenerate();
         $request->session->set('user_id', $user->id);
         return Response::json(['message' => 'Registration successful.']);
-    }
-
-    public function resetPassword(Request $request): Response
-    {
-        $resetPasswordForm = new ResetPasswordForm();
-        $resetPasswordForm->handle($request->body);
-
-        $this->authService->resetPassword($resetPasswordForm->data['password']);
-
-        return Response::json(['message' => 'Password reset functionality not implemented yet.']);
     }
 }

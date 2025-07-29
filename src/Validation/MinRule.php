@@ -8,6 +8,9 @@ final readonly class MinRule implements RuleInterface {
 
     public function __construct(private int $min) {}
 
+    /**
+     * @throws ValidationException
+     */
     public function validate(mixed $value): void
     {
         if (strlen((string)$value) < $this->min) {

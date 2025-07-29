@@ -8,6 +8,9 @@ final readonly class MaxRule implements RuleInterface {
 
     public function __construct(private int $max) {}
 
+    /**
+     * @throws ValidationException
+     */
     public function validate(mixed $value): void
     {
         if (strlen((string)$value) > $this->max) {

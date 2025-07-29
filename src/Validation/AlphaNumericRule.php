@@ -6,7 +6,9 @@ use src\Exceptions\ValidationException;
 
 final readonly class AlphaNumericRule implements RuleInterface {
 
-
+    /**
+     * @throws ValidationException
+     */
     public function validate(mixed $value): void
     {
         if (!isset($value) || !ctype_alnum($value)) {

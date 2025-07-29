@@ -28,6 +28,14 @@ final readonly class UserService
         $this->userRepository->update($user);
     }
 
+    public function updatePassword(string $newPassword): void
+    {
+        $user = $this->authService->requireUser();
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $updatedUser = $this->userFactory->withUpdatedPassword($user, $passwordHash);
+        $this->userRepository->update($updatedUser);
+    }
+
     public function delete(): void
     {
         $user = $this->authService->requireUser();

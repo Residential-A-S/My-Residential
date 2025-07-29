@@ -43,7 +43,8 @@ abstract class AbstractForm
     /**
      * Bind input and validate.
      *
-     * @param array $input  e.g. Request::body
+     * @param array $input e.g. Request::body
+     * @throws ValidationException
      */
     public function handle(array $input): void
     {

@@ -27,6 +27,9 @@ final readonly class PasswordResetService {
     /**
      * @throws DateMalformedStringException
      * @throws RandomException
+     * @throws ServerException
+     * @throws UserException
+     * @throws PasswordResetException
      */
     public function sendVerification(string $email): void
     {

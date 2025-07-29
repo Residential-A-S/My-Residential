@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace src\Repositories;
 
+use DateMalformedStringException;
+use DateTime;
+use Exception;
+use src\Enums\Role;
 use src\Exceptions\ServerException;
-use src\Models\ModelInterface;
 use src\Models\User;
 use PDO;
 use PDOException;
@@ -19,7 +22,7 @@ final readonly class UserRepository
     {
         try {
             $sql = <<<'SQL'
-            SELECT id, email, password
+            SELECT id, email, password, created_at, last_login_at, failed_attempts, name, role
             FROM users
             WHERE id = :id
             SQL;
@@ -45,7 +48,7 @@ final readonly class UserRepository
     {
         try{
             $sql = <<<'SQL'
-            SELECT id, email, password
+            SELECT id, email, password, created_at, last_login_at, failed_attempts, name, role
             FROM users
             WHERE email = :email
             SQL;
@@ -71,7 +74,7 @@ final readonly class UserRepository
     {
         try{
             $sql = <<<'SQL'
-            SELECT id, email, password
+            SELECT id, email, password, created_at, last_login_at, failed_attempts, name, role
             FROM users
             SQL;
             $stmt = $this->db->prepare($sql);
@@ -85,34 +88,64 @@ final readonly class UserRepository
         }
     }
 
-    /** @param array{id:int, email:string, password:string} $data */
+    /** @param array{
+     *     id:int,
+     *     email:string,
+     *     password:string,
+     *     created_at:string,
+     *     last_login_at:string,
+     *     failed_attempts:int,
+     *     name:string,
+     *     role:string
+     * } $data
+     */
     public function hydrate(array $data): User
     {
-        return new User(
-            id: (int)$data['id'],
-            email: (string)$data['email'],
-            password: (string)$data['password']
-        );
+        try {
+            $createdAt = new DateTime($data['created_at']);
+            $lastLoginAt = $data['last_login_at'] !== null ? new DateTime($data['last_login_at']) : null;
+            $role = Role::from($data['role']);
+            return new User(
+                id: (int)$data['id'],
+                email: (string)$data['email'],
+                passwordHash: (string)$data['password'],
+                createdAt: $createdAt,
+                lastLoginAt: $lastLoginAt,
+                failedLoginAttempts: (int)$data['failed_attempts'],
+                name: (string)$data['name'],
+                role: $role
+            );
+        } catch (DateMalformedStringException) {
+            throw new ServerException(ServerException::DATE_MALFORMED);
+        } catch (Exception) {
+            throw new ServerException(ServerException::UNKNOWN_ERROR);
+        }
     }
 
-    /**
-     * @param User $entity
-     * @return void
-     */
-    public function update(ModelInterface $entity): void
+    public function update(User $user): void
     {
         try {
             $sql = <<<'SQL'
             UPDATE users
             SET 
                 email = :email,
-                password = :password
+                password = :passwordHash,
+                created_at = :createdAt,
+                last_login_at = :lastLoginAt,
+                failed_attempts = :failedAttempts,
+                name = :name,
+                role = :role
             WHERE id = :id
             SQL;
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':id', $entity->id, PDO::PARAM_INT);
-            $stmt->bindValue(':username', $entity->email);
-            $stmt->bindValue(':password', password_hash($entity->password, PASSWORD_DEFAULT));
+            $stmt->bindValue(':id', $user->id, PDO::PARAM_INT);
+            $stmt->bindValue(':email', $user->email);
+            $stmt->bindValue(':passwordHash', $user->passwordHash);
+            $stmt->bindValue(':createdAt', $user->createdAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':lastLoginAt', $user->lastLoginAt?->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':failedAttempts', $user->failedLoginAttempts, PDO::PARAM_INT);
+            $stmt->bindValue(':name', $user->name);
+            $stmt->bindValue(':role', $user->role->to());
             $stmt->execute();
 
             if($stmt->rowCount() === 0) {
@@ -123,17 +156,18 @@ final readonly class UserRepository
         }
     }
 
-    /** @param array{email:string, password:string} $data */
-    public function create(array $data): User
+    public function create(string $email, string $hashedPassword, string $name, Role $role): User
     {
         try {
             $sql = <<<'SQL'
-            INSERT INTO users (email, password)
-            VALUES (:email, :password)
+            INSERT INTO users (email, password, name, role)
+            VALUES (:email, :password, :name, :role)
             SQL;
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':email', $data['email']);
-            $stmt->bindValue(':password', $data['password']);
+            $stmt->bindValue(':email', $email);
+            $stmt->bindValue(':password', $hashedPassword);
+            $stmt->bindValue(':name', $name);
+            $stmt->bindValue(':role', $role->to());
             $stmt->execute();
 
             if($stmt->rowCount() === 0) {

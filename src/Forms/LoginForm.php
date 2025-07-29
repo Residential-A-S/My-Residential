@@ -3,10 +3,10 @@
 namespace src\Forms;
 
 use src\Enums\RouteNames;
-use src\Validation\AlphaNumericRule;
 use src\Validation\MaxRule;
 use src\Validation\MinRule;
 use src\Validation\RequiredRule;
+use src\Validation\StrongPasswordRule;
 
 class LoginForm extends AbstractForm
 {
@@ -16,12 +16,10 @@ class LoginForm extends AbstractForm
 
         $this
             ->addField(
-                'username',
+                'email',
                 [
                     new RequiredRule(),
-                    new AlphaNumericRule(),
-                    new MinRule(5),
-                    new MaxRule(40)
+                    new MaxRule(255)
                 ]
             )
             ->addField(
@@ -29,7 +27,8 @@ class LoginForm extends AbstractForm
                 [
                     new RequiredRule(),
                     new MinRule(8),
-                    new MaxRule(32)
+                    new MaxRule(255),
+                    new StrongPasswordRule()
                 ]
             );
     }

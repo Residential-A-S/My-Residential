@@ -6,6 +6,7 @@ use src\Core\Request;
 use src\Core\Response;
 use src\Forms\LoginForm;
 use src\Forms\RegisterForm;
+use src\Forms\ResetPasswordForm;
 use src\Services\AuthService;
 
 final readonly class AuthController
@@ -20,19 +21,17 @@ final readonly class AuthController
         $loginForm->handle($request->body);
 
         $user = $this->authService->login(
-            $loginForm->data['username'],
+            $loginForm->data['email'],
             $loginForm->data['password']
         );
         $request->session->regenerate();
-        $request->session->set('student_id', $user->id);
+        $request->session->set('user_id', $user->id);
         return Response::json(['message' => 'Login successful.']);
     }
 
     public function logout(Request $request): Response
     {
-        $this->authService->requireUser();
-        $request->session->clear();
-        $request->session->regenerate();
+        $this->authService->logout($request->session);
         return Response::json(['message' => 'Logout successful.']);
     }
 
@@ -42,11 +41,22 @@ final readonly class AuthController
         $registerForm->handle($request->body);
 
         $user = $this->authService->register(
-            $registerForm->data['username'],
-            $registerForm->data['password']
+            $registerForm->data['email'],
+            $registerForm->data['password'],
+            $registerForm->data['name']
         );
         $request->session->regenerate();
         $request->session->set('user_id', $user->id);
         return Response::json(['message' => 'Registration successful.']);
+    }
+
+    public function resetPassword(Request $request): Response
+    {
+        $resetPasswordForm = new ResetPasswordForm();
+        $resetPasswordForm->handle($request->body);
+
+        $this->authService->resetPassword($resetPasswordForm->data['password']);
+
+        return Response::json(['message' => 'Password reset functionality not implemented yet.']);
     }
 }

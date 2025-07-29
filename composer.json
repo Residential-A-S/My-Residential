@@ -6,22 +6,28 @@
   "autoload": {
     "psr-4": {
       "src\\Abstracts\\": "src/Abstracts/",
-      "src\\Controllers\\Api\\": "src/Controllers/Api",
-      "src\\Controllers\\Web\\": "src/Controllers/Web",
+      "src\\Controllers\\Api\\": "src/Controllers/Api/",
+      "src\\Controllers\\Web\\": "src/Controllers/Web/",
       "src\\Core\\": "src/Core/",
-      "src\\Enums\\": "src/Enums",
+      "src\\Enums\\": "src/Enums/",
       "src\\Exceptions\\": "src/Exceptions/",
-      "src\\Forms": "src/Forms/",
+      "src\\Factories\\": "src/Factories/",
+      "src\\Forms\\": "src/Forms/",
       "src\\Interfaces\\": "src/Interfaces/",
       "src\\Models\\": "src/Models/",
       "src\\Repositories\\": "src/Repositories/",
       "src\\Services\\": "src/Services/",
-      "src\\Validation": "src/Validation",
-      "src\\Views\\": "src/Views"
+      "src\\Validation\\": "src/Validation/",
+      "src\\Views\\": "src/Views/"
     },
     "files": [
       "public/config.php"
     ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "Tests/"
+    }
   },
   "require": {
     "ext-curl": "*",

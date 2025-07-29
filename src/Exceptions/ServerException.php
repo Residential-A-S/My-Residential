@@ -7,6 +7,7 @@ use RuntimeException;
 final class ServerException extends RuntimeException implements HttpExceptionInterface
 {
     public const int UNKNOWN_ERROR = 0001;
+    public const int DATE_MALFORMED = 0002;
     public const int USER_CREATE_FAILED = 1001;
     public const int USER_FIND_FAILED = 1002;
     public const int USER_UPDATE_FAILED = 1003;
@@ -27,7 +28,6 @@ final class ServerException extends RuntimeException implements HttpExceptionInt
     public const int ORGANIZATION_TRANSFER_FAILED = 3009;
 
     private const int HTTP_STATUS_CODE = 500; // Internal Server Error
-
 
     public int $reasonCode;
     public function __construct(int $reasonCode)

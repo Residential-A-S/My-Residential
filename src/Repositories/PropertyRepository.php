@@ -1,131 +1,186 @@
 <?php
 
+declare(strict_types=1);
+
 namespace src\Repositories;
 
-use PDO;
+use DateTimeImmutable;
+use PDOException;
+use src\Exceptions\PropertyException;
 use src\Exceptions\ServerException;
+use src\Factories\PropertyFactory;
 use src\Models\Property;
+use PDO;
+use Throwable;
 
 final readonly class PropertyRepository
 {
     public function __construct(
-        private PDO $db
-    ) {}
+        private PDO $db,
+        private PropertyFactory $factory
+    ) {
+    }
 
+    /**
+     * @throws ServerException
+     * @throws PropertyException
+     */
     public function findById(int $id): Property
     {
-
-        $stmt = $this->db->prepare('SELECT * FROM properties WHERE id = :id');
-        $stmt->execute([':id' => $id]);
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$data) {
-            throw new ServerException(ServerException::PROPERTY_FIND_FAILED);
+        try {
+            $sql = 'SELECT * FROM properties WHERE id = :id';
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$data) {
+                throw new PropertyException(PropertyException::NOT_FOUND);
+            }
+            return $this->hydrate($data);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
-        return $this->hydrate($data);
     }
 
+    /**
+     * @throws ServerException
+     */
     public function findAll(): array
     {
-        $stmt = $this->db->query('SELECT * FROM properties');
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array_map([$this, 'hydrate'], $data);
-    }
-
-    public function hydrate(array $data): Property
-    {
-        return new Property(
-            id: $data['id'],
-            country: $data['country'],
-            postalCode: $data['postal_code'],
-            city: $data['city'],
-            address: $data['address']
-        );
-    }
-
-    public function create(string $country, string $postalCode, string $city, string $address): Property
-    {
-        $stmt = $this->db->prepare('INSERT INTO properties (country, postal_code, city, address) VALUES (:country, :postal_code, :city, :address)');
-        $stmt->execute([
-            ':country' => $country,
-            ':postal_code' => $postalCode,
-            ':city' => $city,
-            ':address' => $address
-        ]);
-        if ($stmt->rowCount() === 0) {
-            throw new ServerException(ServerException::PROPERTY_CREATE_FAILED);
+        try {
+            $sql = 'SELECT * FROM properties';
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'hydrate'], $data);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
-        $data['id'] = $this->db->lastInsertId();
-        return $this->hydrate($data);
     }
 
+    /**
+     * @throws ServerException
+     * @throws PropertyException
+     */
+    public function create(Property $property): Property
+    {
+        try {
+            $sql = <<<'SQL'
+                INSERT INTO properties (
+                                        organization_id, 
+                                        street_name, 
+                                        street_number, 
+                                        zip_code, 
+                                        city, 
+                                        country, 
+                                        created_at, 
+                                        updated_at
+                                        )
+                VALUES (
+                        :organization_id, 
+                        :street_name, 
+                        :street_number, 
+                        :zip_code, 
+                        :city, 
+                        :country, 
+                        :created_at, 
+                        :updated_at
+                        )
+            SQL;
+            $stmt = $this->db->prepare($sql);
+
+            $stmt->bindValue(':organization_id', $property->organizationId, PDO::PARAM_INT);
+            $stmt->bindValue(':street_name', $property->streetName);
+            $stmt->bindValue(':street_number', $property->streetNumber);
+            $stmt->bindValue(':zip_code', $property->zipCode);
+            $stmt->bindValue(':city', $property->city);
+            $stmt->bindValue(':country', $property->country);
+            $stmt->bindValue(':created_at', $property->createdAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':updated_at', $property->updatedAt->format('Y-m-d H:i:s'));
+
+            $stmt->execute();
+            if ($stmt->rowCount() === 0) {
+                throw new PropertyException(PropertyException::CREATE_FAILED);
+            }
+            $id = (int)$this->db->lastInsertId();
+            return $this->factory->withId($property, $id);
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws ServerException
+     */
     public function update(Property $property): void
     {
-        $stmt = $this->db->prepare('UPDATE properties SET country = :country, postal_code = :postal_code, city = :city, address = :address WHERE id = :id');
-        $stmt->execute([
-            ':id' => $property->id,
-            ':country' => $property->country,
-            ':postal_code' => $property->postalCode,
-            ':city' => $property->city,
-            ':address' => $property->address
-        ]);
-        if ($stmt->rowCount() === 0) {
-            throw new ServerException(ServerException::PROPERTY_UPDATE_FAILED);
+        try {
+            $sql = <<<'SQL'
+                UPDATE properties
+                SET organization_id = :organization_id,
+                    street_name = :street_name,
+                    street_number = :street_number,
+                    zip_code = :zip_code,
+                    city = :city,
+                    country = :country,
+                    updated_at = :updated_at
+                WHERE id = :id
+            SQL;
+            $stmt = $this->db->prepare($sql);
+
+            $stmt->bindValue(':id', $property->id, PDO::PARAM_INT);
+            $stmt->bindValue(':organization_id', $property->organizationId, PDO::PARAM_INT);
+            $stmt->bindValue(':street_name', $property->streetName);
+            $stmt->bindValue(':street_number', $property->streetNumber);
+            $stmt->bindValue(':zip_code', $property->zipCode);
+            $stmt->bindValue(':city', $property->city);
+            $stmt->bindValue(':country', $property->country);
+            $stmt->bindValue(':updated_at', $property->updatedAt->format('Y-m-d H:i:s'));
+
+            $stmt->execute();
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
+    /**
+     * @throws ServerException
+     * @throws PropertyException
+     */
     public function delete(int $id): void
     {
-        $stmt = $this->db->prepare('DELETE FROM properties WHERE id = :id');
-        $stmt->execute([':id' => $id]);
-        if ($stmt->rowCount() === 0) {
-            throw new ServerException(ServerException::PROPERTY_DELETE_FAILED);
+        try {
+            $sql = 'DELETE FROM properties WHERE id = :id';
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            if ($stmt->rowCount() === 0) {
+                throw new PropertyException(PropertyException::NOT_FOUND);
+            }
+        } catch (PDOException $e) {
+            throw new ServerException($e->getMessage());
         }
     }
 
-    public function assignToOrganization(int $propertyId, int $organizationId): void
-    {
-        $stmt = $this->db->prepare('INSERT INTO organization_property_relations (property_id, organization_id) VALUES (:property_id, :organization_id)');
-        $stmt->execute([
-            ':property_id' => $propertyId,
-            ':organization_id' => $organizationId
-        ]);
-        if ($stmt->rowCount() === 0) {
-            throw new ServerException(ServerException::PROPERTY_ASSIGN_FAILED);
-        }
-    }
-
-    /** Finds all properties assigned to a specific organization.
-     *
-     * @param int $organizationId
-     * @return Property[]
+    /**
+     * @throws ServerException
      */
-    public function findByOrganizationId(int $organizationId): array
+    private function hydrate(array $data): Property
     {
-        $sql = <<<'SQL'
-        SELECT p.* FROM properties p
-            JOIN organization_property_relations opr 
-                ON p.id = opr.property_id
-        WHERE opr.organization_id = :organization_id
-        SQL;
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':organization_id' => $organizationId]);
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array_map([$this, 'hydrate'], $data);
-    }
-
-    public function isAssignedToOrganization(int $propertyId): bool
-    {
-        $stmt = $this->db->prepare('SELECT COUNT(*) FROM organization_property_relations WHERE property_id = :property_id');
-        $stmt->execute([':property_id' => $propertyId]);
-        return (bool)$stmt->fetchColumn();
-    }
-
-    public function unassignFromOrganization(int $propertyId): void
-    {
-        $stmt = $this->db->prepare('DELETE FROM organization_property_relations WHERE property_id = :property_id');
-        $stmt->execute([
-            ':property_id' => $propertyId
-        ]);
+        try {
+            return new Property(
+                id: (int)$data['id'],
+                organizationId: (int)$data['organization_id'],
+                streetName: $data['street_name'],
+                streetNumber: $data['street_number'],
+                zipCode: $data['zip_code'],
+                city: $data['city'],
+                country: $data['country'],
+                createdAt: new DateTimeImmutable($data['created_at']),
+                updatedAt: new DateTimeImmutable($data['updated_at'])
+            );
+        } catch (Throwable $e) {
+            throw new ServerException($e->getMessage());
+        }
     }
 }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace src\Core;
 
-use src\Exceptions\ResponseEncodingException;
+use src\Exceptions\ResponseException;
 use JsonException;
 
 final class Response
@@ -36,16 +36,15 @@ final class Response
 
     /**
      * Create a JSON response.
+     *
+     * @throws ResponseException
      */
     public static function json(mixed $data, int $statusCode = 200): self
     {
         try {
             $body = json_encode($data, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
-            throw new ResponseEncodingException(
-                'Failed to JSON-encode response',
-                $e
-            );
+            throw new ResponseException(ResponseException::JSON_ENCODE_FAILED);
         }
 
         return new self($statusCode, 'application/json', $body)->withHeader('Content-Type', 'application/json');

@@ -14,13 +14,11 @@ final class ValidationException extends BaseException
     public const int STRING = 7;
     public const int INVALID_SELECT = 8;
 
-    public const int USERNAME_INVALID = 9;
+    public const int EMAIL_INVALID = 9;
 
-    public const int EMAIL_INVALID = 10;
-
-    public const int PASSWORD_STRENGTH = 11;
-    public const int PASSWORD_INVALID = 12;
-    public const int PASSWORDS_DO_NOT_MATCH = 13;
+    public const int PASSWORD_STRENGTH = 10;
+    public const int PASSWORD_INVALID = 11;
+    public const int PASSWORDS_DO_NOT_MATCH = 12;
 
     private const array MESSAGES = [
         self::FORM_VALIDATION => 'Form validation failed.',
@@ -31,7 +29,6 @@ final class ValidationException extends BaseException
         self::NUMBER => 'Field must be a number.',
         self::STRING => 'Field must be a string.',
         self::INVALID_SELECT => 'Invalid selection made.',
-        self::USERNAME_INVALID => 'Username is invalid.',
         self::EMAIL_INVALID => 'Email is invalid.',
         self::PASSWORD_STRENGTH => 'Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.',
         self::PASSWORD_INVALID => 'Password is invalid.',
@@ -47,14 +44,13 @@ final class ValidationException extends BaseException
         self::NUMBER => 422,
         self::STRING => 422,
         self::INVALID_SELECT => 422,
-        self::USERNAME_INVALID => 422,
         self::EMAIL_INVALID => 422,
         self::PASSWORD_STRENGTH => 422,
         self::PASSWORD_INVALID => 422,
         self::PASSWORDS_DO_NOT_MATCH => 422
     ];
     public function __construct(int $code) {
-        $message = self::MESSAGES[$code] ?? 'An unhandled user error occurred.';
+        $message = self::MESSAGES[$code] ?? 'An unhandled validation error occurred.';
         $httpCode = self::HTTP_STATUS_CODES[$code] ?? 500;
         parent::__construct($message, $httpCode);
     }

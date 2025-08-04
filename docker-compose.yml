@@ -1,16 +1,13 @@
 services:
   web:
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
     image: my-propeteer-web:latest
     ports:
       - "80:80"
     volumes:
-      # Mount entire project → container sees public/, src/, tests/, vendor/, etc.
-      - ./:/var/www/html:cached
-      # your custom php.ini settings
-      - ./docker-php-errors.ini:/usr/local/etc/php/conf.d/docker-php-errors.ini
+      - ./:/var/www/html
     depends_on:
       - db
 
@@ -25,7 +22,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"   # expose for host-based tools if you need
+      - "3306:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

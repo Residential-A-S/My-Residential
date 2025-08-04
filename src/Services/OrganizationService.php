@@ -2,81 +2,61 @@
 
 namespace src\Services;
 
-use Exception;
-use PDO;
+use src\Exceptions\OrganizationException;
+use src\Exceptions\RoleException;
 use src\Exceptions\ServerException;
-use src\Models\Property;
-use src\Models\User;
+use src\Factories\OrganizationFactory;
 use src\Repositories\OrganizationRepository;
-use src\Repositories\PropertyRepository;
-use src\Repositories\RelationRepository;
-use Throwable;
+use src\Repositories\RoleRepository;
+use src\Services\UserOrganizationService;
 
 final readonly class OrganizationService
 {
     public function __construct(
-        private OrganizationRepository $organizationRepo,
-        private PropertyRepository $propertyRepo,
-        private RelationRepository $relationRepo,
+        private OrganizationRepository $orgRepo,
+        private UserOrganizationService $usrOrgRelService,
+        private RoleRepository $roleRepo,
         private AuthService $authService,
-        private PDO $db
+        private OrganizationFactory $orgFactory,
     ){}
 
-    public function getCurrentUserOrganizations(User $user): array
+    /**
+     * @throws OrganizationException
+     * @throws ServerException
+     * @throws RoleException
+     */
+    public function create(string $name): void
     {
-        return $this->organizationRepo->findAllForCurrentUser($user->id);
-    }
-
-    public function createOrganization(string $name, User $user): void
-    {
-        $this->db->beginTransaction();
-        try {
-            $org = $this->organizationRepo->create($name);
-            $this->relationRepo->linkUserOrganization($user->id, $org->id);
-            $this->db->commit();
-        } catch (Throwable) {
-            $this->db->rollBack();
-            throw new ServerException(ServerException::ORGANIZATION_CREATE_FAILED);
-        }
-    }
-
-    public function updateOrganization(array $data): void
-    {
-        $org = $this->organizationRepo->findById($data['id']);
-        $org->name = $data['name'];
-        $this->organizationRepo->update($org);
-    }
-
-    public function deleteOrganization(int $id): void
-    {
-        $this->db->beginTransaction();
         $user = $this->authService->requireUser();
-        $properties = $this->propertyRepo->findByOrganizationId($id);
-        try{
-            foreach ($properties as $property) {
-                $this->relationRepo->unlinkPropertyOrganization($property->id, $id);
-                $this->propertyRepo->delete($property->id);
-            }
-            $this->relationRepo->unlinkUserOrganization($user->id, $id);
-            $this->organizationRepo->delete($id);
-            $this->db->commit();
-        } catch (Throwable) {
-            $this->db->rollBack();
-            throw new ServerException(ServerException::ORGANIZATION_DELETE_FAILED);
-        }
+        $org = $this->orgRepo->create($name);
+        $adminRole = $this->roleRepo->findByName("Admin");
+        $this->usrOrgRelService->addUserWithoutChecks($user->id, $org->id, $adminRole->id);
     }
 
-    public function transferOrganization(int $orgId, int $newUserId): void
+    /**
+     * @throws OrganizationException
+     * @throws ServerException
+     */
+    public function update(int $id, string $name): void
     {
-        $currentUser = $this->authService->requireUser();
-        $this->db->beginTransaction();
-        try {
-            $this->relationRepo->unlinkUserOrganization($currentUser->id, $orgId);
-            $this->relationRepo->linkUserOrganization($newUserId, $orgId);
-            $this->db->commit();
-        } catch (Throwable) {
-            $this->db->rollBack();
-            throw new ServerException(ServerException::ORGANIZATION_TRANSFER_FAILED);
+        $user = $this->authService->requireUser();
+        if(!$this->usrOrgRelRepo->isUserAdminInOrganization($user->id, $id)) {
+            throw new OrganizationException(OrganizationException::UPDATE_NOT_ALLOWED);
         }
+        $org = $this->orgRepo->findById($id);
+        $updatedOrg = $this->orgFactory->withUpdatedName($org, $name);
+        $this->orgRepo->update($updatedOrg);
+    }
+
+    /**
+     * @throws OrganizationException
+     */
+    public function delete(int $id): void
+    {
+        $user = $this->authService->requireUser();
+        if(!$this->usrOrgRelRepo->isUserAdminInOrganization($user->id, $id)) {
+            throw new OrganizationException(OrganizationException::DELETE_NOT_ALLOWED);
+        }
+        $this->orgRepo->delete($id);
     }
 }

@@ -16,7 +16,9 @@
       "src\\Interfaces\\": "src/Interfaces/",
       "src\\Models\\": "src/Models/",
       "src\\Repositories\\": "src/Repositories/",
+      "src\\Repositories\\Relations\\": "src/Repositories/Relations/",
       "src\\Services\\": "src/Services/",
+      "src\\Services\\Relations\\": "src/Services/Relations/",
       "src\\Validation\\": "src/Validation/",
       "src\\Views\\": "src/Views/"
     },

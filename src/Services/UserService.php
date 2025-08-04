@@ -2,6 +2,8 @@
 
 namespace src\Services;
 
+use src\Exceptions\ServerException;
+use src\Exceptions\UserException;
 use src\Factories\UserFactory;
 use src\Repositories\UserRepository;
 
@@ -13,6 +15,10 @@ final readonly class UserService
         private UserFactory $userFactory
     ){}
 
+    /**
+     * @throws UserException
+     * @throws ServerException
+     */
     public function update(string $name, string $email): void
     {
         $user = $this->authService->requireUser();
@@ -28,6 +34,10 @@ final readonly class UserService
         $this->userRepository->update($user);
     }
 
+    /**
+     * @throws UserException
+     * @throws ServerException
+     */
     public function updatePassword(string $newPassword): void
     {
         $user = $this->authService->requireUser();
@@ -36,6 +46,10 @@ final readonly class UserService
         $this->userRepository->update($updatedUser);
     }
 
+    /**
+     * @throws UserException
+     * @throws ServerException
+     */
     public function delete(): void
     {
         $user = $this->authService->requireUser();

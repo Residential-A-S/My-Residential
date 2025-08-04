@@ -59,7 +59,7 @@ final readonly class PasswordResetRepository
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
-                throw new PasswordResetException(PasswordResetException::INVALID);
+                throw new PasswordResetException(PasswordResetException::INVALID_TOKEN);
             }
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);

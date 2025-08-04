@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace src\Repositories;
 
-use DateMalformedStringException;
-use DateTime;
-use Exception;
-use src\Enums\Role;
+use DateTimeImmutable;
 use src\Exceptions\ServerException;
 use src\Exceptions\UserException;
+use src\Factories\UserFactory;
 use src\Models\User;
 use PDO;
 use PDOException;
+use Throwable;
 
 final readonly class UserRepository
 {
-    public function __construct(private PDO $db) {}
+    public function __construct(
+        private PDO $db,
+        private UserFactory $factory,
+    ) {
+    }
 
     /** Finds a user by their ID.
      *
@@ -26,23 +29,14 @@ final readonly class UserRepository
     public function findById(int $id): User
     {
         try {
-            $sql = <<<'SQL'
-            SELECT id, email, password, created_at, last_login_at, failed_attempts, name, role
-            FROM users
-            WHERE id = :id
-            SQL;
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->db->prepare('SELECT * FROM users WHERE id = :id');
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-
-            if ($stmt->rowCount() === 0) {
-                throw new UserException(UserException::FIND_FAILED);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$data) {
+                throw new UserException(UserException::NOT_FOUND);
             }
-
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stmt->closeCursor();
-
-            return $this->hydrate($row);
+            return $this->hydrate($data);
         } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
         }
@@ -55,24 +49,15 @@ final readonly class UserRepository
      */
     public function findByEmail(string $email): User
     {
-        try{
-            $sql = <<<'SQL'
-            SELECT id, email, password, created_at, last_login_at, failed_attempts, name, role
-            FROM users
-            WHERE email = :email
-            SQL;
-            $stmt = $this->db->prepare($sql);
+        try {
+            $stmt = $this->db->prepare('SELECT * FROM users WHERE email = :email');
             $stmt->bindValue(':email', $email);
             $stmt->execute();
-
-            if ($stmt->rowCount() === 0) {
-                throw new UserException(UserException::FIND_FAILED);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$data) {
+                throw new UserException(UserException::NOT_FOUND);
             }
-
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stmt->closeCursor();
-
-            return $this->hydrate($row);
+            return $this->hydrate($data);
         } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
         }
@@ -84,51 +69,46 @@ final readonly class UserRepository
      */
     public function findAll(): array
     {
-        try{
-            $sql = <<<'SQL'
-            SELECT id, email, password, created_at, last_login_at, failed_attempts, name, role
-            FROM users
-            SQL;
-            $stmt = $this->db->prepare($sql);
+        try {
+            $stmt = $this->db->prepare('SELECT * FROM users');
             $stmt->execute();
-            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $stmt->closeCursor();
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            return array_map([$this, 'hydrate'], $rows);
+            return array_map([$this, 'hydrate'], $data);
         } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
         }
     }
 
-    /** @param array{
-     *     id:int,
-     *     email:string,
-     *     password:string,
-     *     created_at:string,
-     *     last_login_at:string,
-     *     failed_attempts:int,
-     *     name:string,
-     *     role:string
-     * } $data
+    /**
+     * @throws UserException
      * @throws ServerException
      */
-    public function hydrate(array $data): User
+    public function create(User $user): User
     {
         try {
-            $createdAt = new DateTime($data['created_at']);
-            $lastLoginAt = $data['last_login_at'] !== null ? new DateTime($data['last_login_at']) : null;
-            $role = Role::from($data['role']);
-            return new User(
-                id: (int)$data['id'],
-                email: (string)$data['email'],
-                passwordHash: (string)$data['password'],
-                createdAt: $createdAt,
-                lastLoginAt: $lastLoginAt,
-                failedLoginAttempts: (int)$data['failed_attempts'],
-                name: (string)$data['name'],
-                role: $role
-            );
-        } catch (DateMalformedStringException $e) {
+            $sql = <<<'SQL'
+            INSERT INTO users 
+                (email, password_hash, name, created_at, updated_at, last_login_at, failed_attempts)
+            VALUES 
+                (:email, :password_hash, :name, :created_at, :updated_at, :last_login_at, :failed_attempts)
+            SQL;
+            $stmt = $this->db->prepare($sql);
+
+            $stmt->bindValue(':email', $user->email);
+            $stmt->bindValue(':password_hash', $user->passwordHash);
+            $stmt->bindValue(':name', $user->name);
+            $stmt->bindValue(':created_at', $user->createdAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':updated_at', $user->createdAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':last_login_at', $user->lastLoginAt?->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':failed_attempts', $user->failedLoginAttempts, PDO::PARAM_INT);
+
+            $stmt->execute();
+            if($stmt->rowCount() === 0) {
+                throw new UserException(UserException::CREATE_FAILED);
+            }
+            return $this->factory->withId($user, (int)$this->db->lastInsertId());
+        } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
         }
     }
@@ -144,58 +124,23 @@ final readonly class UserRepository
             UPDATE users
             SET 
                 email = :email,
-                password = :passwordHash,
-                created_at = :createdAt,
-                last_login_at = :lastLoginAt,
-                failed_attempts = :failedAttempts,
+                password_hash = :passwordHash,
                 name = :name,
-                role = :role
+                updated_at = :updatedAt,
+                last_login_at = :lastLoginAt,
+                failed_attempts = :failedAttempts            
             WHERE id = :id
             SQL;
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':id', $user->id, PDO::PARAM_INT);
             $stmt->bindValue(':email', $user->email);
             $stmt->bindValue(':passwordHash', $user->passwordHash);
-            $stmt->bindValue(':createdAt', $user->createdAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':name', $user->name);
+            $stmt->bindValue(':updatedAt', $user->updatedAt->format('Y-m-d H:i:s'));
             $stmt->bindValue(':lastLoginAt', $user->lastLoginAt?->format('Y-m-d H:i:s'));
             $stmt->bindValue(':failedAttempts', $user->failedLoginAttempts, PDO::PARAM_INT);
-            $stmt->bindValue(':name', $user->name);
-            $stmt->bindValue(':role', $user->role->to());
+
             $stmt->execute();
-
-            if($stmt->rowCount() === 0) {
-                throw new UserException(UserException::UPDATE_FAILED);
-            }
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
-        }
-    }
-
-    /**
-     * @throws UserException
-     * @throws ServerException
-     */
-    public function create(string $email, string $hashedPassword, string $name, Role $role): User
-    {
-        try {
-            $sql = <<<'SQL'
-            INSERT INTO users (email, password, name, role)
-            VALUES (:email, :password, :name, :role)
-            SQL;
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':email', $email);
-            $stmt->bindValue(':password', $hashedPassword);
-            $stmt->bindValue(':name', $name);
-            $stmt->bindValue(':role', $role->to());
-            $stmt->execute();
-
-            if($stmt->rowCount() === 0) {
-                throw new UserException(UserException::CREATE_FAILED);
-            }
-
-            $data = $this->findById((int) $this->db->lastInsertId());
-            $stmt->closeCursor();
-            return $data;
         } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
         }
@@ -208,19 +153,13 @@ final readonly class UserRepository
     public function delete(int $id): void
     {
         try {
-            $sql = <<<'SQL'
-            DELETE FROM users
-            WHERE id = :id
-            SQL;
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->db->prepare('DELETE FROM users WHERE id = :id');
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
             if($stmt->rowCount() === 0) {
-                throw new UserException(UserException::DELETE_FAILED);
+                throw new UserException(UserException::NOT_FOUND);
             }
-
-            $stmt->closeCursor();
         } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
         }
@@ -242,5 +181,36 @@ final readonly class UserRepository
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         return (bool)$stmt->fetchColumn();
+    }
+
+    /**
+     * @throws UserException
+     * @throws ServerException
+     */
+    public function requireById(int $id): User
+    {
+        return $this->findById($id);
+    }
+
+    /**
+     * @throws ServerException
+     */
+    private function hydrate(array $data): User
+    {
+        try {
+            $lastLoginAt = $data['last_login_at'] !== null ? new DateTimeImmutable($data['last_login_at']) : null;
+            return new User(
+                id: (int)$data['id'],
+                email: $data['email'],
+                passwordHash: $data['password'],
+                name: $data['name'],
+                createdAt: new DateTimeImmutable($data['created_at']),
+                updatedAt: new DateTimeImmutable($data['updated_at']),
+                lastLoginAt: $lastLoginAt,
+                failedLoginAttempts: (int)$data['failed_attempts']
+            );
+        } catch (Throwable $e) {
+            throw new ServerException($e->getMessage());
+        }
     }
 }

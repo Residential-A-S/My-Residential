@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace src\Core;
 
-use src\Exceptions\BadRequestException;
+use src\Exceptions\RequestException;
 use JsonException;
 
 final readonly class Request
@@ -19,6 +19,9 @@ final readonly class Request
         public SessionInterface $session,
     ) {}
 
+    /**
+     * @throws RequestException
+     */
     public static function capture(): self
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -39,8 +42,8 @@ final readonly class Request
             try {
                 $body = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
             }
-            catch (JsonException $e) {
-                throw new BadRequestException('Invalid JSON: ' . $e->getMessage(), 400, $e);
+            catch (JsonException) {
+                throw new RequestException(RequestException::INVALID_JSON_FORMAT);
             }
         } else {
             $body = $_POST;

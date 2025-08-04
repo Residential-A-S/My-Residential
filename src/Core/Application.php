@@ -5,10 +5,26 @@ namespace src\Core;
 use src\Controllers\Api\UserController;
 use src\Controllers\Web\HomeController;
 use src\Enums\RouteNames;
+use src\Factories\IssueFactory;
+use src\Factories\OrganizationFactory;
+use src\Factories\PaymentFactory;
+use src\Factories\PropertyFactory;
+use src\Factories\RentalAgreementDocumentFactory;
+use src\Factories\RentalAgreementFactory;
+use src\Factories\RentalAgreementPaymentFactory;
+use src\Factories\RentalUnitFactory;
+use src\Factories\TenantFactory;
 use src\Factories\UserFactory;
+use src\Repositories\IssueRepository;
 use src\Repositories\OrganizationRepository;
+use src\Repositories\PaymentRepository;
 use src\Repositories\PropertyRepository;
-use src\Repositories\RelationRepository;
+use src\Repositories\RentalAgreementDocumentRepository;
+use src\Repositories\RentalAgreementPaymentRepository;
+use src\Repositories\RentalAgreementRepository;
+use src\Repositories\RentalUnitRepository;
+use src\Repositories\TenantRepository;
+use src\Repositories\UserOrganizationRepository;
 use src\Repositories\UserRepository;
 use src\Services\AuthService;
 
@@ -40,28 +56,43 @@ final readonly class Application
             'debug' => true,
         ]);
 
-        $userFactory = new UserFactory();
+        // Initialize factories
+        $issueF = new IssueFactory();
+        $orgF = new OrganizationFactory();
+        $payF = new PaymentFactory();
+        $propF = new PropertyFactory();
+        $raF = new RentalAgreementFactory();
+        $raDocF = new RentalAgreementDocumentFactory();
+        $raPayF = new RentalAgreementPaymentFactory();
+        $ruF = new RentalUnitFactory();
+        $tenantF = new TenantFactory();
+        $userF = new UserFactory();
 
         // Initialize repositories
-        $relationRepo = new RelationRepository($db);
-        $userRepo = new UserRepository($db);
-        $propertyRepo = new PropertyRepository($db, $relationRepo);
-        $organizationRepo = new OrganizationRepository($db, $relationRepo);
+        $issueR = new IssueRepository($db, $issueF);
+        $orgR = new OrganizationRepository($db, $orgF);
+        $payR = new PaymentRepository($db, $payF);
+        $propR = new PropertyRepository($db, $propF);
+        $raR = new RentalAgreementRepository($db, $raF);
+        $raDocR = new RentalAgreementDocumentRepository($db, $raDocF);
+        $raPayR = new RentalAgreementPaymentRepository($db);
+        $ruR = new RentalUnitRepository($db, $ruF);
+        $tenantR = new TenantRepository($db, $tenantF);
+        $userOrgR = new UserOrganizationRepository($db);
+        $userR = new UserRepository($db, $userF);
 
         // Initialize services
-        $authService = new AuthService($request->session, $userRepo, $userFactory);
-        $userService = new UserService($authService, $userRepo, $userFactory);
-        $propertyService = new PropertyService($propertyRepo);
-        //$organizationService = new OrganizationService($organizationRepo);
+        $authS = new AuthService($request->session, $userR, $userOrgR);
+        $userS = new UserService($authS, $userR, $userF);
+        //$orgS = new OrganizationService($orgR);
 
         // Initialize the Controllers
         $loginWebCtrl = new WebLoginController($twig);
-        $homeWebCtrl = new HomeController($twig, $authService);
+        $homeWebCtrl = new HomeController($twig, $authS);
 
-        $authCtrl = new AuthController($authService);
-        $userCtrl = new UserController($userService);
-        //$propertyCtrl = new PropertyController($propertyService);
-        //$organizationCtrl = new OrganizationController($organizationService);
+        $authCtrl = new AuthController($authS);
+        $userCtrl = new UserController($userS);
+        //$orgCtrl = new OrganizationController($orgS);
 
         // Initialize the router
         $router = new Router();

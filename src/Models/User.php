@@ -2,8 +2,7 @@
 
 namespace src\Models;
 
-use src\Enums\Role;
-use DateTime;
+use DateTimeImmutable;
 
 final readonly class User
 {
@@ -11,10 +10,10 @@ final readonly class User
         public int $id,
         public string $email,
         public string $passwordHash,
-        public DateTime $createdAt,
-        public ?DateTime $lastLoginAt,
-        public int $failedLoginAttempts,
         public string $name,
-        public Role $role,
+        public DateTimeImmutable $createdAt,
+        public DateTimeImmutable $updatedAt,
+        public ?DateTimeImmutable $lastLoginAt,
+        public int $failedLoginAttempts,
     ) {}
 }

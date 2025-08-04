@@ -5,15 +5,11 @@ namespace src\Services;
 use DateMalformedStringException;
 use DateTime;
 use Random\RandomException;
-use src\Core\SessionInterface;
-use src\Enums\Role;
 use src\Exceptions\AuthenticationException;
-use src\Exceptions\ConflictException;
 use src\Exceptions\PasswordResetException;
 use src\Exceptions\ServerException;
 use src\Exceptions\UserException;
 use src\Factories\UserFactory;
-use src\Models\User;
 use src\Repositories\PasswordResetRepository;
 use src\Repositories\UserRepository;
 
@@ -57,10 +53,10 @@ final readonly class PasswordResetService {
         $hashedToken = hash_hmac('sha256', $token, APP_SECRET);
         $tokenArray = $this->passwordResetRepository->findByToken($hashedToken);
         if($tokenArray['user_id'] !== $user_id) {
-            throw new PasswordResetException(PasswordResetException::INVALID);
+            throw new PasswordResetException(PasswordResetException::INVALID_TOKEN);
         }
         if($tokenArray['expires_at'] < new DateTime()) {
-            throw new PasswordResetException(PasswordResetException::EXPIRED);
+            throw new PasswordResetException(PasswordResetException::EXPIRED_TOKEN);
         }
         $user = $this->userRepository->findById($user_id);
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);

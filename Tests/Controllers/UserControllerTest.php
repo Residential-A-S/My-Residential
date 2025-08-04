@@ -2,8 +2,10 @@
 
 namespace Tests\Controllers;
 
-use src\Controllers\Api\UserController;
 use src\Core\Request;
+use src\Exceptions\ServerException;
+use src\Exceptions\UserException;
+use src\Exceptions\ValidationException;
 use Tests\BaseTest;
 
 class UserControllerTest extends BaseTest
@@ -19,6 +21,11 @@ class UserControllerTest extends BaseTest
         ];
     }
 
+    /**
+     * @throws ServerException
+     * @throws UserException
+     * @throws ValidationException
+     */
     public function testUpdate()
     {
         $this->registerUser($this->userData);
@@ -42,6 +49,11 @@ class UserControllerTest extends BaseTest
         $this->assertEquals('Simon Jensen', $updatedUser->name, "User email should match the updated email");
     }
 
+    /**
+     * @throws ValidationException
+     * @throws ServerException
+     * @throws UserException
+     */
     public function testDelete()
     {
         $this->registerUser($this->userData);
@@ -60,5 +72,29 @@ class UserControllerTest extends BaseTest
         $this->userController->delete($request);
         $this->assertIsNotInt($this->nativeSession->get('user_id'), "User ID should not be set after deletion");
         $this->assertFalse($this->userRepo->existsById($user->id), "User should not exist after deletion");
+    }
+
+    /**
+     * @throws ValidationException
+     * @throws UserException
+     * @throws ServerException
+     */
+    public function testUpdatePassword()
+    {
+        $this->registerUser($this->userData);
+        $this->loginUser($this->userData);
+        $request = new Request(
+            "POST",
+            "/user/change-password",
+            [],
+            ['password' => 'NewPassword123!'],
+            [],
+            [],
+            [],
+            $this->nativeSession
+        );
+        $this->userController->updatePassword($request);
+        $user = $this->authService->requireUser();
+        $this->assertTrue(password_verify('NewPassword123!', $user->passwordHash), "User password should be updated successfully");
     }
 }

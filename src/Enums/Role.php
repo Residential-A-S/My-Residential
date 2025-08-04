@@ -2,26 +2,29 @@
 
 namespace src\Enums;
 
-enum Role
+enum Role: string
 {
-    case SuperAdmin;
-    case Admin;
-    case Tenant;
+    case OWNER = 'Owner';
+    case ADMIN = 'Admin';
 
-    public function to(): string {
-        return match($this) {
-            self::SuperAdmin => 'Super Admin',
-            self::Admin => 'Admin',
-            self::Tenant => 'Tenant',
+    public function getPermissions(): array
+    {
+        return match ($this) {
+            self::OWNER => [
+                Permission::VIEW_ORGANIZATION_USERS,
+                Permission::DELETE_ORGANIZATION,
+                Permission::UPDATE_ORGANIZATION,
+                Permission::CHANGE_USER_ROLE,
+                Permission::TRANSFER_ORGANIZATION_OWNERSHIP,
+                Permission::MANAGE_USERS_IN_ORGANIZATION,
+            ],
+            self::ADMIN => [
+                Permission::VIEW_ORGANIZATION_USERS
+            ]
         };
     }
-
-    public static function from(string $role): self {
-        return match($role) {
-            'Super Admin' => self::SuperAdmin,
-            'Admin' => self::Admin,
-            'Tenant' => self::Tenant,
-            default => throw new \InvalidArgumentException("Invalid role: $role"),
-        };
+    public function hasPermission(Permission $permission): bool
+    {
+        return in_array($permission, $this->getPermissions(), true);
     }
 }

@@ -17,15 +17,7 @@ final readonly class OrganizationController
         private AuthService $authService,
     ) {}
 
-
-    public function getOrganizations(Request $request): Response
-    {
-        $user = $this->authService->requireUser();
-        $organizations = $this->orgService->getCurrentUserOrganizations($user);
-        return Response::json(['data' => $organizations]);
-    }
-
-    public function createOrganization(Request $request): Response
+    public function create(Request $request): Response
     {
         $user = $this->authService->requireUser();
 

@@ -6,6 +6,7 @@ namespace src\Repositories;
 
 use DateMalformedStringException;
 use DateTime;
+use DateTimeImmutable;
 use src\Exceptions\PasswordResetException;
 use src\Exceptions\ServerException;
 use PDO;
@@ -21,17 +22,22 @@ final readonly class PasswordResetRepository
      * @throws PasswordResetException
      * @throws ServerException
      */
-    public function insertPasswordResetToken(int $userId, string $hashedToken, DateTime $expiresAt): void
-    {
+    public function insertPasswordResetToken(
+        int $userId,
+        string $hashedToken,
+        DateTimeImmutable $expiresAt,
+        DateTimeImmutable $createdAt
+    ): void {
         try {
             $sql = <<<'SQL'
-            INSERT INTO password_resets (user_id, token, expires_at)
-            VALUES (:userId, :hashedToken, :expiresAt)
+            INSERT INTO password_resets (user_id, token, expires_at, created_at)
+            VALUES (:userId, :hashedToken, :expiresAt, :createdAt)
             SQL;
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
             $stmt->bindValue(':hashedToken', $hashedToken);
             $stmt->bindValue(':expiresAt', $expiresAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':createdAt', $createdAt->format('Y-m-d H:i:s'));
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {

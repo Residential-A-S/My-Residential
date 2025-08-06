@@ -4,19 +4,17 @@ namespace src\Services;
 
 use DateMalformedStringException;
 use DateTime;
-use PHPMailer\PHPMailer\Exception;
+use DateTimeImmutable;
 use Random\RandomException;
 use src\Enums\MailTemplates;
 use src\Exceptions\AuthenticationException;
+use src\Exceptions\MailException;
 use src\Exceptions\PasswordResetException;
 use src\Exceptions\ServerException;
 use src\Exceptions\UserException;
 use src\Factories\UserFactory;
 use src\Repositories\PasswordResetRepository;
 use src\Repositories\UserRepository;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 final readonly class PasswordResetService
 {
@@ -36,10 +34,7 @@ final readonly class PasswordResetService
      * @throws RandomException
      * @throws ServerException
      * @throws UserException
-     * @throws Exception
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
+     * @throws MailException
      */
     public function sendVerification(string $email): void
     {
@@ -51,9 +46,10 @@ final readonly class PasswordResetService
         $token = bin2hex(random_bytes(32));
         $hashedToken = hash_hmac('sha256', $token, APP_SECRET);
 
-        $expiresAt = new DateTime()->modify('+1 hour');
+        $createdAt = new DateTimeImmutable();
+        $expiresAt = $createdAt->modify('+1 hour');
 
-        $this->passwordResetRepository->insertPasswordResetToken($user->id, $hashedToken, $expiresAt);
+        $this->passwordResetRepository->insertPasswordResetToken($user->id, $hashedToken, $expiresAt, $createdAt);
         $this->mailService->send(
             $email,
             'Password Reset Request',

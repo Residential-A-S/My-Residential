@@ -2,7 +2,7 @@
 
 namespace src\Forms;
 
-use src\Enums\RouteNames;
+use src\Enums\RouteName;
 use src\Validation\MaxRule;
 use src\Validation\MinRule;
 use src\Validation\RequiredRule;
@@ -12,7 +12,7 @@ class LoginForm extends AbstractForm
 {
     public function __construct()
     {
-        parent::__construct(RouteNames::Login_POST);
+        parent::__construct(RouteName::Login_POST);
 
         $this
             ->addField(

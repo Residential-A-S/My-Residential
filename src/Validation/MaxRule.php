@@ -4,9 +4,11 @@ namespace src\Validation;
 
 use src\Exceptions\ValidationException;
 
-final readonly class MaxRule implements RuleInterface {
-
-    public function __construct(private int $max) {}
+final class MaxRule extends AbstractRule
+{
+    public function __construct(private readonly int $max)
+    {
+    }
 
     /**
      * @throws ValidationException

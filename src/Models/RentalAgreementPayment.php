@@ -11,5 +11,6 @@ final readonly class RentalAgreementPayment
         public int $paymentId,
         public DateTimeImmutable $periodStart,
         public DateTimeImmutable $periodEnd,
-    ) {}
+    ) {
+    }
 }

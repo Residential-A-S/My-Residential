@@ -1,8 +1,6 @@
 <?php
-namespace src\Exceptions;
 
-use RuntimeException;
-use Throwable;
+namespace src\Exceptions;
 
 final class ResponseException extends BaseException
 {

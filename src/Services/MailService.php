@@ -2,26 +2,36 @@
 
 namespace src\Services;
 
+use PHPMailer\PHPMailer\Exception;
 use src\Enums\MailTemplates;
+use src\Exceptions\ServerException;
 use Twig\Environment;
 use PHPMailer\PHPMailer\PHPMailer;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 final readonly class MailService
 {
     public function __construct(
         private Environment $twig,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @throws Exception
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws ServerException
+     */
     public function send(
         $to,
         string $subject,
-        string $template,
         MailTemplates $mailTemplate,
         array $context = [],
         string $from = 'noreply@propeteer.app'
-    ): void
-    {
-        return;
+    ): void {
         $html = $this->twig->render(
             'emails/' . $mailTemplate->getTemplateName() . '.twig',
             $context
@@ -41,7 +51,7 @@ final readonly class MailService
         $email->Body = $html;
         $email->AltBody = strip_tags($html);
         if (!$email->send()) {
-            throw new \RuntimeException('Email could not be sent: ' . $email->ErrorInfo);
+            throw new ServerException('Email could not be sent: ' . $email->ErrorInfo);
         }
     }
 }

@@ -10,7 +10,6 @@ final readonly class TenantFactory
     {
         return new Tenant(
             $id,
-            $tenant->rentalAgreementId,
             $tenant->firstName,
             $tenant->lastName,
             $tenant->email,

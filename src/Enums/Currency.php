@@ -10,7 +10,8 @@ enum Currency: string
     case DKK = 'DKK';
 
 
-    public function getSymbol(): string {
+    public function getSymbol(): string
+    {
         return match ($this) {
             self::EUR => '€',
             self::USD => '$',

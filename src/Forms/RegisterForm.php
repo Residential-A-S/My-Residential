@@ -2,8 +2,7 @@
 
 namespace src\Forms;
 
-use src\Enums\RouteNames;
-use src\Validation\AlphaNumericRule;
+use src\Enums\RouteName;
 use src\Validation\MaxRule;
 use src\Validation\MinRule;
 use src\Validation\RequiredRule;
@@ -13,7 +12,7 @@ class RegisterForm extends AbstractForm
 {
     public function __construct()
     {
-        parent::__construct(RouteNames::Register);
+        parent::__construct(RouteName::Register);
 
         $this
             ->addField(

@@ -4,8 +4,8 @@ namespace src\Validation;
 
 use src\Exceptions\ValidationException;
 
-final readonly class StrongPasswordRule implements RuleInterface {
-
+final class StrongPasswordRule extends AbstractRule
+{
     /**
      * @throws ValidationException
      */
@@ -21,7 +21,7 @@ final readonly class StrongPasswordRule implements RuleInterface {
             $                         # end of string
         /x';
 
-        if (!preg_match($strongPasswordPattern, $value)){
+        if (!preg_match($strongPasswordPattern, $value)) {
             throw new ValidationException(ValidationException::PASSWORD_STRENGTH);
         }
     }

@@ -85,7 +85,7 @@ final readonly class OrganizationRepository
     }
 
     /**
-     * @throws OrganizationException
+     * @param Organization $organization
      * @throws ServerException
      */
     public function update(Organization $organization): void
@@ -127,7 +127,8 @@ final readonly class OrganizationRepository
         }
     }
 
-    public function existsById(int $id): bool {
+    public function existsById(int $id): bool
+    {
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM organizations WHERE id = :id');
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -155,7 +156,8 @@ final readonly class OrganizationRepository
      * @return Organization
      * @throws ServerException
      */
-    private function hydrate(array $data): Organization {
+    private function hydrate(array $data): Organization
+    {
         try {
             return new Organization(
                 $data['id'],

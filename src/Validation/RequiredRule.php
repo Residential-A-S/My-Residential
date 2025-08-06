@@ -4,8 +4,8 @@ namespace src\Validation;
 
 use src\Exceptions\ValidationException;
 
-final readonly class RequiredRule implements RuleInterface {
-
+final class RequiredRule extends AbstractRule
+{
     /**
      * @throws ValidationException
      */

@@ -4,6 +4,9 @@ namespace src\Controllers\Api;
 
 use src\Core\Request;
 use src\Core\Response;
+use src\Exceptions\AuthenticationException;
+use src\Exceptions\ResponseException;
+use src\Exceptions\ValidationException;
 use src\Forms\CreateOrganizationForm;
 use src\Forms\DeleteOrganizationForm;
 use src\Forms\UpdateOrganizationForm;
@@ -15,8 +18,14 @@ final readonly class OrganizationController
     public function __construct(
         private OrganizationService $orgService,
         private AuthService $authService,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @throws ResponseException
+     * @throws ValidationException
+     * @throws AuthenticationException
+     */
     public function create(Request $request): Response
     {
         $user = $this->authService->requireUser();
@@ -31,6 +40,11 @@ final readonly class OrganizationController
         return Response::json(['message' => 'success']);
     }
 
+    /**
+     * @throws ResponseException
+     * @throws ValidationException
+     * @throws AuthenticationException
+     */
     public function updateOrganization(Request $request): Response
     {
         $user = $this->authService->requireUser();
@@ -38,14 +52,15 @@ final readonly class OrganizationController
         $updateOrganizationForm = new UpdateOrganizationForm();
         $updateOrganizationForm->handle($request->body);
 
-        $this->orgService->updateOrganization(
-            $updateOrganizationForm->data['id'],
-            $updateOrganizationForm->data['name'],
-            $user
-        );
+        $this->orgService->updateOrganization();
         return Response::json(['message' => 'success']);
     }
 
+    /**
+     * @throws ResponseException
+     * @throws ValidationException
+     * @throws AuthenticationException
+     */
     public function deleteOrganization(Request $request): Response
     {
         $user = $this->authService->requireUser();
@@ -53,10 +68,7 @@ final readonly class OrganizationController
         $deleteOrganizationForm = new DeleteOrganizationForm();
         $deleteOrganizationForm->handle($request->body);
 
-        $this->orgService->deleteOrganization(
-            $deleteOrganizationForm->data['id'],
-            $user
-        );
+        $this->orgService->deleteOrganization();
         return Response::json(['message' => 'Organization deleted successfully']);
     }
 }

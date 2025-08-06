@@ -4,9 +4,11 @@ namespace src\Validation;
 
 use src\Exceptions\ValidationException;
 
-final readonly class MinRule implements RuleInterface {
-
-    public function __construct(private int $min) {}
+final class MinRule extends AbstractRule
+{
+    public function __construct(private readonly int $min)
+    {
+    }
 
     /**
      * @throws ValidationException

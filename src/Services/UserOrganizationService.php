@@ -12,13 +12,12 @@ use src\Exceptions\UserException;
 use src\Repositories\OrganizationRepository;
 use src\Repositories\UserOrganizationRepository;
 use src\Repositories\UserRepository;
-use src\Services\AuthService;
 use Throwable;
 
 final readonly class UserOrganizationService
 {
     public function __construct(
-        private UserOrganizationRepository $usrOrgRelRepo,
+        private UserOrganizationRepository $userOrgRepo,
         private UserRepository $userRepo,
         private OrganizationRepository $orgRepo,
         private AuthService $authService,
@@ -54,12 +53,12 @@ final readonly class UserOrganizationService
         $this->userRepo->requireById($userId);
         $this->assertNonMembership($userId, $orgId);
 
-        $this->usrOrgRelRepo->addUserToOrganization($userId, $orgId, Role::ADMIN);
+        $this->userOrgRepo->addUserToOrganization($userId, $orgId, Role::ADMIN);
     }
 
     public function addUserWithoutChecks(int $userId, int $orgId, Role $role): void
     {
-        $this->usrOrgRelRepo->addUserToOrganization($userId, $orgId, $role);
+        $this->userOrgRepo->addUserToOrganization($userId, $orgId, $role);
     }
 
     /**
@@ -92,7 +91,7 @@ final readonly class UserOrganizationService
         $this->userRepo->requireById($userId);
         $this->assertMembership($userId, $orgId, OrganizationException::USER_NOT_IN_ORGANIZATION);
 
-        $this->usrOrgRelRepo->removeUserFromOrganization($userId, $orgId);
+        $this->userOrgRepo->removeUserFromOrganization($userId, $orgId);
     }
 
     /**
@@ -113,7 +112,7 @@ final readonly class UserOrganizationService
         $this->assertMembership($actorId, $orgId, OrganizationException::TRANSFER_NOT_ALLOWED);
 
         // Check if the current user is allowed to transfer ownership
-        if ($this->usrOrgRelRepo->findUserRoleInOrganization($actorId, $orgId) !== Role::OWNER) {
+        if ($this->userOrgRepo->findUserRoleInOrganization($actorId, $orgId) !== Role::OWNER) {
             throw new OrganizationException(OrganizationException::TRANSFER_NOT_ALLOWED);
         }
 
@@ -124,12 +123,12 @@ final readonly class UserOrganizationService
         $this->db->beginTransaction();
         try {
             // Check if the new owner is already a member of the organization
-            if ($this->usrOrgRelRepo->userExistsInOrganization($newOwnerId, $orgId)) {
-                $this->usrOrgRelRepo->changeUserRoleInOrganization($newOwnerId, $orgId, Role::OWNER);
+            if ($this->userOrgRepo->userExistsInOrganization($newOwnerId, $orgId)) {
+                $this->userOrgRepo->changeUserRoleInOrganization($newOwnerId, $orgId, Role::OWNER);
             } else {
-                $this->usrOrgRelRepo->addUserToOrganization($newOwnerId, $orgId, Role::OWNER);
+                $this->userOrgRepo->addUserToOrganization($newOwnerId, $orgId, Role::OWNER);
             }
-            $this->usrOrgRelRepo->removeUserFromOrganization($actorId, $orgId);
+            $this->userOrgRepo->removeUserFromOrganization($actorId, $orgId);
         } catch (Throwable $e) {
             $this->db->rollBack();
             throw new ServerException($e);
@@ -142,7 +141,7 @@ final readonly class UserOrganizationService
      */
     private function assertMembership(int $userId, int $orgId, int $exceptionCode): void
     {
-        if (!$this->usrOrgRelRepo->userExistsInOrganization($userId, $orgId)) {
+        if (!$this->userOrgRepo->userExistsInOrganization($userId, $orgId)) {
             throw new OrganizationException($exceptionCode);
         }
     }
@@ -152,7 +151,7 @@ final readonly class UserOrganizationService
      */
     private function assertNonMembership(int $userId, int $orgId): void
     {
-        if ($this->usrOrgRelRepo->userExistsInOrganization($userId, $orgId)) {
+        if ($this->userOrgRepo->userExistsInOrganization($userId, $orgId)) {
             throw new OrganizationException(OrganizationException::USER_ALREADY_IN_ORGANIZATION);
         }
     }

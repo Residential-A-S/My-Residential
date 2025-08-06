@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace src\Core;
@@ -11,10 +12,11 @@ final class Response
     private array $headers = [];
 
     public function __construct(
-        private readonly int    $statusCode  = 200,
+        private readonly int $statusCode = 200,
         private readonly string $contentType = 'text/html',
-        private readonly string $body        = ''
-    ) {}
+        private readonly string $body = ''
+    ) {
+    }
 
     /**
      * Add or overwrite a header.
@@ -64,7 +66,7 @@ final class Response
     public function send(): void
     {
         http_response_code($this->statusCode);
-        header("Content-Type: {$this->contentType}");
+        header("Content-Type: $this->contentType");
 
         foreach ($this->headers as $name => $value) {
             header("$name: $value", true, $this->statusCode);

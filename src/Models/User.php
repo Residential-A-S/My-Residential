@@ -15,5 +15,6 @@ final readonly class User
         public DateTimeImmutable $updatedAt,
         public ?DateTimeImmutable $lastLoginAt,
         public int $failedLoginAttempts,
-    ) {}
+    ) {
+    }
 }

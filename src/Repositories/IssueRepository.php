@@ -18,7 +18,8 @@ final readonly class IssueRepository
     public function __construct(
         private PDO $db,
         private IssueFactory $factory,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws IssueException
@@ -73,7 +74,11 @@ final readonly class IssueRepository
             $stmt = $this->db->prepare($sql);
 
             $stmt->bindValue(':rental_agreement_id', $issue->rentalAgreementId, PDO::PARAM_INT);
-            $stmt->bindValue(':payment_id', $issue->paymentId, $issue->paymentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $stmt->bindValue(
+                ':payment_id',
+                $issue->paymentId,
+                $issue->paymentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT
+            );
             $stmt->bindValue(':name', $issue->name);
             $stmt->bindValue(':description', $issue->description);
             $stmt->bindValue(':status', $issue->status);
@@ -110,7 +115,11 @@ final readonly class IssueRepository
 
             $stmt->bindValue(':id', $issue->id, PDO::PARAM_INT);
             $stmt->bindValue(':rental_agreement_id', $issue->rentalAgreementId, PDO::PARAM_INT);
-            $stmt->bindValue(':payment_id', $issue->paymentId, $issue->paymentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $stmt->bindValue(
+                ':payment_id',
+                $issue->paymentId,
+                $issue->paymentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT
+            );
             $stmt->bindValue(':name', $issue->name);
             $stmt->bindValue(':description', $issue->description);
             $stmt->bindValue(':status', $issue->status);

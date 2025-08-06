@@ -13,5 +13,6 @@ final readonly class RentalUnit
         public string $status,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt
-    ) {}
+    ) {
+    }
 }

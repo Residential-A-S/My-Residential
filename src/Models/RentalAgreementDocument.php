@@ -13,5 +13,6 @@ final readonly class RentalAgreementDocument
         public string $filePath,
         public string $fileType,
         public DateTimeImmutable $uploadedAt
-    ) { }
+    ) {
+    }
 }

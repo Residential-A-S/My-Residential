@@ -14,5 +14,6 @@ final readonly class Payment
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $dueAt,
         public DateTimeImmutable $paidAt,
-    ) {}
+    ) {
+    }
 }

@@ -11,5 +11,6 @@ final readonly class Organization
         public string $name,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt
-    ) {}
+    ) {
+    }
 }

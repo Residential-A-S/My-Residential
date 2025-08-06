@@ -11,6 +11,12 @@ services:
     depends_on:
       - db
 
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"  # web UI
+      - "1025:1025"  # SMTP
+
   db:
     image: mysql:8.1
     command: --default-authentication-plugin=mysql_native_password

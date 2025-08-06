@@ -16,5 +16,6 @@ final readonly class Property
         public string $country,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt
-    ) { }
+    ) {
+    }
 }

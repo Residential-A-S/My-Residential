@@ -104,7 +104,7 @@ final readonly class UserRepository
             $stmt->bindValue(':failed_attempts', $user->failedLoginAttempts, PDO::PARAM_INT);
 
             $stmt->execute();
-            if($stmt->rowCount() === 0) {
+            if ($stmt->rowCount() === 0) {
                 throw new UserException(UserException::CREATE_FAILED);
             }
             return $this->factory->withId($user, (int)$this->db->lastInsertId());
@@ -114,7 +114,7 @@ final readonly class UserRepository
     }
 
     /**
-     * @throws UserException
+     * @param User $user
      * @throws ServerException
      */
     public function update(User $user): void
@@ -157,7 +157,7 @@ final readonly class UserRepository
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 
-            if($stmt->rowCount() === 0) {
+            if ($stmt->rowCount() === 0) {
                 throw new UserException(UserException::NOT_FOUND);
             }
         } catch (PDOException $e) {

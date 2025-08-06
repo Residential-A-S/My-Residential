@@ -2,7 +2,7 @@
 
 namespace src\Forms;
 
-use src\Enums\RouteNames;
+use src\Enums\RouteName;
 use src\Validation\AlphaNumericRule;
 use src\Validation\MaxRule;
 use src\Validation\MinRule;
@@ -12,7 +12,7 @@ class CreatePropertyForm extends AbstractForm
 {
     public function __construct()
     {
-        parent::__construct(RouteNames::Login_POST);
+        parent::__construct(RouteName::Login_POST);
 
         $this
             ->addField(

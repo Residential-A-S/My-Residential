@@ -4,8 +4,8 @@ namespace src\Validation;
 
 use src\Exceptions\ValidationException;
 
-final readonly class AlphaNumericRule implements RuleInterface {
-
+final class AlphaNumericRule extends AbstractRule
+{
     /**
      * @throws ValidationException
      */

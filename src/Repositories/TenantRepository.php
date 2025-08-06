@@ -6,6 +6,7 @@ namespace src\Repositories;
 
 use DateTimeImmutable;
 use PDOException;
+use src\Exceptions\BaseException;
 use src\Exceptions\ServerException;
 use src\Exceptions\TenantException;
 use src\Factories\TenantFactory;
@@ -68,13 +69,12 @@ final readonly class TenantRepository
         try {
             $sql = <<<'SQL'
                 INSERT INTO tenants 
-                    (rental_agreement_id, first_name, last_name, email, phone, created_at, updated_at)
+                    (first_name, last_name, email, phone, created_at, updated_at)
                 VALUES
-                    (:rental_agreement_id, :first_name, :last_name, :email, :phone, :created_at, :updated_at)
+                    (:first_name, :last_name, :email, :phone, :created_at, :updated_at)
             SQL;
             $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(':rental_agreement_id', $tenant->rentalAgreementId, PDO::PARAM_INT);
             $stmt->bindValue(':first_name', $tenant->firstName);
             $stmt->bindValue(':last_name', $tenant->lastName);
             $stmt->bindValue(':email', $tenant->email);
@@ -100,8 +100,7 @@ final readonly class TenantRepository
         try {
             $sql = <<<'SQL'
                 UPDATE tenants
-                SET rental_agreement_id = :rental_agreement_id,
-                    first_name = :first_name,
+                SET first_name = :first_name,
                     last_name = :last_name,
                     email = :email,
                     phone = :phone,
@@ -111,7 +110,6 @@ final readonly class TenantRepository
             $stmt = $this->db->prepare($sql);
 
             $stmt->bindValue(':id', $tenant->id, PDO::PARAM_INT);
-            $stmt->bindValue(':rental_agreement_id', $tenant->rentalAgreementId, PDO::PARAM_INT);
             $stmt->bindValue(':first_name', $tenant->firstName);
             $stmt->bindValue(':last_name', $tenant->lastName);
             $stmt->bindValue(':email', $tenant->email);
@@ -143,6 +141,19 @@ final readonly class TenantRepository
         }
     }
 
+
+    /**
+     * @throws TenantException
+     */
+    public function requireId(int $id): Tenant
+    {
+        try {
+            return $this->findById($id);
+        } catch (BaseException) {
+            throw new TenantException(TenantException::NOT_FOUND);
+        }
+    }
+
     /**
      * @throws ServerException
      */
@@ -151,7 +162,6 @@ final readonly class TenantRepository
         try {
             return new Tenant(
                 id: (int)$data['id'],
-                rentalAgreementId: (int)$data['rental_agreement_id'],
                 firstName: $data['first_name'],
                 lastName: $data['last_name'],
                 email: $data['email'],

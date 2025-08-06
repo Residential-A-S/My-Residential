@@ -18,7 +18,8 @@ final readonly class PaymentRepository
     public function __construct(
         private PDO $db,
         private PaymentFactory $factory,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws PaymentException
@@ -63,7 +64,7 @@ final readonly class PaymentRepository
      */
     public function create(Payment $payment): Payment
     {
-        try{
+        try {
             $sql = <<<'SQL'
                 INSERT INTO payments 
                     (amount, currency, created_at, due_at, paid_at)
@@ -94,7 +95,7 @@ final readonly class PaymentRepository
      */
     public function update(Payment $payment): void
     {
-        try{
+        try {
             $sql = <<<'SQL'
                 UPDATE payments
                 SET amount = :amount,
@@ -123,7 +124,7 @@ final readonly class PaymentRepository
      */
     public function delete(int $id): void
     {
-        try{
+        try {
             $stmt = $this->db->prepare('DELETE FROM payments WHERE id = :id');
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
@@ -141,7 +142,7 @@ final readonly class PaymentRepository
      */
     private function hydrate(array $data): Payment
     {
-        try{
+        try {
             return new Payment(
                 id:         $data['id'],
                 amount:     (float)$data['amount'],

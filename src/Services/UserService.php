@@ -2,6 +2,7 @@
 
 namespace src\Services;
 
+use src\Exceptions\AuthenticationException;
 use src\Exceptions\ServerException;
 use src\Exceptions\UserException;
 use src\Factories\UserFactory;
@@ -13,10 +14,13 @@ final readonly class UserService
         private AuthService $authService,
         private UserRepository $userRepository,
         private UserFactory $userFactory
-    ){}
+    ) {
+    }
 
     /**
-     * @throws UserException
+     * @param string $name
+     * @param string $email
+     * @throws AuthenticationException
      * @throws ServerException
      */
     public function update(string $name, string $email): void
@@ -25,17 +29,12 @@ final readonly class UserService
         if ($user->email === $email && $user->name === $name) {
             return;
         }
-        if($user->email !== $email){
-            $user = $this->userFactory->withUpdatedEmail($user, $email);
-        }
-        if($user->name !== $name) {
-            $user = $this->userFactory->withUpdatedName($user, $name);
-        }
         $this->userRepository->update($user);
     }
 
     /**
-     * @throws UserException
+     * @param string $newPassword
+     * @throws AuthenticationException
      * @throws ServerException
      */
     public function updatePassword(string $newPassword): void
@@ -47,8 +46,9 @@ final readonly class UserService
     }
 
     /**
-     * @throws UserException
+     * @throws AuthenticationException
      * @throws ServerException
+     * @throws UserException
      */
     public function delete(): void
     {

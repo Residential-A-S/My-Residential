@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace src\Core;
@@ -9,15 +10,16 @@ use JsonException;
 final readonly class Request
 {
     public function __construct(
-        public string           $method,
-        public string           $uri,
-        public array            $query,
-        public array            $body,
-        public array            $headers,
-        public array            $cookies,
-        public array            $files,
+        public string $method,
+        public string $uri,
+        public array $query,
+        public array $body,
+        public array $headers,
+        public array $cookies,
+        public array $files,
         public SessionInterface $session,
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RequestException
@@ -41,8 +43,7 @@ final readonly class Request
             $raw = (string)@file_get_contents('php://input');
             try {
                 $body = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
-            }
-            catch (JsonException) {
+            } catch (JsonException) {
                 throw new RequestException(RequestException::INVALID_JSON_FORMAT);
             }
         } else {

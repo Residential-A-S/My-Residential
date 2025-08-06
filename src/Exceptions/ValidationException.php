@@ -30,7 +30,11 @@ final class ValidationException extends BaseException
         self::STRING => 'Field must be a string.',
         self::INVALID_SELECT => 'Invalid selection made.',
         self::EMAIL_INVALID => 'Email is invalid.',
-        self::PASSWORD_STRENGTH => 'Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.',
+        self::PASSWORD_STRENGTH => '
+            Password must contain at least one uppercase letter, 
+            one lowercase letter, one digit, one special character, 
+            and be at least 8 characters long.
+            ',
         self::PASSWORD_INVALID => 'Password is invalid.',
         self::PASSWORDS_DO_NOT_MATCH => 'Passwords do not match.'
     ];
@@ -49,8 +53,12 @@ final class ValidationException extends BaseException
         self::PASSWORD_INVALID => 422,
         self::PASSWORDS_DO_NOT_MATCH => 422
     ];
-    public function __construct(int $code) {
+    public function __construct(int $code, array $errors = [])
+    {
         $message = self::MESSAGES[$code] ?? 'An unhandled validation error occurred.';
+        if (!empty($errors)) {
+            $message .= ' Errors: ' . implode(', ', $errors);
+        }
         $httpCode = self::HTTP_STATUS_CODES[$code] ?? 500;
         parent::__construct($message, $httpCode);
     }

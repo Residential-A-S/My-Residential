@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__ . '/config.php';
 
 $db = new PDO("mysql:host=localhost", DB_USER, DB_PASSWORD, [

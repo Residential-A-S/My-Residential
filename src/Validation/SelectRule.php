@@ -4,9 +4,11 @@ namespace src\Validation;
 
 use src\Exceptions\ValidationException;
 
-final readonly class SelectRule implements RuleInterface
+final class SelectRule extends AbstractRule
 {
-    public function __construct(private array $values) {}
+    public function __construct(private readonly array $values)
+    {
+    }
 
     /**
      * @throws ValidationException

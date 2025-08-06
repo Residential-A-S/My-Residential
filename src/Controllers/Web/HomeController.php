@@ -2,23 +2,32 @@
 
 namespace src\Controllers\Web;
 
-use src\Core\Request;
 use src\Core\Response;
 use src\Exceptions\AuthenticationException;
 use src\Services\AuthService;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
-final readonly class HomeController {
-
+final readonly class HomeController
+{
     public function __construct(
         private Environment $twig,
         private AuthService $authService,
-    ) {}
-    public function show(Request $request): Response
+    ) {
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function show(): Response
     {
-        try{
-            $this->authService->requireStudent();
-        } catch (AuthenticationException){
+        try {
+            $this->authService->requireUser();
+        } catch (AuthenticationException) {
             return Response::redirect("/login");
         }
 

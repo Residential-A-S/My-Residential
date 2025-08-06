@@ -6,6 +6,7 @@ namespace src\Repositories;
 
 use DateTimeImmutable;
 use PDOException;
+use src\Exceptions\BaseException;
 use src\Exceptions\RentalAgreementException;
 use src\Exceptions\ServerException;
 use src\Factories\RentalAgreementFactory;
@@ -18,7 +19,8 @@ final readonly class RentalAgreementRepository
     public function __construct(
         private PDO $db,
         private RentalAgreementFactory $factory
-    ) {}
+    ) {
+    }
 
     /**
      * @throws RentalAgreementException
@@ -141,6 +143,18 @@ final readonly class RentalAgreementRepository
             }
         } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws RentalAgreementException
+     */
+    public function requireId(int $id): RentalAgreement
+    {
+        try {
+            return $this->findById($id);
+        } catch (BaseException) {
+            throw new RentalAgreementException(RentalAgreementException::RENTAL_AGREEMENT_NOT_FOUND);
         }
     }
 

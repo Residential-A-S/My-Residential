@@ -12,5 +12,4 @@ enum MailTemplates
             self::PasswordReset => 'password-reset'
         };
     }
-
 }

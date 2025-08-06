@@ -1,11 +1,13 @@
 <?php
 
+/*
 namespace src\Controllers\Api;
 
 use DateMalformedStringException;
 use Random\RandomException;
 use src\Core\Request;
 use src\Core\Response;
+use src\Exceptions\ResponseException;
 use src\Exceptions\ValidationException;
 use src\Forms\ForgotPasswordSendVerificationForm;
 use src\Services\PasswordResetService;
@@ -20,8 +22,9 @@ final readonly class PasswordResetController
      * @throws DateMalformedStringException
      * @throws RandomException
      * @throws ValidationException
+     * @throws ResponseException
      */
-    public function sendVerification(Request $request): Response
+    /*public function sendVerification(Request $request): Response
     {
         $forgotPasswordForm = new ForgotPasswordSendVerificationForm();
         $forgotPasswordForm->handle($request->body);
@@ -30,3 +33,4 @@ final readonly class PasswordResetController
         return Response::json(['message' => 'Verification email sent.']);
     }
 }
+    */

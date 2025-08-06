@@ -4,6 +4,11 @@ namespace src\Controllers\Api;
 
 use src\Core\Request;
 use src\Core\Response;
+use src\Exceptions\AuthenticationException;
+use src\Exceptions\PropertyException;
+use src\Exceptions\ResponseException;
+use src\Exceptions\ServerException;
+use src\Exceptions\ValidationException;
 use src\Forms\CreatePropertyForm;
 use src\Forms\DeletePropertyForm;
 use src\Forms\UpdatePropertyForm;
@@ -15,8 +20,16 @@ final readonly class PropertyController
     public function __construct(
         private PropertyService $propertyService,
         private AuthService $authService,
-    ) {}
+    ) {
+    }
 
+    /**
+     * @throws ResponseException
+     * @throws ValidationException
+     * @throws PropertyException
+     * @throws ServerException
+     * @throws AuthenticationException
+     */
     public function createProperty(Request $request): Response
     {
         $this->authService->requireUser();
@@ -25,14 +38,23 @@ final readonly class PropertyController
         $createPropertyForm->handle($request->body);
 
         $this->propertyService->create(
-            $createPropertyForm->data['country'],
-            $createPropertyForm->data['postal_code'],
+            $createPropertyForm->data['org_id'],
+            $createPropertyForm->data['street_name'],
+            $createPropertyForm->data['street_number'],
+            $createPropertyForm->data['zip_code'],
             $createPropertyForm->data['city'],
-            $createPropertyForm->data['address']
+            $createPropertyForm->data['country']
         );
         return Response::json(['message' => 'success']);
     }
 
+    /**
+     * @throws ResponseException
+     * @throws ValidationException
+     * @throws PropertyException
+     * @throws ServerException
+     * @throws AuthenticationException
+     */
     public function updateProperty(Request $request): Response
     {
         $this->authService->requireUser();
@@ -42,14 +64,22 @@ final readonly class PropertyController
 
         $this->propertyService->update(
             $updatePropertyForm->data['id'],
-            $updatePropertyForm->data['country'],
-            $updatePropertyForm->data['postal_code'],
+            $updatePropertyForm->data['street_name'],
+            $updatePropertyForm->data['street_number'],
+            $updatePropertyForm->data['zip_code'],
             $updatePropertyForm->data['city'],
-            $updatePropertyForm->data['address']
+            $updatePropertyForm->data['country']
         );
         return Response::json(['message' => 'success']);
     }
 
+    /**
+     * @throws ResponseException
+     * @throws ValidationException
+     * @throws PropertyException
+     * @throws AuthenticationException
+     * @throws ServerException
+     */
     public function deleteProperty(Request $request): Response
     {
         $this->authService->requireUser();

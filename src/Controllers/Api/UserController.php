@@ -4,6 +4,8 @@ namespace src\Controllers\Api;
 
 use src\Core\Request;
 use src\Core\Response;
+use src\Exceptions\AuthenticationException;
+use src\Exceptions\ResponseException;
 use src\Exceptions\ServerException;
 use src\Exceptions\UserException;
 use src\Exceptions\ValidationException;
@@ -15,13 +17,15 @@ final readonly class UserController
 {
     public function __construct(
         private UserService $userService
-    ) {}
+    ) {
+    }
 
     /**
      * @param Request $request
      * @return Response
+     * @throws AuthenticationException
+     * @throws ResponseException
      * @throws ServerException
-     * @throws UserException
      * @throws ValidationException
      */
     public function update(Request $request): Response
@@ -39,9 +43,10 @@ final readonly class UserController
     /**
      * @param Request $request
      * @return Response
-     * @throws ValidationException
+     * @throws AuthenticationException
+     * @throws ResponseException
      * @throws ServerException
-     * @throws UserException
+     * @throws ValidationException
      */
     public function updatePassword(Request $request): Response
     {
@@ -54,8 +59,12 @@ final readonly class UserController
     }
 
     /**
-     * @throws UserException
+     * @param Request $request
+     * @return Response
+     * @throws ResponseException
      * @throws ServerException
+     * @throws UserException
+     * @throws AuthenticationException
      */
     public function delete(Request $request): Response
     {

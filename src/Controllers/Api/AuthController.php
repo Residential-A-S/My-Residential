@@ -4,6 +4,10 @@ namespace src\Controllers\Api;
 
 use src\Core\Request;
 use src\Core\Response;
+use src\Exceptions\AuthenticationException;
+use src\Exceptions\ResponseException;
+use src\Exceptions\ServerException;
+use src\Exceptions\UserException;
 use src\Exceptions\ValidationException;
 use src\Forms\LoginForm;
 use src\Forms\RegisterForm;
@@ -13,10 +17,13 @@ final readonly class AuthController
 {
     public function __construct(
         private AuthService $authService
-    ) {}
+    ) {
+    }
 
     /**
      * @throws ValidationException
+     * @throws AuthenticationException
+     * @throws ResponseException
      */
     public function login(Request $request): Response
     {
@@ -32,6 +39,10 @@ final readonly class AuthController
         return Response::json(['message' => 'Login successful.']);
     }
 
+    /**
+     * @throws ResponseException
+     * @throws AuthenticationException
+     */
     public function logout(Request $request): Response
     {
         $this->authService->logout($request->session);
@@ -40,6 +51,9 @@ final readonly class AuthController
 
     /**
      * @throws ValidationException
+     * @throws ResponseException
+     * @throws ServerException
+     * @throws UserException
      */
     public function register(Request $request): Response
     {

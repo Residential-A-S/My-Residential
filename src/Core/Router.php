@@ -2,7 +2,9 @@
 
 namespace src\Core;
 
-use src\Enums\RouteNames;
+use src\Enums\RouteName;
+use src\Exceptions\ResponseException;
+
 use function call_user_func;
 
 final class Router
@@ -16,16 +18,18 @@ final class Router
     /**
      * Register a route.
      *
-     * @param RouteNames    $routeName
+     * @param RouteName    $routeName
      * @param callable      $handler A function or [ControllerClass, 'method']
      */
-    public function map(RouteNames $routeName, callable $handler): void
+    public function map(RouteName $routeName, callable $handler): void
     {
         $this->routes[strtoupper($routeName->getMethod())][$routeName->getPath()] = $handler;
     }
 
     /**
      * Dispatch the incoming request to the matching handler.
+     *
+     * @throws ResponseException
      */
     public function dispatch(Request $request): Response
     {

@@ -16,5 +16,6 @@ final readonly class RentalAgreement
         public PaymentInterval $paymentInterval,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt
-    ) { }
+    ) {
+    }
 }

@@ -2,23 +2,23 @@
 
 namespace src\Forms;
 
-use src\Enums\RouteNames;
+use src\Enums\RouteName;
 use src\Exceptions\ValidationException;
-use src\Validation\RuleInterface;
+use src\Validation\AbstractRule;
 
 abstract class AbstractForm
 {
     protected string $action   = '';
     protected string $method   = 'POST';
     /**
-     * @var array<string, array{type: string, label: string, rules: RuleInterface[], attrs: array<string,mixed>}>
+     * @var array<string, array{type: string, label: string, rules: AbstractRule[], attrs: array<string,mixed>}>
      */
-    protected array  $fields   = [];
-    public array     $errors   = [];
-    public array     $data     = [];
+    protected array $fields   = [];
+    public array $errors   = [];
+    public array $data     = [];
 
     public function __construct(
-        RouteNames $route,
+        RouteName $route,
     ) {
         $this->action = $route->getPath();
         $this->method = strtoupper($route->getMethod());
@@ -28,7 +28,7 @@ abstract class AbstractForm
      * Add a field to the form.
      *
      * @param string $name    the input name
-     * @param RuleInterface[] $rules   validation rules
+     * @param AbstractRule[] $rules   validation rules
      */
     public function addField(
         string $name,
@@ -53,8 +53,11 @@ abstract class AbstractForm
             $value = $input[$name] ?? null;
             $fieldErrors = [];
 
+            /**
+             * @var AbstractRule $rule
+             */
             foreach ($config['rules'] as $rule) {
-                try{
+                try {
                     $rule->validate($value);
                 } catch (ValidationException $e) {
                     $fieldErrors[] = $e->getMessage();

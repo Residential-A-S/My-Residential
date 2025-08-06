@@ -1,0 +1,76 @@
+<?php
+
+namespace src\Services;
+
+use DateTimeImmutable;
+use src\Enums\Currency;
+use src\Exceptions\AuthenticationException;
+use src\Exceptions\PaymentException;
+use src\Exceptions\ServerException;
+use src\Models\Payment;
+use src\Repositories\PaymentRepository;
+
+final readonly class PaymentService
+{
+    public function __construct(
+        private PaymentRepository $payR,
+        private AuthService $authS,
+    ) {
+    }
+
+    /**
+     * @throws PaymentException
+     * @throws AuthenticationException
+     * @throws ServerException
+     */
+    public function create(float $amount, Currency $currency, DateTimeImmutable $dueAt, DateTimeImmutable $paidAt): void
+    {
+        $this->authS->requireUser();
+        $payment = new Payment(
+            id: 0,
+            amount: $amount,
+            currency: $currency,
+            createdAt: new DateTimeImmutable(),
+            dueAt: $dueAt,
+            paidAt: $paidAt,
+        );
+        $this->payR->create($payment);
+    }
+
+    /**
+     * @throws PaymentException
+     * @throws AuthenticationException
+     * @throws ServerException
+     */
+    public function update(
+        int $id,
+        float $amount,
+        Currency $currency,
+        DateTimeImmutable $dueAt,
+        DateTimeImmutable $paidAt
+    ): void {
+        $this->authS->requireUser();
+        $payment = $this->payR->findById($id);
+        $updatedPayment = new Payment(
+            id: $payment->id,
+            amount: $amount,
+            currency: $currency,
+            createdAt: $payment->createdAt,
+            dueAt: $dueAt,
+            paidAt: $paidAt,
+        );
+        $this->payR->update($updatedPayment);
+    }
+
+    /**
+     * @throws PaymentException
+     * @throws ServerException
+     * @throws AuthenticationException
+     */
+    public function delete(int $id): void
+    {
+        $this->authS->requireUser();
+        $payment = $this->payR->findById($id);
+        $this->payR->delete($payment->id);
+    }
+}

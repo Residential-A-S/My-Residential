@@ -6,9 +6,9 @@ namespace src\Repositories;
 
 use DateTimeImmutable;
 use PDOException;
+use PDOStatement;
 use src\Exceptions\RentalAgreementException;
 use src\Exceptions\ServerException;
-use src\Factories\RentalAgreementPaymentFactory;
 use src\Models\RentalAgreementPayment;
 use PDO;
 use Throwable;
@@ -99,11 +99,7 @@ final readonly class RentalAgreementPaymentRepository
             SQL;
 
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':rental_agreement_id', $rentalAgreementPayment->rentalAgreementId, PDO::PARAM_INT);
-            $stmt->bindValue(':payment_id', $rentalAgreementPayment->paymentId, PDO::PARAM_INT);
-            $stmt->bindValue(':period_start', $rentalAgreementPayment->periodStart->format('Y-m-d H:i:s'));
-            $stmt->bindValue(':period_end', $rentalAgreementPayment->periodEnd->format('Y-m-d H:i:s'));
-
+            $this->bindRentalAgreementPaymentValues($stmt, $rentalAgreementPayment);
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
@@ -132,12 +128,7 @@ final readonly class RentalAgreementPaymentRepository
             SQL;
 
             $stmt = $this->db->prepare($sql);
-
-            $stmt->bindValue(':rental_agreement_id', $rentalAgreementPayment->rentalAgreementId, PDO::PARAM_INT);
-            $stmt->bindValue(':payment_id', $rentalAgreementPayment->paymentId, PDO::PARAM_INT);
-            $stmt->bindValue(':period_start', $rentalAgreementPayment->periodStart->format('Y-m-d H:i:s'));
-            $stmt->bindValue(':period_end', $rentalAgreementPayment->periodEnd->format('Y-m-d H:i:s'));
-
+            $this->bindRentalAgreementPaymentValues($stmt, $rentalAgreementPayment);
             $stmt->execute();
         } catch (PDOException $e) {
             throw new ServerException($e->getMessage());
@@ -178,5 +169,15 @@ final readonly class RentalAgreementPaymentRepository
         } catch (Throwable $e) {
             throw new ServerException($e->getMessage());
         }
+    }
+
+    private function bindRentalAgreementPaymentValues(
+        PDOStatement $stmt,
+        RentalAgreementPayment $rentalAgreementPayment
+    ): void {
+        $stmt->bindValue(':rental_agreement_id', $rentalAgreementPayment->rentalAgreementId, PDO::PARAM_INT);
+        $stmt->bindValue(':payment_id', $rentalAgreementPayment->paymentId, PDO::PARAM_INT);
+        $stmt->bindValue(':period_start', $rentalAgreementPayment->periodStart->format('Y-m-d H:i:s'));
+        $stmt->bindValue(':period_end', $rentalAgreementPayment->periodEnd->format('Y-m-d H:i:s'));
     }
 }

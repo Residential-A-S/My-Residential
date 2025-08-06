@@ -18,7 +18,7 @@ final readonly class AuthService
     public function __construct(
         private SessionInterface $session,
         private UserRepository $userR,
-        private UserOrganizationRepository $userOrgRelR
+        private UserOrganizationRepository $userOrgR
     ) {
     }
 
@@ -79,12 +79,11 @@ final readonly class AuthService
             throw new UserException(UserException::EMAIL_ALREADY_EXISTS);
         }
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         return $this->userR->create(
             new User(
                 id: 0,
                 email: $email,
-                passwordHash: $passwordHash,
+                passwordHash: password_hash($password, PASSWORD_DEFAULT),
                 name: $name,
                 createdAt: new DateTimeImmutable(),
                 updatedAt: new DateTimeImmutable(),
@@ -106,7 +105,7 @@ final readonly class AuthService
 
     public function canUserPerformAction(int $userId, int $orgId, Permission $permission): bool
     {
-        $role = $this->userOrgRelR->findUserRoleInOrganization($userId, $orgId);
+        $role = $this->userOrgR->findUserRoleInOrganization($userId, $orgId);
         return $role->hasPermission($permission);
     }
 

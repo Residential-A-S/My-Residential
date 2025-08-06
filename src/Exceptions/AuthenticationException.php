@@ -2,7 +2,6 @@
 
 namespace src\Exceptions;
 
-
 final class AuthenticationException extends BaseException
 {
     public const int USER_NOT_FOUND = 1;

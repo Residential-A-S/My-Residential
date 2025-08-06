@@ -2,7 +2,7 @@
 
 namespace src\Enums;
 
-enum RouteNames
+enum RouteName
 {
     case Home;
     case Login_GET;
@@ -46,6 +46,13 @@ enum RouteNames
             self::Forgot_Password => '/forgot-password',
             self::User_Update => '/user/update',
             self::User_Delete => '/user/delete',
+            self::Properties => '/properties',
+            self::Property_Create => '/property/create',
+            self::Property_Update => '/property/update',
+            self::Property_Delete => '/property/delete',
+            self::Organization_Create => '/organization/create',
+            self::Organization_Update => '/organization/update',
+            self::Organization_Delete => '/organization/delete',
         };
     }
 }

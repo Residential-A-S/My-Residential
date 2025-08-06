@@ -13,7 +13,9 @@ use PDOException;
 
 final readonly class PasswordResetRepository
 {
-    public function __construct(private PDO $db) {}
+    public function __construct(private PDO $db)
+    {
+    }
 
     /**
      * @throws PasswordResetException
@@ -32,7 +34,7 @@ final readonly class PasswordResetRepository
             $stmt->bindValue(':expiresAt', $expiresAt->format('Y-m-d H:i:s'));
             $stmt->execute();
 
-            if($stmt->rowCount() === 0) {
+            if ($stmt->rowCount() === 0) {
                 throw new PasswordResetException(PasswordResetException::INSERT_FAILED);
             }
         } catch (PDOException $e) {
@@ -66,7 +68,7 @@ final readonly class PasswordResetRepository
             $row['expires_at'] = new DateTime($row['expires_at']);
 
             return $row;
-        } catch (PDOException|DateMalformedStringException $e) {
+        } catch (PDOException | DateMalformedStringException $e) {
             throw new ServerException($e->getMessage());
         }
     }

@@ -4,7 +4,8 @@ namespace src\Core;
 
 use src\Controllers\Api\UserController;
 use src\Controllers\Web\HomeController;
-use src\Enums\RouteNames;
+use src\Enums\RouteName;
+use src\Exceptions\ResponseException;
 use src\Factories\IssueFactory;
 use src\Factories\OrganizationFactory;
 use src\Factories\PaymentFactory;
@@ -27,11 +28,9 @@ use src\Repositories\TenantRepository;
 use src\Repositories\UserOrganizationRepository;
 use src\Repositories\UserRepository;
 use src\Services\AuthService;
-
 use src\Controllers\Web\LoginController as WebLoginController;
 use src\Controllers\Api\AuthController as AuthController;
 use PDO;
-use src\Services\PropertyService;
 use src\Services\UserService;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -40,7 +39,8 @@ final readonly class Application
 {
     private function __construct(
         private Router $router
-    ) {}
+    ) {
+    }
 
     public static function bootstrap(Request $request): self
     {
@@ -96,16 +96,16 @@ final readonly class Application
 
         // Initialize the router
         $router = new Router();
-        $router->map(RouteNames::Home, [$homeWebCtrl, 'show']);
-        $router->map(RouteNames::Login_GET, [$loginWebCtrl, 'show']);
+        $router->map(RouteName::Home, [$homeWebCtrl, 'show']);
+        $router->map(RouteName::Login_GET, [$loginWebCtrl, 'show']);
         //$router->map(RouteNames::Properties, [$propertyCtrl, 'list']);
 
-        $router->map(RouteNames::Login_POST, [$authCtrl, 'login']);
-        $router->map(RouteNames::Logout, [$authCtrl, 'logout']);
-        $router->map(RouteNames::Register, [$authCtrl, 'register']);
-        $router->map(RouteNames::Forgot_Password, [$authCtrl, 'resetPassword']);
-        $router->map(RouteNames::User_Update, [$userCtrl, 'update']);
-        $router->map(RouteNames::User_Delete, [$userCtrl, 'delete']);
+        $router->map(RouteName::Login_POST, [$authCtrl, 'login']);
+        $router->map(RouteName::Logout, [$authCtrl, 'logout']);
+        $router->map(RouteName::Register, [$authCtrl, 'register']);
+        $router->map(RouteName::Forgot_Password, [$authCtrl, 'resetPassword']);
+        $router->map(RouteName::User_Update, [$userCtrl, 'update']);
+        $router->map(RouteName::User_Delete, [$userCtrl, 'delete']);
 
         //$router->map(RouteNames::Property_Create, [$propertyCtrl, 'create']);
         //$router->map(RouteNames::Property_Update, [$propertyCtrl, 'update']);
@@ -119,7 +119,11 @@ final readonly class Application
         return new self($router);
     }
 
-    public function handle(Request $request): Response {
+    /**
+     * @throws ResponseException
+     */
+    public function handle(Request $request): Response
+    {
         return $this->router->dispatch($request);
     }
 }

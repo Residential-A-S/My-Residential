@@ -4,3 +4,4 @@ node_modules
 mysql_data
 src/Core/config.php
 .phpunit.result.cache
+composer.lock

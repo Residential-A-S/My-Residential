@@ -34,12 +34,18 @@ final readonly class UserService
 
     /**
      * @param string $newPassword
+     * @param string $repeatPassword
+     *
      * @throws AuthenticationException
      * @throws ServerException
+     * @throws UserException
      */
-    public function updatePassword(string $newPassword): void
+    public function updatePassword(string $newPassword, string $repeatPassword): void
     {
         $user = $this->authService->requireUser();
+        if ($newPassword !== $repeatPassword) {
+            throw new UserException(UserException::PASSWORDS_DO_NOT_MATCH);
+        }
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
         $updatedUser = $this->userFactory->withUpdatedPassword($user, $passwordHash);
         $this->userRepository->update($updatedUser);

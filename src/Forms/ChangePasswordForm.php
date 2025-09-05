@@ -11,6 +11,8 @@ use src\Validation\StrongPasswordRule;
 class ChangePasswordForm extends AbstractForm
 {
     public string $password;
+    public string $repeatPassword;
+
     public function __construct()
     {
         parent::__construct(RouteName::Register);
@@ -18,6 +20,15 @@ class ChangePasswordForm extends AbstractForm
         $this
             ->addField(
                 'password',
+                [
+                    new RequiredRule(),
+                    new MinRule(8),
+                    new MaxRule(255),
+                    new StrongPasswordRule()
+                ]
+            )
+            ->addField(
+                'repeat_password',
                 [
                     new RequiredRule(),
                     new MinRule(8),
@@ -32,5 +43,6 @@ class ChangePasswordForm extends AbstractForm
         parent::handle($input);
         //Write validated data to properties
         $this->password = $input['password'];
+        $this->repeatPassword = $input['repeat_password'];
     }
 }

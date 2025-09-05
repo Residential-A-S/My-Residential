@@ -6,16 +6,16 @@ use src\Enums\RouteName;
 use src\Validation\IntegerRule;
 use src\Validation\RequiredRule;
 
-class DeletePropertyForm extends AbstractForm
+class DeleteIssueForm extends AbstractForm
 {
-    public int $propertyId;
+    public int $issueId;
     public function __construct()
     {
         parent::__construct(RouteName::Login_POST);
 
         $this
             ->addField(
-                'property_id',
+                'issue_id',
                 [
                     new RequiredRule(),
                     new IntegerRule()
@@ -27,6 +27,6 @@ class DeletePropertyForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->propertyId = (int)$input['property_id'];
+        $this->issueId = (int)$input['issue_id'];
     }
 }

@@ -8,10 +8,10 @@ use src\Validation\RequiredRule;
 
 class UpdatePropertyForm extends AbstractForm
 {
-    public int $property_id;
-    public string $street_name;
-    public string $street_number;
-    public string $zip_code;
+    public int $propertyId;
+    public string $streetName;
+    public string $streetNumber;
+    public string $zipCode;
     public string $city;
     public string $country;
 
@@ -63,10 +63,10 @@ class UpdatePropertyForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->property_id = (int)$input['property_id'];
-        $this->street_name = $input['street_name'];
-        $this->street_number = $input['street_number'];
-        $this->zip_code = $input['zip_code'];
+        $this->propertyId    = (int)$input['property_id'];
+        $this->streetName    = $input['street_name'];
+        $this->streetNumber = $input['street_number'];
+        $this->zipCode = $input['zip_code'];
         $this->city = $input['city'];
         $this->country = $input['country'];
     }

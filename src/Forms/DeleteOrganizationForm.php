@@ -8,7 +8,7 @@ use src\Validation\RequiredRule;
 
 class DeleteOrganizationForm extends AbstractForm
 {
-    public int $organization_id;
+    public int $organizationId;
     public function __construct()
     {
         parent::__construct(RouteName::Login_POST);
@@ -27,6 +27,6 @@ class DeleteOrganizationForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->organization_id = (int)$input['organization_id'];
+        $this->organizationId = (int)$input['organization_id'];
     }
 }

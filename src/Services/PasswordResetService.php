@@ -67,17 +67,14 @@ final readonly class PasswordResetService
      * @throws ServerException
      * @throws PasswordResetException
      */
-    public function resetPassword(string $token, int $user_id, string $newPassword): void
+    public function resetPassword(string $token, string $newPassword, string $repeatNewPassword): void
     {
         $hashedToken = hash_hmac('sha256', $token, APP_SECRET);
-        $tokenArray = $this->passwordResetRepository->findByToken($hashedToken);
-        if ($tokenArray['user_id'] !== $user_id) {
-            throw new PasswordResetException(PasswordResetException::INVALID_TOKEN);
-        }
-        if ($tokenArray['expires_at'] < new DateTime()) {
+        $passwordReset = $this->passwordResetRepository->findByToken($hashedToken);
+        if ($passwordReset->expiresAt < new DateTime()) {
             throw new PasswordResetException(PasswordResetException::EXPIRED_TOKEN);
         }
-        $user = $this->userRepository->findById($user_id);
+        $user = $this->userRepository->findById($passwordReset->userId);
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
         if ($user->passwordHash === $passwordHash) {
             throw new PasswordResetException(PasswordResetException::CANNOT_REUSE_PASSWORD);

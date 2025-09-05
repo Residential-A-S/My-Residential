@@ -9,7 +9,7 @@ use src\Validation\RequiredRule;
 
 class UpdateOrganizationForm extends AbstractForm
 {
-    public int $organization_id;
+    public int $organizationId;
     public string $name;
     public function __construct()
     {
@@ -36,7 +36,7 @@ class UpdateOrganizationForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->organization_id = (int)$input['organization_id'];
+        $this->organizationId = (int)$input['organization_id'];
         $this->name = $input['name'];
     }
 }

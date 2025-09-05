@@ -39,5 +39,8 @@
   "require-dev": {
     "phpunit/phpunit": "@stable",
     "squizlabs/php_codesniffer": ">=4.0.0RC1"
+  },
+  "scripts": {
+    "phpcs": "phpcs --standard=phpcs.xml"
   }
 }

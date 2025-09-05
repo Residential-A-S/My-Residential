@@ -9,6 +9,7 @@ use src\Exceptions\PropertyException;
 use src\Exceptions\ResponseException;
 use src\Exceptions\ServerException;
 use src\Exceptions\ValidationException;
+use src\Factories\FormFactory;
 use src\Forms\CreatePropertyForm;
 use src\Forms\DeletePropertyForm;
 use src\Forms\UpdatePropertyForm;
@@ -20,6 +21,7 @@ final readonly class PropertyController
     public function __construct(
         private PropertyService $propertyService,
         private AuthService $authService,
+        private FormFactory $formFactory,
     ) {
     }
 
@@ -30,22 +32,20 @@ final readonly class PropertyController
      * @throws ServerException
      * @throws AuthenticationException
      */
-    public function createProperty(Request $request): Response
+    public function create(Request $request): Response
     {
         $this->authService->requireUser();
-
-        $createPropertyForm = new CreatePropertyForm();
-        $createPropertyForm->handle($request->parsedBody);
+        $form = $this->formFactory->handleCreatePropertyForm($request->parsedBody);
 
         $this->propertyService->create(
-            $createPropertyForm->data['org_id'],
-            $createPropertyForm->data['street_name'],
-            $createPropertyForm->data['street_number'],
-            $createPropertyForm->data['zip_code'],
-            $createPropertyForm->data['city'],
-            $createPropertyForm->data['country']
+            $form->organizationId,
+            $form->streetName,
+            $form->streetNumber,
+            $form->zipCode,
+            $form->city,
+            $form->country
         );
-        return Response::json(['message' => 'success']);
+        return Response::json(['message' => 'Created property successfully']);
     }
 
     /**
@@ -55,22 +55,20 @@ final readonly class PropertyController
      * @throws ServerException
      * @throws AuthenticationException
      */
-    public function updateProperty(Request $request): Response
+    public function update(Request $request): Response
     {
         $this->authService->requireUser();
-
-        $updatePropertyForm = new UpdatePropertyForm();
-        $updatePropertyForm->handle($request->parsedBody);
+        $form = $this->formFactory->handleUpdatePropertyForm($request->parsedBody);
 
         $this->propertyService->update(
-            $updatePropertyForm->data['id'],
-            $updatePropertyForm->data['street_name'],
-            $updatePropertyForm->data['street_number'],
-            $updatePropertyForm->data['zip_code'],
-            $updatePropertyForm->data['city'],
-            $updatePropertyForm->data['country']
+            $form->propertyId,
+            $form->streetName,
+            $form->streetNumber,
+            $form->zipCode,
+            $form->city,
+            $form->country
         );
-        return Response::json(['message' => 'success']);
+        return Response::json(['message' => 'Updated property successfully']);
     }
 
     /**
@@ -80,13 +78,12 @@ final readonly class PropertyController
      * @throws AuthenticationException
      * @throws ServerException
      */
-    public function deleteProperty(Request $request): Response
+    public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $deletePropertyForm = new DeletePropertyForm();
-        $deletePropertyForm->handle($request->parsedBody);
+        $form = $this->formFactory->handleDeletePropertyForm($request->parsedBody);
 
-        $this->propertyService->delete($deletePropertyForm->data['id']);
+        $this->propertyService->delete($form->propertyId);
         return Response::json(['message' => 'Property deleted successfully']);
     }
 }

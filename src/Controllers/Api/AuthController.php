@@ -29,7 +29,7 @@ final readonly class AuthController
      */
     public function login(Request $request): Response
     {
-        $form = $this->formFactory->createLoginForm($request->parsedBody);
+        $form = $this->formFactory->handleLoginForm($request->parsedBody);
 
         $user = $this->authService->login(
             $form->email,
@@ -58,7 +58,7 @@ final readonly class AuthController
      */
     public function register(Request $request): Response
     {
-        $form = $this->formFactory->createRegisterForm($request->parsedBody);
+        $form = $this->formFactory->handleRegisterForm($request->parsedBody);
 
         $user = $this->authService->register(
             $form->email,

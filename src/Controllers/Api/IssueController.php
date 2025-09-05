@@ -8,6 +8,11 @@ use src\Exceptions\AuthenticationException;
 use src\Exceptions\IssueException;
 use src\Exceptions\ResponseException;
 use src\Exceptions\ServerException;
+use src\Exceptions\ValidationException;
+use src\Factories\FormFactory;
+use src\Forms\CreateIssueForm;
+use src\Forms\DeleteIssueForm;
+use src\Forms\UpdateIssueForm;
 use src\Services\AuthService;
 use src\Services\IssueService;
 
@@ -16,6 +21,7 @@ final readonly class IssueController
     public function __construct(
         private IssueService $issueService,
         private AuthService $authService,
+        private FormFactory $formFactory,
     ) {
     }
 
@@ -24,19 +30,19 @@ final readonly class IssueController
      * @throws ResponseException
      * @throws ServerException
      * @throws AuthenticationException
+     * @throws ValidationException
      */
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
-        $createIssueForm = new CreateIssueForm();
-        $createIssueForm->handle($request->parsedBody);
+        $form = $this->formFactory->handleCreateIssueForm($request->parsedBody);
 
         $this->issueService->create(
-            $createIssueForm->data['rental_agreement_id'],
-            $createIssueForm->data['payment_id'],
-            $createIssueForm->data['name'],
-            $createIssueForm->data['description'],
-            $createIssueForm->data['status']
+            $form->rentalAgreementId,
+            $form->paymentId,
+            $form->name,
+            $form->description,
+            $form->status
         );
 
         return Response::json(['message' => 'Issue creation successful.']);
@@ -47,20 +53,20 @@ final readonly class IssueController
      * @throws IssueException
      * @throws AuthenticationException
      * @throws ServerException
+     * @throws ValidationException
      */
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $updateIssueForm = new UpdateIssueForm();
-        $updateIssueForm->handle($request->parsedBody);
+        $form = $this->formFactory->handleUpdateIssueForm($request->parsedBody);
 
         $this->issueService->update(
-            $updateIssueForm->data['id'],
-            $updateIssueForm->data['rental_agreement_id'],
-            $updateIssueForm->data['payment_id'],
-            $updateIssueForm->data['name'],
-            $updateIssueForm->data['description'],
-            $updateIssueForm->data['status']
+            $form->issueId,
+            $form->rentalAgreementId,
+            $form->paymentId,
+            $form->name,
+            $form->description,
+            $form->status
         );
         return Response::json(['message' => 'Issue update successful.']);
     }
@@ -70,14 +76,14 @@ final readonly class IssueController
      * @throws ResponseException
      * @throws ServerException
      * @throws AuthenticationException
+     * @throws ValidationException
      */
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $deletePropertyForm = new DeleteIssueForm();
-        $deletePropertyForm->handle($request->parsedBody);
+        $form = $this->formFactory->handleDeleteIssueForm($request->parsedBody);
 
-        $this->issueService->delete($deletePropertyForm->data['id']);
+        $this->issueService->delete($form->issueId);
         return Response::json(['message' => 'Issue deleted successfully']);
     }
 }

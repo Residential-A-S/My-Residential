@@ -8,21 +8,21 @@ use src\Validation\MinRule;
 use src\Validation\RequiredRule;
 use src\Validation\StrongPasswordRule;
 
-class RegisterForm extends AbstractForm
+class ForgotPasswordResetPasswordForm extends AbstractForm
 {
-    public string $email;
+    public string $token;
     public string $password;
-    public string $name;
+    public string $repeatPassword;
+
     public function __construct()
     {
         parent::__construct(RouteName::Register);
 
         $this
             ->addField(
-                'email',
+                'token',
                 [
-                    new RequiredRule(),
-                    new MaxRule(255)
+                    new RequiredRule()
                 ]
             )
             ->addField(
@@ -35,10 +35,12 @@ class RegisterForm extends AbstractForm
                 ]
             )
             ->addField(
-                'name',
+                'repeat_password',
                 [
                     new RequiredRule(),
-                    new MaxRule(255)
+                    new MinRule(8),
+                    new MaxRule(255),
+                    new StrongPasswordRule()
                 ]
             );
     }
@@ -47,8 +49,8 @@ class RegisterForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->email = $this->data['email'];
-        $this->password = $this->data['password'];
-        $this->name = $this->data['name'];
+        $this->token = $input['token'];
+        $this->password = $input['password'];
+        $this->repeatPassword = $input['repeat_password'];
     }
 }

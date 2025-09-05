@@ -3,34 +3,30 @@
 namespace src\Forms;
 
 use src\Enums\RouteName;
-use src\Validation\AlphaNumericRule;
-use src\Validation\MaxRule;
-use src\Validation\MinRule;
+use src\Validation\IntegerRule;
 use src\Validation\RequiredRule;
 
 class DeleteOrganizationForm extends AbstractForm
 {
+    public int $organization_id;
     public function __construct()
     {
         parent::__construct(RouteName::Login_POST);
 
         $this
             ->addField(
-                'username',
+                'organization_id',
                 [
                     new RequiredRule(),
-                    new AlphaNumericRule(),
-                    new MinRule(5),
-                    new MaxRule(40)
-                ]
-            )
-            ->addField(
-                'password',
-                [
-                    new RequiredRule(),
-                    new MinRule(8),
-                    new MaxRule(32)
+                    new IntegerRule()
                 ]
             );
+    }
+
+    public function handle(array $input): void
+    {
+        parent::handle($input);
+        //Write validated data to properties
+        $this->organization_id = (int)$input['organization_id'];
     }
 }

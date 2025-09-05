@@ -10,6 +10,7 @@ use src\Validation\StrongPasswordRule;
 
 class ChangePasswordForm extends AbstractForm
 {
+    public string $password;
     public function __construct()
     {
         parent::__construct(RouteName::Register);
@@ -24,5 +25,12 @@ class ChangePasswordForm extends AbstractForm
                     new StrongPasswordRule()
                 ]
             );
+    }
+
+    public function handle(array $input): void
+    {
+        parent::handle($input);
+        //Write validated data to properties
+        $this->password = $input['password'];
     }
 }

@@ -4,20 +4,24 @@ namespace src\Validation;
 
 use src\Exceptions\ValidationException;
 
-final class AlphaNumericRule extends AbstractRule
+final class IntegerRule extends AbstractRule
 {
+    public function __construct()
+    {
+    }
+
     /**
      * @throws ValidationException
      */
     public function validate(mixed $value): void
     {
-        if (!isset($value) || !ctype_alnum($value)) {
-            throw new ValidationException(ValidationException::ALPHA_NUMERIC);
+        if (!is_int($value)) {
+            throw new ValidationException(ValidationException::INTEGER);
         }
     }
 
     public function toHtmlAttributes(): array
     {
-        return ['pattern' => "[A-Za-z0-9]+", 'type' => 'text'];
+        return ['type' => 'number'];
     }
 }

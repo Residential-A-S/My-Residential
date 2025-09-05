@@ -10,6 +10,9 @@ use src\Validation\StrongPasswordRule;
 
 class LoginForm extends AbstractForm
 {
+    public string $email;
+    public string $password;
+
     public function __construct()
     {
         parent::__construct(RouteName::Login_POST);
@@ -31,5 +34,13 @@ class LoginForm extends AbstractForm
                     new StrongPasswordRule()
                 ]
             );
+    }
+
+    public function handle(array $input): void
+    {
+        parent::handle($input);
+        //Write validated data to properties
+        $this->email = $this->data['email'];
+        $this->password = $this->data['password'];
     }
 }

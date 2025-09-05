@@ -13,17 +13,19 @@ final class ValidationException extends BaseException
     public const int NUMBER = 6;
     public const int STRING = 7;
     public const int INVALID_SELECT = 8;
+    public const int INTEGER = 9;
 
-    public const int EMAIL_INVALID = 9;
+    public const int EMAIL_INVALID = 10;
 
-    public const int PASSWORD_STRENGTH = 10;
-    public const int PASSWORD_INVALID = 11;
-    public const int PASSWORDS_DO_NOT_MATCH = 12;
+    public const int PASSWORD_STRENGTH = 11;
+    public const int PASSWORD_INVALID = 12;
+    public const int PASSWORDS_DO_NOT_MATCH = 13;
 
     private const array MESSAGES = [
         self::FORM_VALIDATION => 'Form validation failed.',
         self::REQUIRED => 'This field is required.',
         self::ALPHA_NUMERIC => 'Field must only contain letters and numbers characters.',
+        self::INTEGER => 'Field must be an integer.',
         self::MIN => 'Field value is too short.',
         self::MAX => 'Field value is too long.',
         self::NUMBER => 'Field must be a number.',

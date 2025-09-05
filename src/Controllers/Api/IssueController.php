@@ -5,64 +5,79 @@ namespace src\Controllers\Api;
 use src\Core\Request;
 use src\Core\Response;
 use src\Exceptions\AuthenticationException;
+use src\Exceptions\IssueException;
 use src\Exceptions\ResponseException;
 use src\Exceptions\ServerException;
-use src\Exceptions\UserException;
-use src\Exceptions\ValidationException;
-use src\Forms\ChangePasswordForm;
-use src\Forms\UpdateUserForm;
+use src\Services\AuthService;
 use src\Services\IssueService;
 
 final readonly class IssueController
 {
     public function __construct(
-        private IssueService $issueService
+        private IssueService $issueService,
+        private AuthService $authService,
     ) {
     }
 
+    /**
+     * @throws IssueException
+     * @throws ResponseException
+     * @throws ServerException
+     * @throws AuthenticationException
+     */
+    public function create(Request $request): Response
+    {
+        $this->authService->requireUser();
+        $createIssueForm = new CreateIssueForm();
+        $createIssueForm->handle($request->parsedBody);
+
+        $this->issueService->create(
+            $createIssueForm->data['rental_agreement_id'],
+            $createIssueForm->data['payment_id'],
+            $createIssueForm->data['name'],
+            $createIssueForm->data['description'],
+            $createIssueForm->data['status']
+        );
+
+        return Response::json(['message' => 'Issue creation successful.']);
+    }
+
+    /**
+     * @throws ResponseException
+     * @throws IssueException
+     * @throws AuthenticationException
+     * @throws ServerException
+     */
     public function update(Request $request): Response
     {
-        $updateUserForm = new UpdateUserForm();
-        $updateUserForm->handle($request->body);
+        $this->authService->requireUser();
+        $updateIssueForm = new UpdateIssueForm();
+        $updateIssueForm->handle($request->parsedBody);
 
-        $this->userService->update(
-            $updateUserForm->data['name'],
-            $updateUserForm->data['email']
+        $this->issueService->update(
+            $updateIssueForm->data['id'],
+            $updateIssueForm->data['rental_agreement_id'],
+            $updateIssueForm->data['payment_id'],
+            $updateIssueForm->data['name'],
+            $updateIssueForm->data['description'],
+            $updateIssueForm->data['status']
         );
-        return Response::json(['message' => 'User update successful.']);
+        return Response::json(['message' => 'Issue update successful.']);
     }
 
     /**
-     * @param Request $request
-     * @return Response
-     * @throws AuthenticationException
+     * @throws IssueException
      * @throws ResponseException
      * @throws ServerException
-     * @throws ValidationException
-     */
-    public function updatePassword(Request $request): Response
-    {
-        $changePasswordForm = new ChangePasswordForm();
-        $changePasswordForm->handle($request->body);
-
-        $this->userService->updatePassword($changePasswordForm->data['password']);
-
-        return Response::json(['message' => 'Password reset successful.']);
-    }
-
-    /**
-     * @param Request $request
-     * @return Response
-     * @throws ResponseException
-     * @throws ServerException
-     * @throws UserException
      * @throws AuthenticationException
      */
     public function delete(Request $request): Response
     {
-        $this->userService->delete();
-        $request->session->clear();
-        $request->session->regenerate();
-        return Response::json(['message' => 'User delete successful.']);
+        $this->authService->requireUser();
+        $deletePropertyForm = new DeleteIssueForm();
+        $deletePropertyForm->handle($request->parsedBody);
+
+        $this->issueService->delete($deletePropertyForm->data['id']);
+        return Response::json(['message' => 'Issue deleted successfully']);
     }
 }

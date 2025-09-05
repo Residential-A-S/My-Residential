@@ -9,6 +9,7 @@ use src\Exceptions\ResponseException;
 use src\Exceptions\ServerException;
 use src\Exceptions\UserException;
 use src\Exceptions\ValidationException;
+use src\Factories\FormFactory;
 use src\Forms\LoginForm;
 use src\Forms\RegisterForm;
 use src\Services\AuthService;
@@ -16,7 +17,8 @@ use src\Services\AuthService;
 final readonly class AuthController
 {
     public function __construct(
-        private AuthService $authService
+        private AuthService $authService,
+        private FormFactory $formFactory,
     ) {
     }
 
@@ -27,12 +29,11 @@ final readonly class AuthController
      */
     public function login(Request $request): Response
     {
-        $loginForm = new LoginForm();
-        $loginForm->handle($request->body);
+        $form = $this->formFactory->createLoginForm($request->parsedBody);
 
         $user = $this->authService->login(
-            $loginForm->data['email'],
-            $loginForm->data['password']
+            $form->email,
+            $form->password
         );
         $request->session->regenerate();
         $request->session->set('user_id', $user->id);
@@ -57,13 +58,12 @@ final readonly class AuthController
      */
     public function register(Request $request): Response
     {
-        $registerForm = new RegisterForm();
-        $registerForm->handle($request->body);
+        $form = $this->formFactory->createRegisterForm($request->parsedBody);
 
         $user = $this->authService->register(
-            $registerForm->data['email'],
-            $registerForm->data['password'],
-            $registerForm->data['name']
+            $form->email,
+            $form->password,
+            $form->name
         );
         $request->session->regenerate();
         $request->session->set('user_id', $user->id);

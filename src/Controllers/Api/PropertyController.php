@@ -35,7 +35,7 @@ final readonly class PropertyController
         $this->authService->requireUser();
 
         $createPropertyForm = new CreatePropertyForm();
-        $createPropertyForm->handle($request->body);
+        $createPropertyForm->handle($request->parsedBody);
 
         $this->propertyService->create(
             $createPropertyForm->data['org_id'],
@@ -60,7 +60,7 @@ final readonly class PropertyController
         $this->authService->requireUser();
 
         $updatePropertyForm = new UpdatePropertyForm();
-        $updatePropertyForm->handle($request->body);
+        $updatePropertyForm->handle($request->parsedBody);
 
         $this->propertyService->update(
             $updatePropertyForm->data['id'],
@@ -84,7 +84,7 @@ final readonly class PropertyController
     {
         $this->authService->requireUser();
         $deletePropertyForm = new DeletePropertyForm();
-        $deletePropertyForm->handle($request->body);
+        $deletePropertyForm->handle($request->parsedBody);
 
         $this->propertyService->delete($deletePropertyForm->data['id']);
         return Response::json(['message' => 'Property deleted successfully']);

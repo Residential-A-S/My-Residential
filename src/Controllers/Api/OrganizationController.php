@@ -23,19 +23,18 @@ final readonly class OrganizationController
 
     /**
      * @throws ResponseException
-     * @throws ValidationException
      * @throws AuthenticationException
+     * @throws ValidationException
      */
     public function create(Request $request): Response
     {
-        $user = $this->authService->requireUser();
+        $this->authService->requireUser();
 
         $createOrganizationForm = new CreateOrganizationForm();
-        $createOrganizationForm->handle($request->body);
+        $createOrganizationForm->handle($request->parsedBody);
 
-        $this->orgService->createOrganization(
-            $createOrganizationForm->data['name'],
-            $user
+        $this->orgService->create(
+            $createOrganizationForm->data['name']
         );
         return Response::json(['message' => 'success']);
     }
@@ -50,7 +49,7 @@ final readonly class OrganizationController
         $user = $this->authService->requireUser();
 
         $updateOrganizationForm = new UpdateOrganizationForm();
-        $updateOrganizationForm->handle($request->body);
+        $updateOrganizationForm->handle($request->parsedBody);
 
         $this->orgService->updateOrganization();
         return Response::json(['message' => 'success']);
@@ -66,7 +65,7 @@ final readonly class OrganizationController
         $user = $this->authService->requireUser();
 
         $deleteOrganizationForm = new DeleteOrganizationForm();
-        $deleteOrganizationForm->handle($request->body);
+        $deleteOrganizationForm->handle($request->parsedBody);
 
         $this->orgService->deleteOrganization();
         return Response::json(['message' => 'Organization deleted successfully']);

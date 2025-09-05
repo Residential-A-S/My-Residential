@@ -39,7 +39,7 @@ final readonly class PasswordResetController
     public function sendVerification(Request $request): Response
     {
         $forgotPasswordForm = new ForgotPasswordSendVerificationForm();
-        $forgotPasswordForm->handle($request->body);
+        $forgotPasswordForm->handle($request->parsedBody);
 
         $this->passwordResetService->sendVerification($forgotPasswordForm->data['email']);
         return Response::json(['message' => 'Verification email sent.']);

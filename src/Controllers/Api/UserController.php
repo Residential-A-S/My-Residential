@@ -31,7 +31,7 @@ final readonly class UserController
     public function update(Request $request): Response
     {
         $updateUserForm = new UpdateUserForm();
-        $updateUserForm->handle($request->body);
+        $updateUserForm->handle($request->parsedBody);
 
         $this->userService->update(
             $updateUserForm->data['name'],
@@ -51,7 +51,7 @@ final readonly class UserController
     public function updatePassword(Request $request): Response
     {
         $changePasswordForm = new ChangePasswordForm();
-        $changePasswordForm->handle($request->body);
+        $changePasswordForm->handle($request->parsedBody);
 
         $this->userService->updatePassword($changePasswordForm->data['password']);
 

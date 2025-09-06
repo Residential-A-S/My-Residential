@@ -5,7 +5,7 @@ namespace src\Controllers\Api;
 use src\Core\Request;
 use src\Core\Response;
 use src\Exceptions\AuthenticationException;
-use src\Exceptions\PropertyException;
+use src\Exceptions\PaymentException;
 use src\Exceptions\ResponseException;
 use src\Exceptions\ServerException;
 use src\Exceptions\ValidationException;
@@ -25,16 +25,21 @@ final readonly class PaymentController
     /**
      * @throws ResponseException
      * @throws ValidationException
-     * @throws PropertyException
      * @throws ServerException
      * @throws AuthenticationException
+     * @throws PaymentException
      */
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
         $form = $this->formFactory->handleCreatePaymentForm($request->parsedBody);
 
-        $this->paymentService->create();
+        $this->paymentService->create(
+            $form->amount,
+            $form->currency,
+            $form->dueAt,
+            $form->paidAt
+        );
 
         return Response::json(['message' => 'Created payment successfully']);
     }
@@ -42,41 +47,40 @@ final readonly class PaymentController
     /**
      * @throws ResponseException
      * @throws ValidationException
-     * @throws PropertyException
      * @throws ServerException
      * @throws AuthenticationException
+     * @throws PaymentException
      */
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdatePropertyForm($request->parsedBody);
+        $form = $this->formFactory->handleUpdatePaymentForm($request->parsedBody);
 
         $this->paymentService->update(
-            $form->propertyId,
-            $form->streetName,
-            $form->streetNumber,
-            $form->zipCode,
-            $form->city,
-            $form->country
+            $form->paymentId,
+            $form->amount,
+            $form->currency,
+            $form->dueAt,
+            $form->paidAt
         );
 
-        return Response::json(['message' => 'Updated property successfully']);
+        return Response::json(['message' => 'Updated payment successfully']);
     }
 
     /**
      * @throws ResponseException
      * @throws ValidationException
-     * @throws PropertyException
      * @throws AuthenticationException
      * @throws ServerException
+     * @throws PaymentException
      */
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleDeletePropertyForm($request->parsedBody);
+        $form = $this->formFactory->handleDeletePaymentForm($request->parsedBody);
 
-        $this->paymentService->delete($form->propertyId);
+        $this->paymentService->delete($form->paymentId);
 
-        return Response::json(['message' => 'Property deleted successfully']);
+        return Response::json(['message' => 'Payment deleted successfully']);
     }
 }

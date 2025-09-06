@@ -6,9 +6,11 @@ use src\Exceptions\ValidationException;
 use src\Forms\ChangePasswordForm;
 use src\Forms\CreateIssueForm;
 use src\Forms\CreateOrganizationForm;
+use src\Forms\CreatePaymentForm;
 use src\Forms\CreatePropertyForm;
 use src\Forms\DeleteIssueForm;
 use src\Forms\DeleteOrganizationForm;
+use src\Forms\DeletePaymentForm;
 use src\Forms\DeletePropertyForm;
 use src\Forms\DeleteUserForm;
 use src\Forms\ForgotPasswordResetPasswordForm;
@@ -17,6 +19,7 @@ use src\Forms\LoginForm;
 use src\Forms\RegisterForm;
 use src\Forms\UpdateIssueForm;
 use src\Forms\UpdateOrganizationForm;
+use src\Forms\UpdatePaymentForm;
 use src\Forms\UpdatePropertyForm;
 use src\Forms\UpdateUserForm;
 
@@ -197,6 +200,42 @@ final readonly class FormFactory
     public function handleChangePasswordForm(array $requestBody): ChangePasswordForm
     {
         $form = new ChangePasswordForm();
+        $form->handle($requestBody);
+        return $form;
+    }
+
+
+    /**
+     * Payment Forms
+     */
+
+    /**
+     * @throws ValidationException
+     */
+    public function handleCreatePaymentForm(array $requestBody): CreatePaymentForm
+    {
+        $form = new CreatePaymentForm();
+        $form->handle($requestBody);
+        return $form;
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function handleUpdatePaymentForm(array $requestBody): UpdatePaymentForm
+    {
+        $form = new UpdatePaymentForm();
+        $form->handle($requestBody);
+
+        return $form;
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function handleDeletePaymentForm(array $requestBody): DeletePaymentForm
+    {
+        $form = new DeletePaymentForm();
         $form->handle($requestBody);
         return $form;
     }

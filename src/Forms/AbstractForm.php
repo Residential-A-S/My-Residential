@@ -19,8 +19,7 @@ abstract class AbstractForm
 
     public function __construct(
         RouteName $route,
-    )
-    {
+    ) {
         $this->action = $route->getPath();
         $this->method = strtoupper($route->getMethod());
     }

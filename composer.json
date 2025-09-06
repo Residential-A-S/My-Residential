@@ -15,6 +15,7 @@
       "src\\Forms\\": "src/Forms/",
       "src\\Interfaces\\": "src/Interfaces/",
       "src\\Models\\": "src/Models/",
+      "src\\Providers\\": "src/Providers/",
       "src\\Repositories\\": "src/Repositories/",
       "src\\Services\\": "src/Services/",
       "src\\Validation\\": "src/Validation/",

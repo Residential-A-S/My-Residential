@@ -18,8 +18,8 @@ final class Router
     /**
      * Register a route.
      *
-     * @param RouteName    $routeName
-     * @param callable      $handler A function or [ControllerClass, 'method']
+     * @param RouteName $routeName
+     * @param callable $handler A function or [ControllerClass, 'method']
      */
     public function map(RouteName $routeName, callable $handler): void
     {
@@ -37,7 +37,7 @@ final class Router
         $uri    = $request->uri;
 
         $handler = $this->routes[$method][$uri] ?? null;
-        if (! $handler) {
+        if (!$handler) {
             return Response::json(['error' => 'Not Found'], 404);
         }
 
@@ -46,5 +46,14 @@ final class Router
         // 2) a [ClassName, 'methodName'] pair
         // In either case, call it with the Request:
         return call_user_func($handler, $request);
+    }
+
+    public function load(string $path, Container $c): self
+    {
+        foreach (glob(rtrim($path, '/') . "/*.php") as $file) {
+            $setRoutes = require $path;
+            $setRoutes($this, $c);
+        }
+        return $this;
     }
 }

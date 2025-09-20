@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 require_once '../vendor/autoload.php';
 
-use src\Core\Application;
-use src\Exceptions\BaseException;
-use src\Core\Request;
-use src\Core\Response;
+use Adapter\Bootstrap\Application;
+use Shared\Exception\BaseException;
+use Adapter\Http\Request;
+use Adapter\Http\Response;
 
 
 

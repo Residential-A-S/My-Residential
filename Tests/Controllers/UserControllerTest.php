@@ -2,10 +2,10 @@
 
 namespace Tests\Controllers;
 
-use src\Core\Request;
-use src\Exceptions\ServerException;
-use src\Exceptions\UserException;
-use src\Exceptions\ValidationException;
+use Adapter\Http\Request;
+use Shared\Exception\ServerException;
+use Domain\Exception\UserException;
+use Adapter\Http\Exception\ValidationException;
 use Tests\BaseTest;
 
 class UserControllerTest extends BaseTest

@@ -4,21 +4,21 @@ namespace Tests;
 
 use PDO;
 use PHPUnit\Framework\TestCase;
-use src\Controllers\Api\AuthController as AuthController;
-use src\Controllers\Api\UserController;
-use src\Core\NativeSession;
-use src\Core\Request;
-use src\Exceptions\AuthenticationException;
-use src\Exceptions\ResponseException;
-use src\Exceptions\ServerException;
-use src\Exceptions\UserException;
-use src\Exceptions\ValidationException;
+use Adapter\Http\Controllers\Api\AuthController as AuthController;
+use Adapter\Http\Controllers\Api\UserController;
+use Adapter\Auth\NativeSession;
+use Adapter\Http\Request;
+use Application\Exception\AuthenticationException;
+use Adapter\Http\ResponseException;
+use Shared\Exception\ServerException;
+use Domain\Exception\UserException;
+use Adapter\Http\Exception\ValidationException;
 use src\Factories\UserFactory;
-use src\Repositories\UserOrganizationRepository;
-use src\Repositories\UserRepository;
-use src\Services\AuthService;
-use src\Services\MailService;
-use src\Services\UserService;
+use Adapter\Persistence\UserOrganizationRepository;
+use Adapter\Persistence\UserRepository;
+use Application\Service\AuthenticationService;
+use Adapter\Mail\Mailer;
+use Application\Service\UserService;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -31,9 +31,9 @@ class BaseTest extends TestCase
 
     protected UserRepository $userRepo;
     protected UserOrganizationRepository $userOrgR;
-    protected AuthService $authService;
-    protected UserService $userService;
-    protected MailService $mailService;
+    protected AuthenticationService      $authService;
+    protected UserService    $userService;
+    protected Mailer         $mailService;
     protected AuthController $authCtrl;
     protected UserController $userController;
 
@@ -64,9 +64,9 @@ class BaseTest extends TestCase
         $this->userOrgR = new UserOrganizationRepository($this->db);
 
         // Initialize services
-        $this->authService = new AuthService($this->nativeSession, $this->userRepo, $this->userOrgR);
+        $this->authService = new AuthenticationService($this->nativeSession, $this->userRepo, $this->userOrgR);
         $this->userService = new UserService($this->authService, $this->userRepo, $userFactory);
-        $this->mailService = new MailService($twig);
+        $this->mailService = new Mailer($twig);
 
         $this->authCtrl = new AuthController($this->authService);
         $this->userController = new UserController($this->userService);

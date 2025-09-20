@@ -2,6 +2,6 @@
 vendor
 node_modules
 mysql_data
-src/Core/config.php
+config.php
 .phpunit.result.cache
 composer.lock

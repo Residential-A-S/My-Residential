@@ -2,8 +2,8 @@
 
 namespace Tests\Repositories;
 
-use src\Enums\Role;
-use src\Models\User;
+use src\Types\Role;
+use src\Entity\User;
 use Tests\BaseTest;
 
 class UserRepositoryTest extends BaseTest {

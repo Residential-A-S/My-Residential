@@ -1,0 +1,72 @@
+<?php
+
+namespace Adapter\Http\Controllers\Api;
+
+use Adapter\Http\Request;
+use Adapter\Http\Response;
+use Application\Exception\AuthenticationException;
+use Adapter\Http\ResponseException;
+use Shared\Exception\ServerException;
+use Domain\Exception\UserException;
+use Adapter\Http\Exception\ValidationException;
+use src\Factories\FormFactory;
+use src\Forms\LoginForm;
+use src\Forms\RegisterForm;
+use Application\Service\AuthenticationService;
+
+final readonly class AuthController
+{
+    public function __construct(
+        private AuthenticationService $authService,
+        private FormFactory $formFactory,
+    ) {
+    }
+
+    /**
+     * @throws ValidationException
+     * @throws AuthenticationException
+     * @throws ResponseException
+     */
+    public function login(Request $request): Response
+    {
+        $form = $this->formFactory->handleLoginForm($request->parsedBody);
+
+        $user = $this->authService->login(
+            $form->email,
+            $form->password
+        );
+        $request->session->regenerate();
+        $request->session->set('user_id', $user->id);
+        return Response::json(['message' => 'Login successful.']);
+    }
+
+    /**
+     * @throws ResponseException
+     * @throws AuthenticationException
+     */
+    public function logout(Request $request): Response
+    {
+        $this->authService->logout($request->session);
+        return Response::json(['message' => 'Logout successful.']);
+    }
+
+    /**
+     * @throws ValidationException
+     * @throws ResponseException
+     * @throws ServerException
+     * @throws UserException
+     */
+    public function register(Request $request): Response
+    {
+        $form = $this->formFactory->handleRegisterForm($request->parsedBody);
+
+        $user = $this->authService->register(
+            $form->email,
+            $form->password,
+            $form->name
+        );
+        $request->session->regenerate();
+        $request->session->set('user_id', $user->id);
+        return Response::json(['message' => 'Registration successful.']);
+    }
+}

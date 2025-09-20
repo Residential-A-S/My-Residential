@@ -3,8 +3,8 @@
 namespace Tests\Services;
 
 use PHPMailer\PHPMailer\Exception;
-use src\Enums\MailTemplates;
-use src\Exceptions\ServerException;
+use src\Types\MailTemplates;
+use Shared\Exception\ServerException;
 use Tests\BaseTest;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;

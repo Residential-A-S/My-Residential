@@ -3,7 +3,7 @@
 namespace Tests\Services;
 
 use Tests\BaseTest;
-use src\Models\User;
+use src\Entity\User;
 
 class AuthServiceTest extends BaseTest
 {

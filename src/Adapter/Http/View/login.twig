@@ -1,0 +1,31 @@
+{% extends 'layouts' %}
+
+{% block title %}Login{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/assets/css/login.css">
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="/assets/js/login.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="login-card">
+        <div class="login-box">
+           <div class="form-container">
+                <div class="form-slider">
+                    <div class="login-form-container">
+                        {% include '../../../Views/forms/login.twig' %}
+                        <p>Don't have an account? <button class="secondary" type="button" id="to-register-form">Register here</button></p>
+                    </div>
+                    <div class="register-form-container">
+                        {% include '../../../Views/forms/register.twig' %}
+                        <p>Already have an account? <button class="secondary" type="button" id="to-login-form">Login here</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

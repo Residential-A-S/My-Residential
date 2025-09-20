@@ -1,6 +1,6 @@
 {
-  "name": "propeteer/propeteer",
-  "description": "Propeteer is a property management system",
+  "name": "residential/residential",
+  "description": "Residential is a property management system",
   "license": "AGPL-3.0-or-later",
   "version": "0.1.0",
   "autoload": {
@@ -27,8 +27,7 @@
     "phpmailer/phpmailer": "^6.10"
   },
   "require-dev": {
-    "phpunit/phpunit": "@stable",
-    "squizlabs/php_codesniffer": ">=4.0.0RC1"
+    "phpunit/phpunit": "@stable"
   },
   "scripts": {
     "phpcs": "phpcs --standard=phpcs.xml"

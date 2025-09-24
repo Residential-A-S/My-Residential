@@ -11,9 +11,8 @@ use Adapter\Http\Form\Validation\RequiredRule;
 use Domain\Types\PaymentInterval;
 use ValueError;
 
-class UpdateRentalAgreementForm extends AbstractForm
+class RentalAgreementCreateForm extends AbstractForm
 {
-    public int $rentalAgreementId;
     public int $rentalUnitId;
     public DateTimeImmutable $startDate;
     public ?DateTimeImmutable $endDate;
@@ -22,10 +21,9 @@ class UpdateRentalAgreementForm extends AbstractForm
 
     public function __construct()
     {
-        parent::__construct(RouteName::Api_Rental_Agreement_Update);
+        parent::__construct(RouteName::Api_Rental_Agreement_Create);
 
         $this
-            ->addField('rental_agreement_id', [new RequiredRule(), new IntegerRule()])
             ->addField('rental_unit_id', [new RequiredRule(), new IntegerRule()])
             ->addField('start_date', [new RequiredRule()])
             ->addField('end_date')
@@ -38,7 +36,6 @@ class UpdateRentalAgreementForm extends AbstractForm
         try {
             parent::handle($input);
             //Write validated data to properties
-            $this->rentalAgreementId = (int)$this->data['rental_agreement_id'];
             $this->rentalUnitId    = (int)$this->data['rental_unit_id'];
             $this->startDate       = new DateTimeImmutable($this->data['start_date']);
             $this->endDate         = isset($this->data['end_date']) ?

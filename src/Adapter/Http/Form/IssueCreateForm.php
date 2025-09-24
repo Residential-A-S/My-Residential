@@ -8,7 +8,7 @@ use Adapter\Http\RouteName;
 use Application\DTO\View\CreateIssueCommand;
 use DateTimeImmutable;
 
-class CreateIssueForm extends AbstractForm
+class IssueCreateForm extends AbstractForm
 {
     public CreateIssueCommand $issue;
     public int                $rentalAgreementId;

@@ -6,16 +6,16 @@ use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class DeleteIssueForm extends AbstractForm
+class PropertyDeleteForm extends AbstractForm
 {
-    public int $issueId;
+    public int $propertyId;
     public function __construct()
     {
-        parent::__construct(RouteName::Api_Issue_Delete);
+        parent::__construct(RouteName::Api_Property_Delete);
 
         $this
             ->addField(
-                'issue_id',
+                'property_id',
                 [
                     new RequiredRule(),
                     new IntegerRule()
@@ -27,6 +27,6 @@ class DeleteIssueForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->issueId = (int)$input['issue_id'];
+        $this->propertyId = (int)$input['property_id'];
     }
 }

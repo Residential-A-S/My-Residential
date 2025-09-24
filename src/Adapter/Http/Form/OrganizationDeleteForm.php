@@ -3,22 +3,22 @@
 namespace Adapter\Http\Form;
 
 use Adapter\Http\RouteName;
-use Adapter\Http\Form\Validation\AlphaNumericRule;
+use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class CreateOrganizationForm extends AbstractForm
+class OrganizationDeleteForm extends AbstractForm
 {
-    public string $name;
+    public int $organizationId;
     public function __construct()
     {
-        parent::__construct(RouteName::Api_Organization_Create);
+        parent::__construct(RouteName::Api_Organization_Delete);
 
         $this
             ->addField(
-                'name',
+                'organization_id',
                 [
                     new RequiredRule(),
-                    new AlphaNumericRule()
+                    new IntegerRule()
                 ]
             );
     }
@@ -27,6 +27,6 @@ class CreateOrganizationForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->name = $input['name'];
+        $this->organizationId = (int)$input['organization_id'];
     }
 }

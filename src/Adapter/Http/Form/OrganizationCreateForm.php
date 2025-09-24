@@ -3,22 +3,22 @@
 namespace Adapter\Http\Form;
 
 use Adapter\Http\RouteName;
-use Adapter\Http\Form\Validation\IntegerRule;
+use Adapter\Http\Form\Validation\AlphaNumericRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class DeletePropertyForm extends AbstractForm
+class OrganizationCreateForm extends AbstractForm
 {
-    public int $propertyId;
+    public string $name;
     public function __construct()
     {
-        parent::__construct(RouteName::Api_Property_Delete);
+        parent::__construct(RouteName::Api_Organization_Create);
 
         $this
             ->addField(
-                'property_id',
+                'name',
                 [
                     new RequiredRule(),
-                    new IntegerRule()
+                    new AlphaNumericRule()
                 ]
             );
     }
@@ -27,6 +27,6 @@ class DeletePropertyForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->propertyId = (int)$input['property_id'];
+        $this->name = $input['name'];
     }
 }

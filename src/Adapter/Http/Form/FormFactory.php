@@ -38,9 +38,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleCreateIssueForm(array $requestBody): CreateIssueForm
+    public function handleCreateIssueForm(array $requestBody): IssueCreateForm
     {
-        $form = new CreateIssueForm();
+        $form = new IssueCreateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -48,9 +48,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleUpdateIssueForm(array $requestBody): UpdateIssueForm
+    public function handleUpdateIssueForm(array $requestBody): IssueUpdateForm
     {
-        $form = new UpdateIssueForm();
+        $form = new IssueUpdateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -58,9 +58,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleDeleteIssueForm(array $requestBody): DeleteIssueForm
+    public function handleDeleteIssueForm(array $requestBody): IssueDeleteForm
     {
-        $form = new DeleteIssueForm();
+        $form = new IssueDeleteForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -73,9 +73,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleCreateOrganizationForm(array $requestBody): CreateOrganizationForm
+    public function handleCreateOrganizationForm(array $requestBody): OrganizationCreateForm
     {
-        $form = new CreateOrganizationForm();
+        $form = new OrganizationCreateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -83,9 +83,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleUpdateOrganizationForm(array $requestBody): UpdateOrganizationForm
+    public function handleUpdateOrganizationForm(array $requestBody): OrganizationUpdateForm
     {
-        $form = new UpdateOrganizationForm();
+        $form = new OrganizationUpdateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -93,9 +93,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleDeleteOrganizationForm(array $requestBody): DeleteOrganizationForm
+    public function handleDeleteOrganizationForm(array $requestBody): OrganizationDeleteForm
     {
-        $form = new DeleteOrganizationForm();
+        $form = new OrganizationDeleteForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -133,9 +133,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleCreatePropertyForm(array $requestBody): CreatePropertyForm
+    public function handleCreatePropertyForm(array $requestBody): PropertyCreateForm
     {
-        $form = new CreatePropertyForm();
+        $form = new PropertyCreateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -143,9 +143,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleUpdatePropertyForm(array $requestBody): UpdatePropertyForm
+    public function handleUpdatePropertyForm(array $requestBody): PropertyUpdateForm
     {
-        $form = new UpdatePropertyForm();
+        $form = new PropertyUpdateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -153,9 +153,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleDeletePropertyForm(array $requestBody): DeletePropertyForm
+    public function handleDeletePropertyForm(array $requestBody): PropertyDeleteForm
     {
-        $form = new DeletePropertyForm();
+        $form = new PropertyDeleteForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -168,9 +168,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleUpdateUserForm(array $requestBody): UpdateUserForm
+    public function handleUpdateUserForm(array $requestBody): UserUpdateForm
     {
-        $form = new UpdateUserForm();
+        $form = new UserUpdateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -193,9 +193,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleCreatePaymentForm(array $requestBody): CreatePaymentForm
+    public function handleCreatePaymentForm(array $requestBody): PaymentCreateForm
     {
-        $form = new CreatePaymentForm();
+        $form = new PaymentCreateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -203,9 +203,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleUpdatePaymentForm(array $requestBody): UpdatePaymentForm
+    public function handleUpdatePaymentForm(array $requestBody): PaymentUpdateForm
     {
-        $form = new UpdatePaymentForm();
+        $form = new PaymentUpdateForm();
         $form->handle($requestBody);
 
         return $form;
@@ -214,9 +214,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleDeletePaymentForm(array $requestBody): DeletePaymentForm
+    public function handleDeletePaymentForm(array $requestBody): PaymentDeleteForm
     {
-        $form = new DeletePaymentForm();
+        $form = new PaymentDeleteForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -229,9 +229,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleCreateRentalAgreementForm(array $requestBody): CreateRentalAgreementForm
+    public function handleCreateRentalAgreementForm(array $requestBody): RentalAgreementCreateForm
     {
-        $form = new CreateRentalAgreementForm();
+        $form = new RentalAgreementCreateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -239,9 +239,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleUpdateRentalAgreementForm(array $requestBody): UpdateRentalAgreementForm
+    public function handleUpdateRentalAgreementForm(array $requestBody): RentalAgreementUpdateForm
     {
-        $form = new UpdateRentalAgreementForm();
+        $form = new RentalAgreementUpdateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -249,9 +249,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleDeleteRentalAgreementForm(array $requestBody): DeleteRentalAgreementForm
+    public function handleDeleteRentalAgreementForm(array $requestBody): RentalAgreementDeleteForm
     {
-        $form = new DeleteRentalAgreementForm();
+        $form = new RentalAgreementDeleteForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -264,9 +264,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleCreateRentalAgreementPaymentForm(array $requestBody): CreateRentalAgreementPaymentForm
+    public function handleCreateRentalAgreementPaymentForm(array $requestBody): RentChargeCreateForm
     {
-        $form = new CreateRentalAgreementPaymentForm();
+        $form = new RentChargeCreateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -274,9 +274,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleUpdateRentalAgreementPaymentForm(array $requestBody): UpdateRentalAgreementPaymentForm
+    public function handleUpdateRentalAgreementPaymentForm(array $requestBody): RentChargeUpdateForm
     {
-        $form = new UpdateRentalAgreementPaymentForm();
+        $form = new RentChargeUpdateForm();
         $form->handle($requestBody);
         return $form;
     }
@@ -284,9 +284,9 @@ final readonly class FormFactory
     /**
      * @throws ValidationException
      */
-    public function handleDeleteRentalAgreementPaymentForm(array $requestBody): DeleteRentalAgreementPaymentForm
+    public function handleDeleteRentalAgreementPaymentForm(array $requestBody): RentChargeDeleteForm
     {
-        $form = new DeleteRentalAgreementPaymentForm();
+        $form = new RentChargeDeleteForm();
         $form->handle($requestBody);
         return $form;
     }

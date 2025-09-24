@@ -13,7 +13,7 @@ use Domain\Types\Currency;
 use Domain\ValueObject\Money;
 use ValueError;
 
-class UpdatePaymentForm extends AbstractForm
+class PaymentUpdateForm extends AbstractForm
 {
     public int $paymentId;
     public Money $money;

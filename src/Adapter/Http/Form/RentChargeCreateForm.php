@@ -12,7 +12,7 @@ use Domain\Types\Currency;
 use Domain\ValueObject\Money;
 use ValueError;
 
-class CreateRentalAgreementPaymentForm extends AbstractForm
+class RentChargeCreateForm extends AbstractForm
 {
     public int $rentalAgreementId;
     public DateTimeImmutable $periodStart;

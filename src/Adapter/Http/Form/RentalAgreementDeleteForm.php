@@ -6,7 +6,7 @@ use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class DeleteRentalAgreementPaymentForm extends AbstractForm
+class RentalAgreementDeleteForm extends AbstractForm
 {
     public int $rentalAgreementId;
     public function __construct()

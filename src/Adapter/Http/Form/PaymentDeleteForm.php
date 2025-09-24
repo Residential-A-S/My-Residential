@@ -6,7 +6,7 @@ use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class DeletePaymentForm extends AbstractForm
+class PaymentDeleteForm extends AbstractForm
 {
     public int $paymentId;
     public function __construct()

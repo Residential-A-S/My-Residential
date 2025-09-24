@@ -3,31 +3,31 @@
 namespace Adapter\Http\Form;
 
 use Adapter\Http\RouteName;
-use Adapter\Http\Form\Validation\AlphaNumericRule;
-use Adapter\Http\Form\Validation\IntegerRule;
+use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class UpdateOrganizationForm extends AbstractForm
+class UserUpdateForm extends AbstractForm
 {
-    public int $organizationId;
+    public string $email;
     public string $name;
+
     public function __construct()
     {
-        parent::__construct(RouteName::Api_Organization_Update);
+        parent::__construct(RouteName::Api_User_Update);
 
         $this
             ->addField(
-                'organization_id',
+                'email',
                 [
                     new RequiredRule(),
-                    new IntegerRule()
+                    new MaxRule(255)
                 ]
             )
             ->addField(
                 'name',
                 [
                     new RequiredRule(),
-                    new AlphaNumericRule()
+                    new MaxRule(255)
                 ]
             );
     }
@@ -36,7 +36,7 @@ class UpdateOrganizationForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->organizationId = (int)$input['organization_id'];
-        $this->name = $input['name'];
+        $this->email = $this->data['email'];
+        $this->name = $this->data['name'];
     }
 }

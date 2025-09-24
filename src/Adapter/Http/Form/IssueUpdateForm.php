@@ -6,7 +6,7 @@ use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class UpdateIssueForm extends AbstractForm
+class IssueUpdateForm extends AbstractForm
 {
     public int $issueId;
     public int $rentalAgreementId;

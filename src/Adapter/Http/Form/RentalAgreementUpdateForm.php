@@ -11,7 +11,7 @@ use Adapter\Http\Form\Validation\RequiredRule;
 use Domain\Types\PaymentInterval;
 use ValueError;
 
-class UpdateRentalAgreementPaymentForm extends AbstractForm
+class RentalAgreementUpdateForm extends AbstractForm
 {
     public int $rentalAgreementId;
     public int $rentalUnitId;

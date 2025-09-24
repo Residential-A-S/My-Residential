@@ -6,7 +6,7 @@ use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
-class UpdatePropertyForm extends AbstractForm
+class PropertyUpdateForm extends AbstractForm
 {
     public int $propertyId;
     public string $streetName;

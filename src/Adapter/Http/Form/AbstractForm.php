@@ -73,4 +73,12 @@ abstract class AbstractForm
             throw new ValidationException(ValidationException::FORM_VALIDATION, $this->errors);
         }
     }
+
+    /**
+     * @throws ValidationException
+     */
+    public function throwValidationException(): void
+    {
+        throw new ValidationException(ValidationException::FORM_VALIDATION, $this->errors);
+    }
 }

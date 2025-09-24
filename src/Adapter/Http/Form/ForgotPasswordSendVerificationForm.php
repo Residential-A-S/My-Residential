@@ -2,13 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\ForgotPasswordSendVerificationCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class ForgotPasswordSendVerificationForm extends AbstractForm
 {
-    public string $email;
+    public ForgotPasswordSendVerificationCommand $command;
     public function __construct()
     {
         parent::__construct(RouteName::Api_Forgot_Password_Send_Verification);
@@ -27,6 +28,8 @@ class ForgotPasswordSendVerificationForm extends AbstractForm
     {
         parent::handle($input);
         //Write validated data to properties
-        $this->email = $input['email'];
+        $this->command = new ForgotPasswordSendVerificationCommand(
+            $input['email']
+        );
     }
 }

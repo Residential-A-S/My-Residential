@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\ForgotPasswordResetPasswordCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\MinRule;
@@ -10,9 +11,7 @@ use Adapter\Http\Form\Validation\StrongPasswordRule;
 
 class ForgotPasswordResetPasswordForm extends AbstractForm
 {
-    public string $token;
-    public string $password;
-    public string $repeatPassword;
+    public ForgotPasswordResetPasswordCommand $command;
 
     public function __construct()
     {
@@ -48,9 +47,15 @@ class ForgotPasswordResetPasswordForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->token = $input['token'];
-        $this->password = $input['password'];
-        $this->repeatPassword = $input['repeat_password'];
+
+        if ($input['password'] !== $input['repeat_password']) {
+            $this->errors['repeat_password'][] = 'The password and repeat password fields must match.';
+            $this->throwValidationException();
+        }
+
+        $this->command = new ForgotPasswordResetPasswordCommand(
+            $input['token'],
+            $input['password']
+        );
     }
 }

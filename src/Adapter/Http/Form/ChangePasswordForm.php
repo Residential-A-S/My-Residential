@@ -2,6 +2,8 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\ChangePasswordCommand;
+use Adapter\Http\Exception\ValidationException;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\MinRule;
@@ -10,8 +12,7 @@ use Adapter\Http\Form\Validation\StrongPasswordRule;
 
 class ChangePasswordForm extends AbstractForm
 {
-    public string $password;
-    public string $repeatPassword;
+    public ChangePasswordCommand $command;
 
     public function __construct()
     {
@@ -41,8 +42,14 @@ class ChangePasswordForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->password = $input['password'];
-        $this->repeatPassword = $input['repeat_password'];
+
+        if ($input['password'] !== $input['repeat_password']) {
+            $this->errors['repeat_password'][] = 'The password fields must match.';
+            $this->throwValidationException();
+        }
+
+        $this->command = new ChangePasswordCommand(
+            $input['password']
+        );
     }
 }

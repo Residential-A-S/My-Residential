@@ -2,6 +2,7 @@
 
 namespace Application\Service;
 
+use Adapter\Dto\Command\UserLoginCommand;
 use Application\Exception\AuthenticationException;
 use Application\Port\UserRepository;
 use Application\Security\SessionInterface;
@@ -51,7 +52,7 @@ final readonly class AuthenticationService
     /**
      * @throws AuthenticationException
      */
-    public function login(string $email, string $password): User
+    public function login(UserLoginCommand $cmd): User
     {
         try {
             $user = $this->userR->findByEmail($email);

@@ -2,13 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\OrganizationDeleteCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class OrganizationDeleteForm extends AbstractForm
 {
-    public int $organizationId;
+    public OrganizationDeleteCommand $command;
     public function __construct()
     {
         parent::__construct(RouteName::Api_Organization_Delete);
@@ -26,7 +27,8 @@ class OrganizationDeleteForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->organizationId = (int)$input['organization_id'];
+        $this->command = new OrganizationDeleteCommand(
+            (int)$input['organization_id']
+        );
     }
 }

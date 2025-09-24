@@ -2,7 +2,7 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class TenantCreateCommand
+final readonly class TenantCreateCommand implements CommandInterface
 {
     public function __construct(
         public string $firstName,

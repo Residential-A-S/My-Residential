@@ -2,7 +2,7 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class PaymentCreateCommand
+final readonly class PaymentCreateCommand implements CommandInterface
 {
     public function __construct(
         public string $amount,

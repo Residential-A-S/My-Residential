@@ -2,12 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\OrganizationCreateCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\AlphaNumericRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class OrganizationCreateForm extends AbstractForm
 {
+    public OrganizationCreateCommand $command;
     public string $name;
     public function __construct()
     {
@@ -26,7 +28,8 @@ class OrganizationCreateForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->name = $input['name'];
+        $this->command = new OrganizationCreateCommand(
+            $input['name']
+        );
     }
 }

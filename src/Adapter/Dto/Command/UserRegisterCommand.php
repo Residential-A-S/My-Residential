@@ -2,7 +2,7 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class UserRegisterCommand
+final readonly class UserRegisterCommand implements CommandInterface
 {
     public function __construct(
         public int $id,

@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\UserLoginCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\MinRule;
@@ -10,8 +11,7 @@ use Adapter\Http\Form\Validation\StrongPasswordRule;
 
 class LoginForm extends AbstractForm
 {
-    public string $email;
-    public string $password;
+    public UserLoginCommand $command;
 
     public function __construct()
     {
@@ -39,8 +39,9 @@ class LoginForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->email = $this->data['email'];
-        $this->password = $this->data['password'];
+        $this->command = new UserLoginCommand(
+            $this->data['email'],
+            $this->data['password']
+        );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\OrganizationUpdateCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\AlphaNumericRule;
 use Adapter\Http\Form\Validation\IntegerRule;
@@ -9,6 +10,7 @@ use Adapter\Http\Form\Validation\RequiredRule;
 
 class OrganizationUpdateForm extends AbstractForm
 {
+    public OrganizationUpdateCommand $command;
     public int $organizationId;
     public string $name;
     public function __construct()
@@ -35,8 +37,9 @@ class OrganizationUpdateForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->organizationId = (int)$input['organization_id'];
-        $this->name = $input['name'];
+        $this->command = new OrganizationUpdateCommand(
+            (int)$input['organization_id'],
+            $input['name']
+        );
     }
 }

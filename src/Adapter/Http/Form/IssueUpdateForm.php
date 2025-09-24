@@ -2,18 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\IssueUpdateCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class IssueUpdateForm extends AbstractForm
 {
-    public int $issueId;
-    public int $rentalAgreementId;
-    public ?int $paymentId;
-    public string $name;
-    public string $description;
-    public string $status;
+    public IssueUpdateCommand $command;
 
     public function __construct()
     {
@@ -31,12 +27,14 @@ class IssueUpdateForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->issueId = $this->data['issue_id'];
-        $this->rentalAgreementId = $this->data['rental_agreement_id'];
-        $this->paymentId = $this->data['payment_id'] ?? null;
-        $this->name = $this->data['name'];
-        $this->description = $this->data['description'];
-        $this->status = $this->data['status'];
+
+        $this->command = new IssueUpdateCommand(
+            (int)$this->data['issue_id'],
+            (int)$this->data['rental_agreement_id'],
+            isset($this->data['payment_id']) ? (int)$this->data['payment_id'] : null,
+            $this->data['name'],
+            $this->data['description'],
+            $this->data['status']
+        );
     }
 }

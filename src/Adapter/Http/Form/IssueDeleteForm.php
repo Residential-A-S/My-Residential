@@ -2,13 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\IssueDeleteCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class IssueDeleteForm extends AbstractForm
 {
-    public int $issueId;
+    public IssueDeleteCommand $command;
     public function __construct()
     {
         parent::__construct(RouteName::Api_Issue_Delete);
@@ -26,7 +27,9 @@ class IssueDeleteForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->issueId = (int)$input['issue_id'];
+
+        $this->command = new IssueDeleteCommand(
+            (int)$input['issue_id']
+        );
     }
 }

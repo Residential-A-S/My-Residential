@@ -2,7 +2,7 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class IssueUpdateCommand
+final readonly class IssueUpdateCommand implements CommandInterface
 {
     public function __construct(
         public int $id,

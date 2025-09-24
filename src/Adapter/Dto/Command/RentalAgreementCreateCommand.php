@@ -2,7 +2,7 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class RentalAgreementCreateCommand
+final readonly class RentalAgreementCreateCommand implements CommandInterface
 {
     public function __construct(
         public int $rentalUnitId,

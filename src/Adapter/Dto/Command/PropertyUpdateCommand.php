@@ -2,7 +2,7 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class PropertyUpdateCommand
+final readonly class PropertyUpdateCommand implements CommandInterface
 {
     public function __construct(
         public int $id,

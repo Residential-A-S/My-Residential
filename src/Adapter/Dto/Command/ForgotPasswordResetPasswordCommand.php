@@ -2,7 +2,7 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class ForgotPasswordResetPasswordCommand
+final readonly class ForgotPasswordResetPasswordCommand implements CommandInterface
 {
     public function __construct(
         public string $token,

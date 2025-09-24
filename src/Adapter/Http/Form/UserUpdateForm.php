@@ -2,14 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\UserUpdateCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class UserUpdateForm extends AbstractForm
 {
-    public string $email;
-    public string $name;
+    public UserUpdateCommand $command;
 
     public function __construct()
     {
@@ -35,8 +35,9 @@ class UserUpdateForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->email = $this->data['email'];
-        $this->name = $this->data['name'];
+        $this->command = new UserUpdateCommand(
+            $input['email'],
+            $input['name']
+        );
     }
 }

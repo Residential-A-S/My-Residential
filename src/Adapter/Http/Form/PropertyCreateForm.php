@@ -2,18 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\PropertyCreateCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class PropertyCreateForm extends AbstractForm
 {
-    public int $organizationId;
-    public string $streetName;
-    public string $streetNumber;
-    public string $zipCode;
-    public string $city;
-    public string $country;
+    public PropertyCreateCommand $command;
     public function __construct()
     {
         parent::__construct(RouteName::Api_Property_Create);
@@ -61,12 +57,13 @@ class PropertyCreateForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->organizationId = (int)$input['organization_id'];
-        $this->streetName = $input['street_name'];
-        $this->streetNumber = $input['street_number'];
-        $this->zipCode = $input['zip_code'];
-        $this->city = $input['city'];
-        $this->country = $input['country'];
+        $this->command = new PropertyCreateCommand(
+            (int)$input['organization_id'],
+            $input['street_name'],
+            $input['street_number'],
+            $input['zip_code'],
+            $input['city'],
+            $input['country']
+        );
     }
 }

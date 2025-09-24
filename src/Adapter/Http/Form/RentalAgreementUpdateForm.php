@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\RentalAgreementUpdateCommand;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Adapter\Http\RouteName;
@@ -13,12 +14,7 @@ use ValueError;
 
 class RentalAgreementUpdateForm extends AbstractForm
 {
-    public int $rentalAgreementId;
-    public int $rentalUnitId;
-    public DateTimeImmutable $startDate;
-    public ?DateTimeImmutable $endDate;
-    public string $status;
-    public PaymentInterval $paymentInterval;
+    public RentalAgreementUpdateCommand $command;
 
     public function __construct()
     {
@@ -35,21 +31,14 @@ class RentalAgreementUpdateForm extends AbstractForm
 
     public function handle(array $input): void
     {
-        try {
-            parent::handle($input);
-            //Write validated data to properties
-            $this->rentalAgreementId = (int)$this->data['rental_agreement_id'];
-            $this->rentalUnitId    = (int)$this->data['rental_unit_id'];
-            $this->startDate       = new DateTimeImmutable($this->data['start_date']);
-            $this->endDate         = isset($this->data['end_date']) ?
-                new DateTimeImmutable($this->data['end_date']) : null;
-            $this->status          = $this->data['status'];
-            $this->paymentInterval = PaymentInterval::from($this->data['payment_interval']);
-        } catch (ValueError) {
-            $this->errors['payment_interval'] = 'Invalid payment interval value';
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        } catch (DateMalformedStringException) {
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        }
+        parent::handle($input);
+        $this->command = new RentalAgreementUpdateCommand(
+            (int)$input['rental_agreement_id'],
+            (int)$input['rental_unit_id'],
+            $input['start_date'],
+            $input['end_date'] ?? null,
+            $input['status'],
+            $input['payment_interval']
+        );
     }
 }

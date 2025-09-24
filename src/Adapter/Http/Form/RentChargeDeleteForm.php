@@ -2,13 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\RentChargeDeleteCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class RentChargeDeleteForm extends AbstractForm
 {
-    public int $rentalAgreementId;
+    public RentChargeDeleteCommand $command;
     public function __construct()
     {
         parent::__construct(RouteName::Api_Rental_Agreement_Delete);
@@ -26,7 +27,8 @@ class RentChargeDeleteForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->rentalAgreementId = (int)$input['rental_agreement_id'];
+        $this->command = new RentChargeDeleteCommand(
+            (int)$input['rental_agreement_id']
+        );
     }
 }

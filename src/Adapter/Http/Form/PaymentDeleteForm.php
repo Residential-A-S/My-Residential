@@ -2,13 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\PaymentDeleteCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class PaymentDeleteForm extends AbstractForm
 {
-    public int $paymentId;
+    public PaymentDeleteCommand $command;
     public function __construct()
     {
         parent::__construct(RouteName::Api_Payment_Delete);
@@ -26,7 +27,8 @@ class PaymentDeleteForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->paymentId = (int)$input['payment_id'];
+        $this->command = new PaymentDeleteCommand(
+            (int)$input['payment_id']
+        );
     }
 }

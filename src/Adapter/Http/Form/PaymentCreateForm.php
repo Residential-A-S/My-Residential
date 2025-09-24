@@ -2,18 +2,15 @@
 
 namespace Adapter\Http\Form;
 
-use DateMalformedStringException;
+use Adapter\Dto\Command\PaymentCreateCommand;
 use DateTimeImmutable;
 use Adapter\Http\RouteName;
-use Adapter\Http\Exception\ValidationException;
-use Adapter\Http\Form\Validation\NumberRule;
 use Adapter\Http\Form\Validation\RequiredRule;
-use Domain\Types\Currency;
 use Domain\ValueObject\Money;
-use ValueError;
 
 class PaymentCreateForm extends AbstractForm
 {
+    public PaymentCreateCommand $command;
     public Money $money;
     public DateTimeImmutable $dueAt;
     public ?DateTimeImmutable $paidAt;
@@ -23,7 +20,7 @@ class PaymentCreateForm extends AbstractForm
         parent::__construct(RouteName::Api_Payment_Create);
 
         $this
-            ->addField('amount', [new RequiredRule(), new NumberRule()])
+            ->addField('amount', [new RequiredRule()])
             ->addField('currency', [new RequiredRule()])
             ->addField('due_at', [new RequiredRule()])
             ->addField('paid_at');
@@ -31,21 +28,12 @@ class PaymentCreateForm extends AbstractForm
 
     public function handle(array $input): void
     {
-        try {
-            parent::handle($input);
-            //Write validated data to properties
-            $amount   = (int)$input['amount'];
-            $currency = Currency::from($input['currency']);
-
-            $this->money = new Money($amount, $currency);
-
-            $this->dueAt    = new DateTimeImmutable($input['due_at']);
-            $this->paidAt   = $input['paid_at'] ? new DateTimeImmutable($input['paid_at']) : null;
-        } catch (ValueError) {
-            $this->errors['currency'] = 'Invalid currency value';
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        } catch (DateMalformedStringException) {
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        }
+        parent::handle($input);
+        $this->command = new PaymentCreateCommand(
+            $input['amount'],
+            $input['currency'],
+            $input['due_at'],
+            $input['paid_at'] ?: null
+        );
     }
 }

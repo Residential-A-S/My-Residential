@@ -2,11 +2,10 @@
 
 namespace Adapter\Dto\Command;
 
-final readonly class UserRegisterCommand implements CommandInterface
+final readonly class UserUpdateCommand implements CommandInterface
 {
     public function __construct(
         public string $email,
-        public string $password,
         public string $name,
     ) {
     }

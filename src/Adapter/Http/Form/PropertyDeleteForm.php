@@ -2,13 +2,14 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\PropertyDeleteCommand;
 use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 
 class PropertyDeleteForm extends AbstractForm
 {
-    public int $propertyId;
+    public PropertyDeleteCommand $command;
     public function __construct()
     {
         parent::__construct(RouteName::Api_Property_Delete);
@@ -26,7 +27,8 @@ class PropertyDeleteForm extends AbstractForm
     public function handle(array $input): void
     {
         parent::handle($input);
-        //Write validated data to properties
-        $this->propertyId = (int)$input['property_id'];
+        $this->command = new PropertyDeleteCommand(
+            (int)$input['property_id']
+        );
     }
 }

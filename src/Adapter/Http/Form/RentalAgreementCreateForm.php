@@ -2,22 +2,14 @@
 
 namespace Adapter\Http\Form;
 
-use DateMalformedStringException;
-use DateTimeImmutable;
+use Adapter\Dto\Command\RentalAgreementCreateCommand;
 use Adapter\Http\RouteName;
-use Adapter\Http\Exception\ValidationException;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
-use Domain\Types\PaymentInterval;
-use ValueError;
 
 class RentalAgreementCreateForm extends AbstractForm
 {
-    public int $rentalUnitId;
-    public DateTimeImmutable $startDate;
-    public ?DateTimeImmutable $endDate;
-    public string $status;
-    public PaymentInterval $paymentInterval;
+    public RentalAgreementCreateCommand $command;
 
     public function __construct()
     {
@@ -33,20 +25,13 @@ class RentalAgreementCreateForm extends AbstractForm
 
     public function handle(array $input): void
     {
-        try {
-            parent::handle($input);
-            //Write validated data to properties
-            $this->rentalUnitId    = (int)$this->data['rental_unit_id'];
-            $this->startDate       = new DateTimeImmutable($this->data['start_date']);
-            $this->endDate         = isset($this->data['end_date']) ?
-                new DateTimeImmutable($this->data['end_date']) : null;
-            $this->status          = $this->data['status'];
-            $this->paymentInterval = PaymentInterval::from($this->data['payment_interval']);
-        } catch (ValueError) {
-            $this->errors['payment_interval'] = 'Invalid payment interval value';
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        } catch (DateMalformedStringException) {
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        }
+        parent::handle($input);
+        $this->command = new RentalAgreementCreateCommand(
+            (int)$input['rental_unit_id'],
+            $input['start_date'],
+            $input['end_date'] ?? null,
+            $input['status'],
+            $input['payment_interval']
+        );
     }
 }

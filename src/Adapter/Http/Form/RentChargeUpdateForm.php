@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Form;
 
+use Adapter\Dto\Command\RentChargeUpdateCommand;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Adapter\Http\RouteName;
@@ -13,43 +14,29 @@ use ValueError;
 
 class RentChargeUpdateForm extends AbstractForm
 {
-    public int $rentalAgreementId;
-    public int $rentalUnitId;
-    public DateTimeImmutable $startDate;
-    public ?DateTimeImmutable $endDate;
-    public string $status;
-    public PaymentInterval $paymentInterval;
+    public RentChargeUpdateCommand $command;
 
     public function __construct()
     {
         parent::__construct(RouteName::Api_Rental_Agreement_Update);
 
         $this
+            ->addField('rent_charge_id', [new RequiredRule(), new IntegerRule()])
             ->addField('rental_agreement_id', [new RequiredRule(), new IntegerRule()])
-            ->addField('rental_unit_id', [new RequiredRule(), new IntegerRule()])
-            ->addField('start_date', [new RequiredRule()])
-            ->addField('end_date')
-            ->addField('status', [new RequiredRule()])
-            ->addField('payment_interval', [new RequiredRule()]);
+            ->addField('payment_id', [new IntegerRule()])
+            ->addField('period_start', [new RequiredRule()])
+            ->addField('period_end', [new RequiredRule()]);
     }
 
     public function handle(array $input): void
     {
-        try {
-            parent::handle($input);
-            //Write validated data to properties
-            $this->rentalAgreementId = (int)$this->data['rental_agreement_id'];
-            $this->rentalUnitId    = (int)$this->data['rental_unit_id'];
-            $this->startDate       = new DateTimeImmutable($this->data['start_date']);
-            $this->endDate         = isset($this->data['end_date']) ?
-                new DateTimeImmutable($this->data['end_date']) : null;
-            $this->status          = $this->data['status'];
-            $this->paymentInterval = PaymentInterval::from($this->data['payment_interval']);
-        } catch (ValueError) {
-            $this->errors['payment_interval'] = 'Invalid payment interval value';
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        } catch (DateMalformedStringException) {
-            throw new ValidationException(ValidationException::FORM_VALIDATION);
-        }
+        parent::handle($input);
+        $this->command = new RentChargeUpdateCommand(
+            (int)$input['rent_charge_id'],
+            (int)$input['rental_agreement_id'],
+            $input['payment_id'] ? (int)$input['payment_id'] : null,
+            $input['period_start'],
+            $input['period_end']
+        );
     }
 }

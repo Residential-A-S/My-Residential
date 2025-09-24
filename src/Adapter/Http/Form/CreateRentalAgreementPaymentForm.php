@@ -1,15 +1,15 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
 use DateMalformedStringException;
 use DateTimeImmutable;
-use src\Types\Currency;
-use src\Types\PaymentInterval;
-use src\Types\RouteName;
+use Adapter\Http\RouteName;
 use Adapter\Http\Exception\ValidationException;
-use src\Validation\IntegerRule;
-use src\Validation\RequiredRule;
+use Adapter\Http\Form\Validation\IntegerRule;
+use Adapter\Http\Form\Validation\RequiredRule;
+use Domain\Types\Currency;
+use Domain\ValueObject\Money;
 use ValueError;
 
 class CreateRentalAgreementPaymentForm extends AbstractForm
@@ -17,8 +17,7 @@ class CreateRentalAgreementPaymentForm extends AbstractForm
     public int $rentalAgreementId;
     public DateTimeImmutable $periodStart;
     public ?DateTimeImmutable $periodEnd;
-    public float $amount;
-    public Currency $currency;
+    public Money $money;
     public DateTimeImmutable $dueAt;
     public ?DateTimeImmutable $paidAt;
 
@@ -45,8 +44,12 @@ class CreateRentalAgreementPaymentForm extends AbstractForm
             $this->periodStart         = new DateTimeImmutable($this->data['period_start']);
             $this->periodEnd           = isset($this->data['period_end']) ?
                 new DateTimeImmutable($this->data['period_end']) : null;
-            $this->amount              = (float)$this->data['amount'];
-            $this->currency            = Currency::from($this->data['currency']);
+
+            $amount              = (float)$this->data['amount'];
+            $currency            = Currency::from($this->data['currency']);
+
+            $this->money = new Money($amount, $currency);
+
             $this->dueAt               = new DateTimeImmutable($this->data['due_at']);
             $this->paidAt              = isset($this->data['paid_at']) ?
                 new DateTimeImmutable($this->data['paid_at']) : null;

@@ -1,8 +1,8 @@
 <?php
 
-namespace src\Factories;
+namespace Domain\Factory;
 
-use src\Entity\Payment;
+use Domain\Entity\Payment;
 
 final readonly class PaymentFactory
 {

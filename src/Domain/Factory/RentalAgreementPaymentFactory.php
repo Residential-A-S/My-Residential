@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Factories;
+namespace Domain\Factory;
 
 final readonly class RentalAgreementPaymentFactory
 {

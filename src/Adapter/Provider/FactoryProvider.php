@@ -1,19 +1,19 @@
 <?php
 
-namespace src\Providers;
+namespace Adapter\Provider;
 
 use Adapter\Bootstrap\Container;
-use src\Factories\FormFactory;
-use src\Factories\IssueFactory;
-use src\Factories\OrganizationFactory;
-use src\Factories\PaymentFactory;
-use src\Factories\PropertyFactory;
-use src\Factories\RentalAgreementDocumentFactory;
-use src\Factories\RentalAgreementFactory;
-use src\Factories\RentalAgreementPaymentFactory;
-use src\Factories\RentalUnitFactory;
-use src\Factories\TenantFactory;
-use src\Factories\UserFactory;
+use Adapter\Http\Form\FormFactory;
+use Domain\Factory\IssueFactory;
+use Domain\Factory\OrganizationFactory;
+use Domain\Factory\PaymentFactory;
+use Domain\Factory\PropertyFactory;
+use Domain\Factory\RentalAgreementDocumentFactory;
+use Domain\Factory\RentalAgreementFactory;
+use Domain\Factory\RentalAgreementPaymentFactory;
+use Domain\Factory\RentalUnitFactory;
+use Domain\Factory\TenantFactory;
+use Domain\Factory\UserFactory;
 
 final readonly class FactoryProvider implements ProviderInterface
 {

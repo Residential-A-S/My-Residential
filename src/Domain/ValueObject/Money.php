@@ -2,7 +2,7 @@
 
 namespace Domain\ValueObject;
 
-use src\Types\Currency;
+use Domain\Types\Currency;
 use Domain\Exception\MoneyException;
 
 final readonly class Money

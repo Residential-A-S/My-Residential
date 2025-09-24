@@ -8,7 +8,7 @@ use src\Entity\Organization;
 interface OrganizationRepository
 {
     /**
-     * Find an Organization by its ID.
+     * Find an CreateOrganizationCommand by its ID.
      * Throws an OrganizationException if the organization is not found.
      * @throws OrganizationException
      */

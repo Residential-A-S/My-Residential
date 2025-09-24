@@ -2,16 +2,14 @@
 
 namespace Application\Service;
 
-use Application\Service\PaymentService;
-use DateTimeImmutable;
-use Application\Service\AuthenticationService;
-use src\Types\Currency;
+use Adapter\Persistence\PdoRentalAgreementPaymentRepository;
 use Application\Exception\AuthenticationException;
+use DateTimeImmutable;
+use Domain\Entity\RentCharge;
 use Domain\Exception\PaymentException;
 use Domain\Exception\RentalAgreementException;
+use Domain\Types\Currency;
 use Shared\Exception\ServerException;
-use src\Entity\RentalAgreementPayment;
-use Adapter\Persistence\PdoRentalAgreementPaymentRepository;
 
 final readonly class RentalAgreementPaymentService
 {
@@ -45,7 +43,7 @@ final readonly class RentalAgreementPaymentService
             paidAt: $paidAt
         );
 
-        $rentalAgreementPayment = new RentalAgreementPayment(
+        $rentalAgreementPayment = new RentCharge(
             rentalAgreementId: $rentalAgreementId,
             paymentId: $payment->id,
             periodStart: $periodStart,

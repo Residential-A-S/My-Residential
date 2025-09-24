@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use PDOException;
 use Domain\Exception\RentalUnitException;
 use Shared\Exception\ServerException;
-use src\Factories\RentalUnitFactory;
+use Domain\Factory\RentalUnitFactory;
 use src\Entity\RentalUnit;
 use PDO;
 use Throwable;

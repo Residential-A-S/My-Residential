@@ -13,7 +13,7 @@ use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Domain\Exception\UserException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\UserFactory;
+use Domain\Factory\UserFactory;
 use Adapter\Persistence\UserOrganizationRepository;
 use Adapter\Persistence\UserRepository;
 use Application\Service\AuthenticationService;

@@ -2,8 +2,8 @@
 
 namespace Application\Port;
 
-use Domain\Exception\UserException;
 use Domain\Entity\User;
+use Domain\Exception\UserException;
 
 interface UserRepository
 {

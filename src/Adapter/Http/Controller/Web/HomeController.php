@@ -1,6 +1,6 @@
 <?php
 
-namespace Adapter\Http\Controllers\Web;
+namespace Adapter\Http\Controller\Web;
 
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;

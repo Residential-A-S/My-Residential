@@ -8,7 +8,7 @@ use PDO;
 use PDOException;
 use Domain\Exception\OrganizationException;
 use Shared\Exception\ServerException;
-use src\Factories\OrganizationFactory;
+use Domain\Factory\OrganizationFactory;
 use src\Entity\Organization;
 use Throwable;
 
@@ -123,7 +123,7 @@ final readonly class PdoOrganizationRepository implements OrganizationRepository
     }
 
     /**
-     * Hydrates an array of data into an Organization object.
+     * Hydrates an array of data into an CreateOrganizationCommand object.
      *
      * @param array{
      *     id:int,
@@ -131,7 +131,7 @@ final readonly class PdoOrganizationRepository implements OrganizationRepository
      *     created_at:string,
      *     updated_at:string
      * } $data
-     * @return Organization
+     * @return CreateOrganizationCommand
      * @throws ServerException
      */
     private function hydrate(array $data): Organization

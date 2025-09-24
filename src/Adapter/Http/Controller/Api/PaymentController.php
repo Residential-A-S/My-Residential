@@ -1,6 +1,6 @@
 <?php
 
-namespace Adapter\Http\Controllers\Api;
+namespace Adapter\Http\Controller\Api;
 
 use Adapter\Http\Request;
 use Adapter\Http\Response;
@@ -9,7 +9,7 @@ use Domain\Exception\PaymentException;
 use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\FormFactory;
+use Domain\Factory\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\PaymentService;
 

@@ -1,8 +1,9 @@
 <?php
 
-namespace src\Factories;
+namespace Domain\Factory;
 
-use src\Entity\User;
+use DateTimeImmutable;
+use Domain\Entity\User;
 
 final readonly class UserFactory
 {
@@ -29,6 +30,22 @@ final readonly class UserFactory
             $user->name,
             $user->createdAt,
             $user->updatedAt,
+            $user->lastLoginAt,
+            $user->failedLoginAttempts
+        );
+    }
+
+    public function withUpdatedInfo(User $user, ?string $name = null, ?string $email = null): User
+    {
+        $name = $name ?? $user->name;
+        $email = $email ?? $user->email;
+        return new User(
+            $user->id,
+            $email,
+            $user->passwordHash,
+            $name,
+            $user->createdAt,
+            new DateTimeImmutable(),
             $user->lastLoginAt,
             $user->failedLoginAttempts
         );

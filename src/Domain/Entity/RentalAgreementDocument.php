@@ -1,18 +1,19 @@
 <?php
 
-namespace src\Entity;
+namespace Domain\Entity;
 
-use DateTimeImmutable;
+use Domain\Types\DocumentType;
+use Domain\ValueObject\DocumentId;
+use Domain\ValueObject\RentalAgreementDocumentId;
+use Domain\ValueObject\RentalAgreementId;
 
 final readonly class RentalAgreementDocument
 {
     public function __construct(
-        public int $id,
-        public int $rentalAgreementId,
-        public string $fileName,
-        public string $filePath,
-        public string $fileType,
-        public DateTimeImmutable $uploadedAt
+        public RentalAgreementDocumentId $id,
+        public RentalAgreementId $rentalAgreementId,
+        public DocumentId $documentId,
+        public DocumentType $documentType,
     ) {
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Application\Service;
 
-use Application\Security\SessionInterface;
 use Application\Exception\AuthenticationException;
 use Application\Port\UserRepository;
-use Shared\Exception\BaseException;
-use Domain\Exception\UserException;
+use Application\Security\SessionInterface;
 use Domain\Entity\User;
+use Domain\Exception\UserException;
+use Shared\Exception\BaseException;
 
 
 final readonly class AuthenticationService

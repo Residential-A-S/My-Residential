@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Adapter\Persistence;
 
+use Application\DTO\PasswordReset;
 use DateMalformedStringException;
-use DateTime;
 use DateTimeImmutable;
-use src\Exceptions\PasswordResetException;
-use Domain\Exception\PaymentException;
-use src\Exceptions\ServerException;
+use Domain\Exception\PasswordResetException;
 use PDO;
 use PDOException;
-use src\Entity\PasswordReset;
+use Shared\Exception\ServerException;
 
 final readonly class PdoPasswordResetRepository
 {

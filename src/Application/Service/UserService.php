@@ -2,14 +2,12 @@
 
 namespace Application\Service;
 
-use DateTimeImmutable;
-use src\Entity\User;
+use Application\DTO\View\User;
 use Application\Exception\AuthenticationException;
-use Shared\Exception\ServerException;
+use Application\Port\UserRepository;
+use DateTimeImmutable;
 use Domain\Exception\UserException;
-use src\Factories\UserFactory;
-use Adapter\Persistence\UserRepository;
-use Application\Service\AuthenticationService;
+use Domain\Factories\UserFactory;
 
 final readonly class UserService
 {
@@ -17,12 +15,10 @@ final readonly class UserService
         private AuthenticationService $authService,
         private UserRepository $userRepository,
         private UserFactory $userFactory
-    ) {
-    }
+    ) {}
 
     /**
      * @throws UserException
-     * @throws ServerException
      */
     public function create(string $email, string $password, string $name): User
     {
@@ -30,9 +26,9 @@ final readonly class UserService
             throw new UserException(UserException::EMAIL_ALREADY_EXISTS);
         }
 
-        return $this->userRepository->create(
+        return $this->userRepository->save(
             new User(
-                id: 0,
+                id: null,
                 email: $email,
                 passwordHash: password_hash($password, PASSWORD_DEFAULT),
                 name: $name,
@@ -47,16 +43,14 @@ final readonly class UserService
     /**
      * @param string $name
      * @param string $email
-     * @throws AuthenticationException
-     * @throws ServerException
+     *
+     * @throws AuthenticationException|UserException
      */
     public function update(string $name, string $email): void
     {
         $user = $this->authService->requireUser();
-        if ($user->email === $email && $user->name === $name) {
-            return;
-        }
-        $this->userRepository->update($user);
+        $user = $this->userFactory->withUpdatedInfo($user, $name, $email);
+        $this->userRepository->save($user);
     }
 
     /**
@@ -64,7 +58,6 @@ final readonly class UserService
      * @param string $repeatPassword
      *
      * @throws AuthenticationException
-     * @throws ServerException
      * @throws UserException
      */
     public function updatePassword(string $newPassword, string $repeatPassword): void
@@ -74,13 +67,12 @@ final readonly class UserService
             throw new UserException(UserException::PASSWORDS_DO_NOT_MATCH);
         }
         $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
-        $updatedUser = $this->userFactory->withUpdatedPassword($user, $passwordHash);
-        $this->userRepository->update($updatedUser);
+        $updatedUser  = $this->userFactory->withUpdatedPassword($user, $passwordHash);
+        $this->userRepository->save($updatedUser);
     }
 
     /**
      * @throws AuthenticationException
-     * @throws ServerException
      * @throws UserException
      */
     public function delete(): void
@@ -88,3 +80,4 @@ final readonly class UserService
         $user = $this->authService->requireUser();
         $this->userRepository->delete($user->id);
     }
+}

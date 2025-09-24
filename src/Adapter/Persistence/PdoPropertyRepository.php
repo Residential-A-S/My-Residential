@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use PDOException;
 use Domain\Exception\PropertyException;
 use Shared\Exception\ServerException;
-use src\Factories\PropertyFactory;
+use Domain\Factory\PropertyFactory;
 use src\Entity\Property;
 use PDO;
 use Throwable;

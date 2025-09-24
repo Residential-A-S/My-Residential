@@ -9,7 +9,7 @@ use PDOException;
 use Shared\Exception\BaseException;
 use Domain\Exception\RentalAgreementException;
 use Shared\Exception\ServerException;
-use src\Factories\RentalAgreementFactory;
+use Domain\Factory\RentalAgreementFactory;
 use src\Entity\RentalAgreement;
 use PDO;
 use Throwable;

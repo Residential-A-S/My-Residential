@@ -1,8 +1,8 @@
 <?php
 
-namespace src\Factories;
+namespace Domain\Factory;
 
-use src\Entity\Property;
+use Domain\Entity\Property;
 
 final readonly class PropertyFactory
 {

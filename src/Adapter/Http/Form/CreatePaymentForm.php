@@ -1,20 +1,20 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
 use DateMalformedStringException;
 use DateTimeImmutable;
-use src\Types\Currency;
-use src\Types\RouteName;
+use Adapter\Http\RouteName;
 use Adapter\Http\Exception\ValidationException;
-use src\Validation\NumberRule;
-use src\Validation\RequiredRule;
+use Adapter\Http\Form\Validation\NumberRule;
+use Adapter\Http\Form\Validation\RequiredRule;
+use Domain\Types\Currency;
+use Domain\ValueObject\Money;
 use ValueError;
 
 class CreatePaymentForm extends AbstractForm
 {
-    public int $amount;
-    public Currency $currency;
+    public Money $money;
     public DateTimeImmutable $dueAt;
     public ?DateTimeImmutable $paidAt;
 
@@ -34,8 +34,11 @@ class CreatePaymentForm extends AbstractForm
         try {
             parent::handle($input);
             //Write validated data to properties
-            $this->amount   = (int)$input['amount'];
-            $this->currency = Currency::from($input['currency']);
+            $amount   = (int)$input['amount'];
+            $currency = Currency::from($input['currency']);
+
+            $this->money = new Money($amount, $currency);
+
             $this->dueAt    = new DateTimeImmutable($input['due_at']);
             $this->paidAt   = $input['paid_at'] ? new DateTimeImmutable($input['paid_at']) : null;
         } catch (ValueError) {

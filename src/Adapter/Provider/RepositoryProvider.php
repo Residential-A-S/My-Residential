@@ -1,85 +1,86 @@
 <?php
 
-namespace src\Providers;
+namespace Adapter\Provider;
 
 use PDO;
-use src\Core\Container;
-use src\Factories\IssueFactory;
-use src\Factories\OrganizationFactory;
-use src\Factories\PaymentFactory;
-use src\Factories\PropertyFactory;
-use src\Factories\RentalAgreementDocumentFactory;
-use src\Factories\RentalAgreementFactory;
-use src\Factories\RentalUnitFactory;
-use src\Factories\TenantFactory;
-use src\Factories\UserFactory;
-use Adapter\Persistence\IssueRepository;
-use Adapter\Persistence\OrganizationRepository;
-use Adapter\Persistence\PaymentRepository;
-use Adapter\Persistence\PropertyRepository;
-use Adapter\Persistence\RentalAgreementDocumentRepository;
-use Adapter\Persistence\RentalAgreementPaymentRepository;
-use Adapter\Persistence\RentalAgreementRepository;
-use Adapter\Persistence\RentalUnitRepository;
-use Adapter\Persistence\TenantRepository;
-use Adapter\Persistence\UserOrganizationRepository;
-use Adapter\Persistence\UserRepository;
+use Adapter\Bootstrap\Container;
+use Domain\Factory\IssueFactory;
+use Domain\Factory\OrganizationFactory;
+use Domain\Factory\PaymentFactory;
+use Domain\Factory\PropertyFactory;
+use Domain\Factory\RentalAgreementDocumentFactory;
+use Domain\Factory\RentalAgreementFactory;
+use Domain\Factory\RentalUnitFactory;
+use Domain\Factory\TenantFactory;
+use Domain\Factory\UserFactory;
+use Adapter\Persistence\PdoIssueRepository;
+use Adapter\Persistence\PdoOrganizationRepository;
+use Adapter\Persistence\PdoPaymentRepository;
+use Adapter\Persistence\PdoPropertyRepository;
+use Adapter\Persistence\PdoRentalAgreementDocumentRepository;
+use Adapter\Persistence\PdoRentalAgreementPaymentRepository;
+use Adapter\Persistence\PdoRentalAgreementRepository;
+use Adapter\Persistence\PdoRentalUnitRepository;
+use Adapter\Persistence\PdoTenantRepository;
+use Adapter\Persistence\PdoUserOrganizationRepository;
+use Adapter\Persistence\PdoUserRepository;
 
 final readonly class RepositoryProvider implements ProviderInterface
 {
     public function register(Container $c): void
     {
-        $c->bind(IssueRepository::class, fn($c) => new IssueRepository(
+        $c->bind(PdoIssueRepository::class, fn($c) => new PdoIssueRepository(
             $c->get(PDO::class),
             $c->get(IssueFactory::class)
         ));
 
-        $c->bind(OrganizationRepository::class, fn($c) => new OrganizationRepository(
+        $c->bind(PdoOrganizationRepository::class, fn($c) => new PdoOrganizationRepository(
             $c->get(PDO::class),
             $c->get(OrganizationFactory::class)
         ));
 
-        $c->bind(PaymentRepository::class, fn($c) => new PaymentRepository(
+        $c->bind(PdoPaymentRepository::class, fn($c) => new PdoPaymentRepository(
             $c->get(PDO::class),
             $c->get(PaymentFactory::class)
         ));
 
-        $c->bind(PropertyRepository::class, fn($c) => new PropertyRepository(
+        $c->bind(PdoPropertyRepository::class, fn($c) => new PdoPropertyRepository(
             $c->get(PDO::class),
             $c->get(PropertyFactory::class)
         ));
 
-        $c->bind(RentalAgreementRepository::class, fn($c) => new RentalAgreementRepository(
+        $c->bind(PdoRentalAgreementRepository::class, fn($c) => new PdoRentalAgreementRepository(
             $c->get(PDO::class),
             $c->get(RentalAgreementFactory::class)
         ));
 
-        $c->bind(RentalAgreementDocumentRepository::class, fn($c) => new RentalAgreementDocumentRepository(
+        $c->bind(PdoRentalAgreementDocumentRepository::class, fn($c) => new PdoRentalAgreementDocumentRepository(
             $c->get(PDO::class),
             $c->get(RentalAgreementDocumentFactory::class)
         ));
 
-        $c->bind(RentalAgreementPaymentRepository::class, fn($c) => new RentalAgreementPaymentRepository(
+        $c->bind(PdoRentalAgreementPaymentRepository::class, fn($c) => new PdoRentalAgreementPaymentRepository(
             $c->get(PDO::class)
         ));
 
-        $c->bind(RentalUnitRepository::class, fn($c) => new RentalUnitRepository(
+        $c->bind(PdoRentalUnitRepository::class, fn($c) => new PdoRentalUnitRepository(
             $c->get(PDO::class),
             $c->get(RentalUnitFactory::class)
         ));
 
-        $c->bind(TenantRepository::class, fn($c) => new TenantRepository(
+        $c->bind(PdoTenantRepository::class, fn($c) => new PdoTenantRepository(
             $c->get(PDO::class),
             $c->get(TenantFactory::class)
         ));
 
-        $c->bind(UserOrganizationRepository::class, fn($c) => new UserOrganizationRepository(
+        $c->bind(PdoUserOrganizationRepository::class, fn($c) => new PdoUserOrganizationRepository(
             $c->get(PDO::class)
         ));
 
-        $c->bind(UserRepository::class, fn($c) => new UserRepository(
+        $c->bind(PdoUserRepository::class, fn($c) => new PdoUserRepository(
             $c->get(PDO::class),
             $c->get(UserFactory::class)
         ));
     }
 }
+   

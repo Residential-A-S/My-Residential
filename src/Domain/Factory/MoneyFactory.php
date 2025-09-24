@@ -1,8 +1,8 @@
 <?php
 
-namespace src\Factories;
+namespace Domain\Factory;
 
-use src\Types\Currency;
+use Domain\Types\Currency;
 use Domain\ValueObject\Money;
 
 final readonly class MoneyFactory

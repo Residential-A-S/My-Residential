@@ -1,6 +1,6 @@
 <?php
 
-namespace Adapter\Http\Controllers\Api;
+namespace Adapter\Http\Controller\Api;
 
 use DateMalformedStringException;
 use Random\RandomException;
@@ -13,7 +13,7 @@ use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Domain\Exception\UserException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\FormFactory;
+use Domain\Factory\FormFactory;
 use src\Forms\ForgotPasswordSendVerificationForm;
 use Application\Service\PasswordResetService;
 

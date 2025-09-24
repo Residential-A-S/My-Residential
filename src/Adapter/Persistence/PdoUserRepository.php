@@ -6,12 +6,12 @@ namespace Adapter\Persistence;
 
 use Application\Port\UserRepository;
 use DateTimeImmutable;
-use Shared\Exception\ServerException;
+use Domain\Entity\User;
 use Domain\Exception\UserException;
 use Domain\Factories\UserFactory;
-use Domain\Entity\User;
 use PDO;
 use PDOException;
+use Shared\Exception\ServerException;
 use Throwable;
 
 final readonly class PdoUserRepository implements UserRepository

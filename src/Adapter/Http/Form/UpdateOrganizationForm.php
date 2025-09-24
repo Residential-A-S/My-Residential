@@ -1,11 +1,11 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
-use src\Types\RouteName;
-use src\Validation\AlphaNumericRule;
-use src\Validation\IntegerRule;
-use src\Validation\RequiredRule;
+use Adapter\Http\RouteName;
+use Adapter\Http\Form\Validation\AlphaNumericRule;
+use Adapter\Http\Form\Validation\IntegerRule;
+use Adapter\Http\Form\Validation\RequiredRule;
 
 class UpdateOrganizationForm extends AbstractForm
 {

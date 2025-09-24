@@ -3,12 +3,14 @@
 namespace Domain\Entity;
 
 use DateTimeImmutable;
+use Domain\ValueObject\Email;
+use Domain\ValueObject\UserId;
 
 final readonly class User
 {
     public function __construct(
-        public ?int $id,
-        public string $email,
+        public UserId $id,
+        public Email $email,
         public string $passwordHash,
         public string $name,
         public DateTimeImmutable $createdAt,

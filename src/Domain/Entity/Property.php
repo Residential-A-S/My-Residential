@@ -1,14 +1,16 @@
 <?php
 
-namespace src\Entity;
+namespace Domain\Entity;
 
 use DateTimeImmutable;
+use Domain\ValueObject\OrganizationId;
+use Domain\ValueObject\PropertyId;
 
 final readonly class Property
 {
     public function __construct(
-        public int $id,
-        public int $organizationId,
+        public PropertyId $id,
+        public OrganizationId $organizationId,
         public string $streetName,
         public string $streetNumber,
         public string $zipCode,

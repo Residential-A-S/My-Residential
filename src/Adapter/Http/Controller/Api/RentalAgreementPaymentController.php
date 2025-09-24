@@ -1,28 +1,26 @@
 <?php
 
-namespace Adapter\Http\Controllers\Api;
+namespace Adapter\Http\Controller\Api;
 
-use src\Core\Request;
-use src\Core\Response;
+use Adapter\Http\Request;
+use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
 use Domain\Exception\PaymentException;
 use Domain\Exception\RentalAgreementException;
-use src\Core\ResponseException;
+use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\FormFactory;
+use Adapter\Http\Form\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\RentalAgreementPaymentService;
 use Application\Service\RentalAgreementService;
-use src\UseCases\RentalAgreementPaymentUseCases;
 
 final readonly class RentalAgreementPaymentController
 {
     public function __construct(
         private RentalAgreementPaymentService $rentalAgreementPaymentService,
         private AuthenticationService $authService,
-        private FormFactory $formFactory,
-        private RentalAgreementPaymentUseCases $rentalAgreementPaymentUseCases,
+        private FormFactory $formFactory
     ) {
     }
 
@@ -42,7 +40,7 @@ final readonly class RentalAgreementPaymentController
         $this->authService->requireUser();
         $form = $this->formFactory->handleCreateRentalAgreementPaymentForm($request->parsedBody);
 
-        $this->rentalAgreementPaymentUseCases->create(
+        $this->rentalAgreementPaymentService->create(
             rentalAgreementId: $form->rentalAgreementId,
             periodStart: $form->periodStart,
             periodEnd: $form->periodEnd,
@@ -68,12 +66,13 @@ final readonly class RentalAgreementPaymentController
         $form = $this->formFactory->handleUpdateRentalAgreementPaymentForm($request->parsedBody);
 
         $this->rentalAgreementPaymentService->update(
-            $form->rentalAgreementId,
-            $form->rentalUnitId,
-            $form->startDate,
-            $form->endDate,
-            $form->status,
-            $form->paymentInterval
+            rentalAgreementId: $form->rentalAgreementId,
+            periodStart: $form->periodStart,
+            periodEnd: $form->periodEnd,
+            amount: $form->amount,
+            currency: $form->currency,
+            dueAt: $form->dueAt,
+            paidAt: $form->paidAt,
         );
 
         return Response::json(['message' => 'Updated rental agreement payment successfully']);

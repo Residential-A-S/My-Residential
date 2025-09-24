@@ -1,15 +1,15 @@
 <?php
 
-namespace Adapter\Http\Controllers\Api;
+namespace Adapter\Http\Controller\Api;
 
-use src\Core\Request;
-use src\Core\Response;
+use Adapter\Http\Request;
+use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
 use Domain\Exception\IssueException;
-use src\Core\ResponseException;
+use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\FormFactory;
+use Domain\Factory\FormFactory;
 use src\Forms\CreateIssueForm;
 use src\Forms\DeleteIssueForm;
 use src\Forms\UpdateIssueForm;
@@ -45,7 +45,7 @@ final readonly class IssueController
             $form->status
         );
 
-        return Response::json(['message' => 'Issue creation successful.']);
+        return Response::json(['message' => 'CreateIssueCommand creation successful.']);
     }
 
     /**
@@ -68,7 +68,7 @@ final readonly class IssueController
             $form->description,
             $form->status
         );
-        return Response::json(['message' => 'Issue update successful.']);
+        return Response::json(['message' => 'CreateIssueCommand update successful.']);
     }
 
     /**
@@ -84,6 +84,6 @@ final readonly class IssueController
         $form = $this->formFactory->handleDeleteIssueForm($request->parsedBody);
 
         $this->issueService->delete($form->issueId);
-        return Response::json(['message' => 'Issue deleted successfully']);
+        return Response::json(['message' => 'CreateIssueCommand deleted successfully']);
     }
 }

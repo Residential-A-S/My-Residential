@@ -1,14 +1,17 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
-use src\Types\RouteName;
-use src\Validation\IntegerRule;
-use src\Validation\RequiredRule;
+use Adapter\Http\Form\Validation\IntegerRule;
+use Adapter\Http\Form\Validation\RequiredRule;
+use Adapter\Http\RouteName;
+use Application\DTO\View\CreateIssueCommand;
+use DateTimeImmutable;
 
 class CreateIssueForm extends AbstractForm
 {
-    public int $rentalAgreementId;
+    public CreateIssueCommand $issue;
+    public int                $rentalAgreementId;
     public ?int $paymentId;
     public string $name;
     public string $description;
@@ -35,5 +38,15 @@ class CreateIssueForm extends AbstractForm
         $this->name = $this->data['name'];
         $this->description = $this->data['description'];
         $this->status = $this->data['status'];
+        $this->issue = new CreateIssueCommand(
+            id: null,
+            rentalAgreementId: $this->rentalAgreementId,
+            paymentId: $this->paymentId,
+            name: $this->name,
+            description: $this->description,
+            status: $this->status,
+            createdAt: new DateTimeImmutable(),
+            updatedAt: new DateTimeImmutable()
+        );
     }
 }

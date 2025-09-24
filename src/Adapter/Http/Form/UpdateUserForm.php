@@ -1,10 +1,10 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
-use src\Types\RouteName;
-use src\Validation\MaxRule;
-use src\Validation\RequiredRule;
+use Adapter\Http\RouteName;
+use Adapter\Http\Form\Validation\MaxRule;
+use Adapter\Http\Form\Validation\RequiredRule;
 
 class UpdateUserForm extends AbstractForm
 {

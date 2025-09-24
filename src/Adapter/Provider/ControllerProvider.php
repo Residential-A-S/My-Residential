@@ -1,16 +1,16 @@
 <?php
 
-namespace src\Providers;
+namespace Adapter\Provider;
 
-use Adapter\Http\Controllers\Api\AuthController;
-use Adapter\Http\Controllers\Api\IssueController;
-use Adapter\Http\Controllers\Api\OrganizationController;
-use Adapter\Http\Controllers\Api\PasswordResetController;
-use Adapter\Http\Controllers\Api\PaymentController;
-use Adapter\Http\Controllers\Api\PropertyController;
-use Adapter\Http\Controllers\Api\UserController;
-use src\Core\Container;
-use src\Factories\FormFactory;
+use Adapter\Http\Controller\Api\AuthController;
+use Adapter\Http\Controller\Api\IssueController;
+use Adapter\Http\Controller\Api\OrganizationController;
+use Adapter\Http\Controller\Api\PasswordResetController;
+use Adapter\Http\Controller\Api\PaymentController;
+use Adapter\Http\Controller\Api\PropertyController;
+use Adapter\Http\Controller\Api\UserController;
+use Adapter\Bootstrap\Container;
+use Adapter\Http\Form\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\IssueService;
 use Application\Service\OrganizationService;
@@ -18,6 +18,7 @@ use Application\Service\PasswordResetService;
 use Application\Service\PaymentService;
 use Application\Service\PropertyService;
 use Application\Service\UserService;
+use src\Providers\ProviderInterface;
 
 final readonly class ControllerProvider implements ProviderInterface
 {

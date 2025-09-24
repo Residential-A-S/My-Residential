@@ -1,14 +1,17 @@
 <?php
 
-namespace src\Core;
+namespace Adapter\Bootstrap;
 
-use src\Core\ResponseException;
-use src\Providers\ControllerProvider;
-use src\Providers\DatabaseProvider;
-use src\Providers\FactoryProvider;
-use src\Providers\RepositoryProvider;
-use src\Providers\ServiceProvider;
-use src\Providers\ViewProvider;
+use Adapter\Http\Request;
+use Adapter\Http\Response;
+use Adapter\Http\ResponseException;
+use Adapter\Http\Router;
+use Adapter\Provider\ControllerProvider;
+use Adapter\Provider\DatabaseProvider;
+use Adapter\Provider\FactoryProvider;
+use Adapter\Provider\RepositoryProvider;
+use Adapter\Provider\ServiceProvider;
+use Adapter\Provider\ViewProvider;
 
 final readonly class Application
 {
@@ -51,3 +54,4 @@ final readonly class Application
         return $this->router->dispatch($request);
     }
 }
+   

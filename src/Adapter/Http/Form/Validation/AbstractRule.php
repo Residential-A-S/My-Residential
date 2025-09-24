@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Validation;
+namespace Adapter\Http\Form\Validation;
 
 use Adapter\Http\Exception\ValidationException;
 

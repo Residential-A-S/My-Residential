@@ -1,13 +1,14 @@
 <?php
 
-namespace src\Entity;
+namespace Domain\Entity;
 
 use DateTimeImmutable;
+use Domain\ValueObject\OrganizationId;
 
 final readonly class Organization
 {
     public function __construct(
-        public int $id,
+        public OrganizationId $id,
         public string $name,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt

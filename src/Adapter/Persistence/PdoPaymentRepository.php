@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use PDOException;
 use Domain\Exception\PaymentException;
 use Shared\Exception\ServerException;
-use src\Factories\PaymentFactory;
+use Domain\Factory\PaymentFactory;
 use src\Entity\Payment;
 use PDO;
 use Throwable;

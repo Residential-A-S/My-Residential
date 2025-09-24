@@ -1,8 +1,8 @@
 <?php
 
-namespace src\Factories;
+namespace Domain\Factory;
 
-use src\Entity\Organization;
+use Domain\Entity\Organization;
 
 final readonly class OrganizationFactory
 {

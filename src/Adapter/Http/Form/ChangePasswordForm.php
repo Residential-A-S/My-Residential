@@ -1,12 +1,12 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
-use src\Types\RouteName;
-use src\Validation\MaxRule;
-use src\Validation\MinRule;
-use src\Validation\RequiredRule;
-use src\Validation\StrongPasswordRule;
+use Adapter\Http\RouteName;
+use Adapter\Http\Form\Validation\MaxRule;
+use Adapter\Http\Form\Validation\MinRule;
+use Adapter\Http\Form\Validation\RequiredRule;
+use Adapter\Http\Form\Validation\StrongPasswordRule;
 
 class ChangePasswordForm extends AbstractForm
 {

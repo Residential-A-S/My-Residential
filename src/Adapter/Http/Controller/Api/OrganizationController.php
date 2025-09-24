@@ -1,16 +1,16 @@
 <?php
 
-namespace Adapter\Http\Controllers\Api;
+namespace Adapter\Http\Controller\Api;
 
-use src\Core\Request;
-use src\Core\Response;
+use Adapter\Http\Request;
+use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
 use Shared\Exception\BaseException;
 use Domain\Exception\OrganizationException;
-use src\Core\ResponseException;
+use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\FormFactory;
+use Domain\Factory\FormFactory;
 use src\Forms\CreateOrganizationForm;
 use src\Forms\DeleteOrganizationForm;
 use src\Forms\UpdateOrganizationForm;
@@ -43,7 +43,7 @@ final readonly class OrganizationController
         $form = $this->formFactory->handleCreateOrganizationForm($request->parsedBody);
 
         $this->orgService->create($form->name);
-        return Response::json(['message' => 'Organization created successfully']);
+        return Response::json(['message' => 'CreateOrganizationCommand created successfully']);
     }
 
     /**
@@ -65,7 +65,7 @@ final readonly class OrganizationController
             $form->organizationId,
             $form->name,
         );
-        return Response::json(['message' => 'Organization updated successfully']);
+        return Response::json(['message' => 'CreateOrganizationCommand updated successfully']);
     }
 
     /**
@@ -84,6 +84,6 @@ final readonly class OrganizationController
         $form = $this->formFactory->handleDeleteOrganizationForm($request->parsedBody);
 
         $this->orgService->delete($form->organizationId);
-        return Response::json(['message' => 'Organization deleted successfully']);
+        return Response::json(['message' => 'CreateOrganizationCommand deleted successfully']);
     }
 }

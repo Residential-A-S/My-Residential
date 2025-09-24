@@ -1,15 +1,15 @@
 <?php
 
-namespace Adapter\Http\Controllers\Api;
+namespace Adapter\Http\Controller\Api;
 
-use src\Core\Request;
-use src\Core\Response;
+use Adapter\Http\Request;
+use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
 use Domain\Exception\PropertyException;
-use src\Core\ResponseException;
+use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\FormFactory;
+use Domain\Factory\FormFactory;
 use src\Forms\CreatePropertyForm;
 use src\Forms\DeletePropertyForm;
 use src\Forms\UpdatePropertyForm;

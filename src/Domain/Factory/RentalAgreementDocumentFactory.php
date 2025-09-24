@@ -1,8 +1,8 @@
 <?php
 
-namespace src\Factories;
+namespace Domain\Factory;
 
-use src\Entity\RentalAgreementDocument;
+use Domain\Entity\RentalAgreementDocument;
 
 final readonly class RentalAgreementDocumentFactory
 {

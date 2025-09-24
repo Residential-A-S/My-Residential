@@ -1,14 +1,14 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
 use DateMalformedStringException;
 use DateTimeImmutable;
-use src\Types\PaymentInterval;
-use src\Types\RouteName;
+use Adapter\Http\RouteName;
 use Adapter\Http\Exception\ValidationException;
-use src\Validation\IntegerRule;
-use src\Validation\RequiredRule;
+use Adapter\Http\Form\Validation\IntegerRule;
+use Adapter\Http\Form\Validation\RequiredRule;
+use Domain\Types\PaymentInterval;
 use ValueError;
 
 class UpdateRentalAgreementForm extends AbstractForm

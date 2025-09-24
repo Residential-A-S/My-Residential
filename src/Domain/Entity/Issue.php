@@ -1,18 +1,21 @@
 <?php
 
-namespace src\Entity;
+namespace Domain\Entity;
 
 use DateTimeImmutable;
+use Domain\Types\IssueStatus;
+use Domain\ValueObject\IssueId;
+use Domain\ValueObject\RentalAgreementId;
 
 final readonly class Issue
 {
     public function __construct(
-        public int $id,
-        public int $rentalAgreementId,
+        public IssueId $id,
+        public RentalAgreementId $rentalAgreementId,
         public ?int $paymentId,
         public string $name,
         public string $description,
-        public string $status,
+        public IssueStatus $status,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt
     ) {

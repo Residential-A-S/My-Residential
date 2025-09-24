@@ -8,20 +8,20 @@ use DateTimeImmutable;
 use Random\RandomException;
 use Adapter\Mail\Mailer;
 use src\Types\MailTemplates;
-use src\Exceptions\AuthenticationException;
-use src\Exceptions\MailException;
-use src\Exceptions\PasswordResetException;
-use src\Exceptions\ServerException;
+use Application\Exception\AuthenticationException;
+use Adapter\Mail\MailException;
+use Domain\Exception\PasswordResetException;
+use Shared\Exception\ServerException;
 use Domain\Exception\UserException;
-use src\Factories\UserFactory;
-use src\Repositories\PasswordResetRepository;
-use src\Repositories\UserRepository;
+use Domain\Factory\UserFactory;
+use Adapter\Persistence\PdoPasswordResetRepository;
+use Adapter\Persistence\UserRepository;
 
 final readonly class PasswordResetService
 {
     public function __construct(
         private UserRepository $userRepository,
-        private PasswordResetRepository $passwordResetRepository,
+        private PdoPasswordResetRepository $passwordResetRepository,
         private UserFactory $userFactory,
         private Mailer $mailService,
     ) {
@@ -82,6 +82,4 @@ final readonly class PasswordResetService
         }
         $updatedUser = $this->userFactory->withUpdatedPassword($user, $passwordHash);
         $this->userRepository->update($updatedUser);
-        $this->passwordResetRepository->deleteByToken($hashedToken);
-    }
-}
+        $this->passwordResetRepository->deleteByToken($h

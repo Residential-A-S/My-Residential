@@ -9,7 +9,7 @@ use PDOException;
 use Shared\Exception\BaseException;
 use Shared\Exception\ServerException;
 use Domain\Exception\TenantException;
-use src\Factories\TenantFactory;
+use Domain\Factory\TenantFactory;
 use src\Entity\Tenant;
 use PDO;
 use Throwable;

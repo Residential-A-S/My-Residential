@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Providers;
+namespace Adapter\Provider;
 
 use PDO;
 use Adapter\Bootstrap\Container;

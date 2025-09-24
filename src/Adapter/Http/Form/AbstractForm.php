@@ -1,10 +1,10 @@
 <?php
 
-namespace src\Forms;
+namespace Adapter\Http\Form;
 
-use src\Types\RouteName;
+use Adapter\Http\RouteName;
 use Adapter\Http\Exception\ValidationException;
-use src\Validation\AbstractRule;
+use Adapter\Http\Form\Validation\AbstractRule;
 
 abstract class AbstractForm
 {

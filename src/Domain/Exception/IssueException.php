@@ -10,7 +10,7 @@ final class IssueException extends BaseException
     public const int CREATE_FAILED = 2;
 
     private const array MESSAGES = [
-        self::NOT_FOUND => 'Issue not found.',
+        self::NOT_FOUND => 'CreateIssueCommand not found.',
         self::CREATE_FAILED => 'Failed to create issue.',
     ];
 

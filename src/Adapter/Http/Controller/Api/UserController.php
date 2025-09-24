@@ -1,15 +1,15 @@
 <?php
 
-namespace Adapter\Http\Controllers\Api;
+namespace Adapter\Http\Controller\Api;
 
-use src\Core\Request;
-use src\Core\Response;
+use Adapter\Http\Request;
+use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
-use src\Exceptions\ResponseException;
+use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Domain\Exception\UserException;
 use Adapter\Http\Exception\ValidationException;
-use src\Factories\FormFactory;
+use Domain\Factory\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\UserService;
 
@@ -22,13 +22,31 @@ final readonly class UserController
     ) {}
 
     /**
+     * @throws ValidationException
+     * @throws ResponseException
+     * @throws UserException
+     */
+    public function register(Request $request): Response
+    {
+        $form = $this->formFactory->handleRegisterForm($request->parsedBody);
+
+        $user = $this->userService->create(
+            $form->email,
+            $form->password,
+            $form->name
+        );
+        $request->session->regenerate();
+        $request->session->set('user_id', $user->id);
+        return Response::json(['message' => 'Registration successful.']);
+    }
+
+    /**
      * @param Request $request
      *
      * @return Response
      * @throws AuthenticationException
      * @throws ResponseException
-     * @throws ServerException
-     * @throws ValidationException
+     * @throws ValidationException|UserException
      */
     public function update(Request $request): Response
     {
@@ -49,7 +67,6 @@ final readonly class UserController
      * @return Response
      * @throws AuthenticationException
      * @throws ResponseException
-     * @throws ServerException
      * @throws ValidationException
      * @throws UserException
      */
@@ -71,7 +88,6 @@ final readonly class UserController
      *
      * @return Response
      * @throws ResponseException
-     * @throws ServerException
      * @throws UserException
      * @throws AuthenticationException
      */
@@ -84,3 +100,4 @@ final readonly class UserController
         return Response::json(['message' => 'User deleted successfully.']);
     }
 }
+ 

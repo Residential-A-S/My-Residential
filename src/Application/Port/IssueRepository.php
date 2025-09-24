@@ -3,7 +3,7 @@
 namespace Application\Port;
 
 use Domain\Exception\IssueException;
-use src\Entity\Issue;
+use Domain\Entity\Issue;
 
 interface IssueRepository
 {

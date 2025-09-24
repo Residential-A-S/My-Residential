@@ -9,8 +9,8 @@ use DateTimeImmutable;
 use PDOException;
 use Domain\Exception\IssueException;
 use Shared\Exception\ServerException;
-use src\Factories\IssueFactory;
-use src\Entity\Issue;
+use Domain\Factory\IssueFactory;
+use Domain\Entity\Issue;
 use PDO;
 use Throwable;
 
@@ -136,7 +136,7 @@ final readonly class PdoIssueRepository implements IssueRepository
     }
 
     /**
-     * Hydrates an array of data into an Issue object.
+     * Hydrates an array of data into an CreateIssueCommand object.
      *
      * @param array{
      *     id:int,
@@ -148,7 +148,7 @@ final readonly class PdoIssueRepository implements IssueRepository
      *     created_at:string,
      *     updated_at:string
      * } $data
-     * @return Issue
+     * @return CreateIssueCommand
      * @throws ServerException
      */
     private function hydrate(array $data): Issue

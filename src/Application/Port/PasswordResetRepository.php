@@ -2,8 +2,8 @@
 
 namespace Application\Port;
 
-use Domain\Exception\PasswordResetException;
 use Domain\Entity\PasswordReset;
+use Domain\Exception\PasswordResetException;
 
 interface PasswordResetRepository
 {

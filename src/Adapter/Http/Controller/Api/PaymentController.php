@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
@@ -9,7 +10,6 @@ use Domain\Exception\PaymentException;
 use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\PaymentService;
 
@@ -32,14 +32,9 @@ final readonly class PaymentController
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleCreatePaymentForm($request->parsedBody);
+        $cmd = $this->formFactory->handleCreatePaymentForm($request->parsedBody)->command;
 
-        $this->paymentService->create(
-            $form->amount,
-            $form->currency,
-            $form->dueAt,
-            $form->paidAt
-        );
+        $this->paymentService->create($cmd);
 
         return Response::json(['message' => 'Created payment successfully']);
     }
@@ -54,15 +49,9 @@ final readonly class PaymentController
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdatePaymentForm($request->parsedBody);
+        $cmd = $this->formFactory->handleUpdatePaymentForm($request->parsedBody)->command;
 
-        $this->paymentService->update(
-            $form->paymentId,
-            $form->amount,
-            $form->currency,
-            $form->dueAt,
-            $form->paidAt
-        );
+        $this->paymentService->update($cmd);
 
         return Response::json(['message' => 'Updated payment successfully']);
     }
@@ -77,9 +66,9 @@ final readonly class PaymentController
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleDeletePaymentForm($request->parsedBody);
+        $cmd = $this->formFactory->handleDeletePaymentForm($request->parsedBody)->command;
 
-        $this->paymentService->delete($form->paymentId);
+        $this->paymentService->delete($cmd);
 
         return Response::json(['message' => 'Payment deleted successfully']);
     }

@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
@@ -9,10 +10,6 @@ use Domain\Exception\IssueException;
 use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\FormFactory;
-use src\Forms\CreateIssueForm;
-use src\Forms\DeleteIssueForm;
-use src\Forms\UpdateIssueForm;
 use Application\Service\AuthenticationService;
 use Application\Service\IssueService;
 
@@ -35,15 +32,9 @@ final readonly class IssueController
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleCreateIssueForm($request->parsedBody);
+        $cmd = $this->formFactory->handleCreateIssueForm($request->parsedBody)->command;
 
-        $this->issueService->create(
-            $form->rentalAgreementId,
-            $form->paymentId,
-            $form->name,
-            $form->description,
-            $form->status
-        );
+        $this->issueService->create($cmd);
 
         return Response::json(['message' => 'CreateIssueCommand creation successful.']);
     }
@@ -58,16 +49,9 @@ final readonly class IssueController
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdateIssueForm($request->parsedBody);
+        $cmd = $this->formFactory->handleUpdateIssueForm($request->parsedBody)->command;
 
-        $this->issueService->update(
-            $form->issueId,
-            $form->rentalAgreementId,
-            $form->paymentId,
-            $form->name,
-            $form->description,
-            $form->status
-        );
+        $this->issueService->update($cmd);
         return Response::json(['message' => 'CreateIssueCommand update successful.']);
     }
 
@@ -81,9 +65,9 @@ final readonly class IssueController
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleDeleteIssueForm($request->parsedBody);
+        $cmd = $this->formFactory->handleDeleteIssueForm($request->parsedBody)->command;
 
-        $this->issueService->delete($form->issueId);
+        $this->issueService->delete($cmd);
         return Response::json(['message' => 'CreateIssueCommand deleted successfully']);
     }
 }

@@ -68,7 +68,7 @@ final readonly class PasswordResetService
      * @throws ServerException
      * @throws PasswordResetException
      */
-    public function resetPassword(string $token, string $newPassword, string $repeatNewPassword): void
+    public function resetPassword(string $token, string $newPassword): void
     {
         $hashedToken = hash_hmac('sha256', $token, APP_SECRET);
         $passwordReset = $this->passwordResetRepository->findByToken($hashedToken);

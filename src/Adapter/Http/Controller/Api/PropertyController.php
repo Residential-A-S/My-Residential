@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
@@ -9,10 +10,6 @@ use Domain\Exception\PropertyException;
 use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\FormFactory;
-use src\Forms\CreatePropertyForm;
-use src\Forms\DeletePropertyForm;
-use src\Forms\UpdatePropertyForm;
 use Application\Service\AuthenticationService;
 use Application\Service\PropertyService;
 
@@ -35,16 +32,9 @@ final readonly class PropertyController
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleCreatePropertyForm($request->parsedBody);
+        $cmd = $this->formFactory->handleCreatePropertyForm($request->parsedBody)->command;
 
-        $this->propertyService->create(
-            $form->organizationId,
-            $form->streetName,
-            $form->streetNumber,
-            $form->zipCode,
-            $form->city,
-            $form->country
-        );
+        $this->propertyService->create($cmd);
         return Response::json(['message' => 'Created property successfully']);
     }
 
@@ -58,16 +48,9 @@ final readonly class PropertyController
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdatePropertyForm($request->parsedBody);
+        $cmd = $this->formFactory->handleUpdatePropertyForm($request->parsedBody)->command;
 
-        $this->propertyService->update(
-            $form->propertyId,
-            $form->streetName,
-            $form->streetNumber,
-            $form->zipCode,
-            $form->city,
-            $form->country
-        );
+        $this->propertyService->update($cmd);
         return Response::json(['message' => 'Updated property successfully']);
     }
 
@@ -81,9 +64,9 @@ final readonly class PropertyController
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleDeletePropertyForm($request->parsedBody);
+        $cmd = $this->formFactory->handleDeletePropertyForm($request->parsedBody)->command;
 
-        $this->propertyService->delete($form->propertyId);
+        $this->propertyService->delete($cmd);
         return Response::json(['message' => 'Property deleted successfully']);
     }
 }

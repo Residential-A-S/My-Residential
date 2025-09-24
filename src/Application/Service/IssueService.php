@@ -2,6 +2,7 @@
 
 namespace Application\Service;
 
+use Adapter\Dto\Command\IssueCreateCommand;
 use DateTimeImmutable;
 use Application\Exception\AuthenticationException;
 use Domain\Exception\IssueException;
@@ -19,22 +20,11 @@ final readonly class IssueService
     }
 
     /**
-     * @param int $rentalAgreementId
-     * @param int|null $paymentId
-     * @param string $name
-     * @param string $description
-     * @param string $status
      * @throws AuthenticationException
      * @throws IssueException
      * @throws ServerException
      */
-    public function create(
-        int $rentalAgreementId,
-        ?int $paymentId,
-        string $name,
-        string $description,
-        string $status
-    ): void {
+    public function create(IssueCreateCommand $cmd): void {
         $this->authS->requireUser();
         $now = new DateTimeImmutable();
         $issue = new Issue(

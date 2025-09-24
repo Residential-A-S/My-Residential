@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Http\Form\FormFactory;
 use DateMalformedStringException;
 use Random\RandomException;
 use Adapter\Http\Request;
@@ -13,8 +14,6 @@ use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Domain\Exception\UserException;
 use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\FormFactory;
-use src\Forms\ForgotPasswordSendVerificationForm;
 use Application\Service\PasswordResetService;
 
 final readonly class PasswordResetController
@@ -40,9 +39,9 @@ final readonly class PasswordResetController
      */
     public function sendVerification(Request $request): Response
     {
-        $form = $this->formFactory->handleForgotPasswordSendVerificationForm($request->parsedBody);
+        $cmd = $this->formFactory->handleForgotPasswordSendVerificationForm($request->parsedBody)->command;
 
-        $this->passwordResetService->sendVerification($form->email);
+        $this->passwordResetService->sendVerification($cmd);
         return Response::json(['message' => 'Verification email sent.']);
     }
 
@@ -58,13 +57,9 @@ final readonly class PasswordResetController
      */
     public function resetPassword(Request $request): Response
     {
-        $form = $this->formFactory->handleForgotPasswordResetPasswordForm($request->parsedBody);
+        $cmd = $this->formFactory->handleForgotPasswordResetPasswordForm($request->parsedBody)->command;
 
-        $this->passwordResetService->resetPassword(
-            $form->token,
-            $form->password,
-            $form->repeatPassword
-        );
+        $this->passwordResetService->resetPassword($cmd);
         return Response::json(['message' => 'Password has been reset.']);
     }
 }

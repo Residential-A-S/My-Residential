@@ -25,12 +25,9 @@ final readonly class AuthController
      */
     public function login(Request $request): Response
     {
-        $form = $this->formFactory->handleLoginForm($request->parsedBody);
+        $cmd = $this->formFactory->handleLoginForm($request->parsedBody)->command;
 
-        $user = $this->authService->login(
-            $form->email,
-            $form->password
-        );
+        $user = $this->authService->login($cmd);
         $request->session->regenerate();
         $request->session->set('user_id', $user->id);
         return Response::json(['message' => 'Login successful.']);

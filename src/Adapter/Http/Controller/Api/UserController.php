@@ -2,14 +2,13 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
 use Adapter\Http\ResponseException;
-use Shared\Exception\ServerException;
 use Domain\Exception\UserException;
 use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\UserService;
 
@@ -28,13 +27,9 @@ final readonly class UserController
      */
     public function register(Request $request): Response
     {
-        $form = $this->formFactory->handleRegisterForm($request->parsedBody);
+        $cmd = $this->formFactory->handleRegisterForm($request->parsedBody)->command;
 
-        $user = $this->userService->create(
-            $form->email,
-            $form->password,
-            $form->name
-        );
+        $user = $this->userService->create($cmd);
         $request->session->regenerate();
         $request->session->set('user_id', $user->id);
         return Response::json(['message' => 'Registration successful.']);
@@ -51,12 +46,9 @@ final readonly class UserController
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdateUserForm($request->parsedBody);
+        $cmd = $this->formFactory->handleUpdateUserForm($request->parsedBody)->command;
 
-        $this->userService->update(
-            $form->name,
-            $form->email
-        );
+        $this->userService->update($cmd);
 
         return Response::json(['message' => 'User update successful.']);
     }
@@ -73,12 +65,9 @@ final readonly class UserController
     public function updatePassword(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleChangePasswordForm($request->parsedBody);
+        $cmd = $this->formFactory->handleChangePasswordForm($request->parsedBody)->command;
 
-        $this->userService->updatePassword(
-            $form->password,
-            $form->repeatPassword
-        );
+        $this->userService->updatePassword($cmd);
 
         return Response::json(['message' => 'Password updated successfully.']);
     }

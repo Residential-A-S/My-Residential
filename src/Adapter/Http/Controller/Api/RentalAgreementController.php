@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
@@ -9,7 +10,6 @@ use Domain\Exception\RentalAgreementException;
 use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\RentalAgreementService;
 
@@ -32,15 +32,9 @@ final readonly class RentalAgreementController
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleCreateRentalAgreementForm($request->parsedBody);
+        $cmd = $this->formFactory->handleCreateRentalAgreementForm($request->parsedBody)->command;
 
-        $this->rentalAgreementService->create(
-            $form->rentalUnitId,
-            $form->startDate,
-            $form->endDate,
-            $form->status,
-            $form->paymentInterval
-        );
+        $this->rentalAgreementService->create($cmd);
 
         return Response::json(['message' => 'Created rental agreement successfully']);
     }
@@ -55,16 +49,9 @@ final readonly class RentalAgreementController
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdateRentalAgreementForm($request->parsedBody);
+        $cmd = $this->formFactory->handleUpdateRentalAgreementForm($request->parsedBody)->command;
 
-        $this->rentalAgreementService->update(
-            $form->rentalAgreementId,
-            $form->rentalUnitId,
-            $form->startDate,
-            $form->endDate,
-            $form->status,
-            $form->paymentInterval
-        );
+        $this->rentalAgreementService->update($cmd);
 
         return Response::json(['message' => 'Updated rental agreement successfully']);
     }
@@ -79,9 +66,9 @@ final readonly class RentalAgreementController
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleDeleteRentalAgreementForm($request->parsedBody);
+        $cmd = $this->formFactory->handleDeleteRentalAgreementForm($request->parsedBody)->command;
 
-        $this->rentalAgreementService->delete($form->rentalAgreementId);
+        $this->rentalAgreementService->delete($cmd);
 
         return Response::json(['message' => 'Rental agreement deleted successfully']);
     }

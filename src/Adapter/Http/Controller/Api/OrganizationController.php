@@ -2,6 +2,7 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
@@ -10,10 +11,6 @@ use Domain\Exception\OrganizationException;
 use Adapter\Http\ResponseException;
 use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\FormFactory;
-use src\Forms\CreateOrganizationForm;
-use src\Forms\DeleteOrganizationForm;
-use src\Forms\UpdateOrganizationForm;
 use Application\Service\AuthenticationService;
 use Application\Service\OrganizationService;
 
@@ -40,9 +37,9 @@ final readonly class OrganizationController
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleCreateOrganizationForm($request->parsedBody);
+        $cmd = $this->formFactory->handleCreateOrganizationForm($request->parsedBody)->command;
 
-        $this->orgService->create($form->name);
+        $this->orgService->create($cmd);
         return Response::json(['message' => 'CreateOrganizationCommand created successfully']);
     }
 
@@ -59,12 +56,9 @@ final readonly class OrganizationController
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdateOrganizationForm($request->parsedBody);
+        $cmd = $this->formFactory->handleUpdateOrganizationForm($request->parsedBody)->command;
 
-        $this->orgService->update(
-            $form->organizationId,
-            $form->name,
-        );
+        $this->orgService->update($cmd);
         return Response::json(['message' => 'CreateOrganizationCommand updated successfully']);
     }
 
@@ -81,9 +75,9 @@ final readonly class OrganizationController
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleDeleteOrganizationForm($request->parsedBody);
+        $cmd = $this->formFactory->handleDeleteOrganizationForm($request->parsedBody)->command;
 
-        $this->orgService->delete($form->organizationId);
+        $this->orgService->delete($cmd);
         return Response::json(['message' => 'CreateOrganizationCommand deleted successfully']);
     }
 }

@@ -13,7 +13,6 @@ use Adapter\Http\Exception\ValidationException;
 use Adapter\Http\Form\FormFactory;
 use Application\Service\AuthenticationService;
 use Application\Service\RentalAgreementPaymentService;
-use Application\Service\RentalAgreementService;
 
 final readonly class RentalAgreementPaymentController
 {
@@ -38,17 +37,9 @@ final readonly class RentalAgreementPaymentController
     public function create(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleCreateRentalAgreementPaymentForm($request->parsedBody);
+        $cmd = $this->formFactory->handleCreateRentalAgreementPaymentForm($request->parsedBody)->command;
 
-        $this->rentalAgreementPaymentService->create(
-            rentalAgreementId: $form->rentalAgreementId,
-            periodStart: $form->periodStart,
-            periodEnd: $form->periodEnd,
-            amount: $form->amount,
-            currency: $form->currency,
-            dueAt: $form->dueAt,
-            paidAt: $form->paidAt,
-        );
+        $this->rentalAgreementPaymentService->create($cmd);
 
         return Response::json(['message' => 'Created rental agreement payment successfully']);
     }
@@ -63,17 +54,9 @@ final readonly class RentalAgreementPaymentController
     public function update(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleUpdateRentalAgreementPaymentForm($request->parsedBody);
+        $cmd = $this->formFactory->handleUpdateRentalAgreementPaymentForm($request->parsedBody)->command;
 
-        $this->rentalAgreementPaymentService->update(
-            rentalAgreementId: $form->rentalAgreementId,
-            periodStart: $form->periodStart,
-            periodEnd: $form->periodEnd,
-            amount: $form->amount,
-            currency: $form->currency,
-            dueAt: $form->dueAt,
-            paidAt: $form->paidAt,
-        );
+        $this->rentalAgreementPaymentService->update($cmd);
 
         return Response::json(['message' => 'Updated rental agreement payment successfully']);
     }
@@ -88,9 +71,9 @@ final readonly class RentalAgreementPaymentController
     public function delete(Request $request): Response
     {
         $this->authService->requireUser();
-        $form = $this->formFactory->handleDeleteRentalAgreementPaymentForm($request->parsedBody);
+        $cmd = $this->formFactory->handleDeleteRentalAgreementPaymentForm($request->parsedBody)->command;
 
-        $this->rentalAgreementPaymentService->delete($form->rentalAgreementId);
+        $this->rentalAgreementPaymentService->delete($cmd);
 
         return Response::json(['message' => 'Rental agreement payment deleted successfully']);
     }

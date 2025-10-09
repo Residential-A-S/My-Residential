@@ -2,7 +2,13 @@
 
 namespace Domain\ValueObject;
 
-final readonly class RentalAgreementId extends Id
-{
+use Domain\Shared\Id;
 
+final readonly class RentalAgreementId implements Id
+{
+    public function __construct(private string $ulid) {}
+    public function toString(): string
+    {
+        return $this->ulid;
+    }
 }

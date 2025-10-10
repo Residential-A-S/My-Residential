@@ -2,7 +2,7 @@
 
 namespace Domain\Factory;
 
-use Domain\Entity\RentalAgreementDocument;
+use Domain\ValueObject\RentalAgreementDocument;
 
 final readonly class RentalAgreementDocumentFactory
 {

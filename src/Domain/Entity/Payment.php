@@ -13,7 +13,7 @@ final readonly class Payment
         public Money $amount,
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $dueAt,
-        public DateTimeImmutable $paidAt,
+        public ?DateTimeImmutable $paidAt,
     ) {
     }
 }

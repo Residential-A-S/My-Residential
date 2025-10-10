@@ -3,6 +3,7 @@
 namespace Domain\Entity;
 
 use DateTimeImmutable;
+use Domain\Types\DocumentType;
 use Domain\ValueObject\DocumentId;
 
 final readonly class Document
@@ -12,7 +13,8 @@ final readonly class Document
         public string $fileName,
         public string $filePath,
         public string $fileType,
-        public DateTimeImmutable $uploadedAt
+        public DateTimeImmutable $uploadedAt,
+        public DocumentType $documentType,
     ) {
     }
 }

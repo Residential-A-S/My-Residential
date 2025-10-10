@@ -1,9 +1,8 @@
 <?php
 
-namespace Domain\Entity;
+namespace Domain\ValueObject;
 
 use DateTimeImmutable;
-use Domain\ValueObject\UserId;
 
 final readonly class PasswordReset
 {

@@ -2,7 +2,7 @@
 
 namespace Application\Service;
 
-use Adapter\Persistence\PdoRentalAgreementPaymentRepository;
+use Adapter\Persistence\PdoRentChargeRepository;
 use Application\Exception\AuthenticationException;
 use DateTimeImmutable;
 use Domain\Entity\RentCharge;
@@ -11,10 +11,10 @@ use Domain\Exception\RentalAgreementException;
 use Domain\Types\Currency;
 use Shared\Exception\ServerException;
 
-final readonly class RentalAgreementPaymentService
+final readonly class RentChargeService
 {
     public function __construct(
-        private PdoRentalAgreementPaymentRepository $rentalAgreementPaymentRepository,
+        private PdoRentChargeRepository $rentalAgreementPaymentRepository,
         private PaymentService $paymentService,
         private AuthenticationService $authS,
     ) {

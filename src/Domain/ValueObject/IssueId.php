@@ -2,9 +2,7 @@
 
 namespace Domain\ValueObject;
 
-use Domain\Shared\Id;
-
-final readonly class IssueId implements Id
+final readonly class IssueId
 {
     public function __construct(private string $ulid) {}
     public function toString(): string

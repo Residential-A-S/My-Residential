@@ -27,9 +27,15 @@
     "phpmailer/phpmailer": "^6.10"
   },
   "require-dev": {
-    "phpunit/phpunit": "@stable"
+    "phpunit/phpunit": "@stable",
+    "phpdocumentor/shim": "@stable"
   },
   "scripts": {
     "phpcs": "phpcs --standard=phpcs.xml"
+  },
+  "config": {
+    "allow-plugins": {
+      "phpdocumentor/shim": true
+    }
   }
 }

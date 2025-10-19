@@ -17,4 +17,16 @@ final readonly class Document
         public DocumentType $documentType,
     ) {
     }
+
+    public function changeDocumentType(DocumentType $newDocumentType): self
+    {
+        return new self(
+            id: $this->id,
+            fileName: $this->fileName,
+            filePath: $this->filePath,
+            fileType: $this->fileType,
+            uploadedAt: $this->uploadedAt,
+            documentType: $newDocumentType,
+        );
+    }
 }

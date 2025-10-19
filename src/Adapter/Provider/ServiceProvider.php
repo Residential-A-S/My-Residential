@@ -20,7 +20,7 @@ use Adapter\Persistence\PdoPasswordResetRepository;
 use Adapter\Persistence\PdoPaymentRepository;
 use Adapter\Persistence\PdoPropertyRepository;
 use Adapter\Persistence\PdoRentalAgreementDocumentRepository;
-use Adapter\Persistence\PdoRentalAgreementPaymentRepository;
+use Adapter\Persistence\PdoRentChargeRepository;
 use Adapter\Persistence\PdoRentalAgreementRepository;
 use Adapter\Persistence\PdoRentalUnitRepository;
 use Adapter\Persistence\PdoTenantRepository;

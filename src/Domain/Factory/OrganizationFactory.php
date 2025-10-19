@@ -2,17 +2,25 @@
 
 namespace Domain\Factory;
 
+use DateTimeImmutable;
 use Domain\Entity\Organization;
+use Shared\Factory\UlidFactory;
 
 final readonly class OrganizationFactory
 {
-    public function withId(Organization $org, int $id): Organization
+    public function __construct(
+        private UlidFactory $ulidFactory
+    ) {
+    }
+
+    public function create(string $name): Organization
     {
+        $now = new DateTimeImmutable();
         return new Organization(
-            $id,
-            $org->name,
-            $org->createdAt,
-            $org->updatedAt
+            id: $this->ulidFactory->organizationId(),
+            name: $name,
+            createdAt: $now,
+            updatedAt: $now
         );
     }
 }

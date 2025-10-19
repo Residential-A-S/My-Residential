@@ -16,4 +16,15 @@ final readonly class RentalUnit
         public DateTimeImmutable $updatedAt
     ) {
     }
+
+    public function rename(string $newName): self
+    {
+        return new self(
+            id: $this->id,
+            propertyId: $this->propertyId,
+            name: $newName,
+            createdAt: $this->createdAt,
+            updatedAt: new DateTimeImmutable(),
+        );
+    }
 }

@@ -23,6 +23,8 @@ final class ValidationException extends BaseException
     public const int PASSWORD_INVALID = 12;
     public const int PASSWORDS_DO_NOT_MATCH = 13;
 
+    public const int Phone = 14;
+
     private const array MESSAGES = [
         self::FORM_VALIDATION => 'Form validation failed.',
         self::REQUIRED => 'This field is required.',
@@ -40,7 +42,8 @@ final class ValidationException extends BaseException
             and be at least 8 characters long.
             ',
         self::PASSWORD_INVALID => 'Password is invalid.',
-        self::PASSWORDS_DO_NOT_MATCH => 'Passwords do not match.'
+        self::PASSWORDS_DO_NOT_MATCH => 'Passwords do not match.',
+        self::Phone => 'Invalid phone number format.'
     ];
 
     private const array HTTP_STATUS_CODES = [
@@ -55,7 +58,8 @@ final class ValidationException extends BaseException
         self::EMAIL_INVALID => 422,
         self::PASSWORD_STRENGTH => 422,
         self::PASSWORD_INVALID => 422,
-        self::PASSWORDS_DO_NOT_MATCH => 422
+        self::PASSWORDS_DO_NOT_MATCH => 422,
+        self::Phone => 422
     ];
     public function __construct(int $code, array $errors = [])
     {

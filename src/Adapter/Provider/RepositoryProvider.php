@@ -18,7 +18,7 @@ use Adapter\Persistence\PdoOrganizationRepository;
 use Adapter\Persistence\PdoPaymentRepository;
 use Adapter\Persistence\PdoPropertyRepository;
 use Adapter\Persistence\PdoRentalAgreementDocumentRepository;
-use Adapter\Persistence\PdoRentalAgreementPaymentRepository;
+use Adapter\Persistence\PdoRentChargeRepository;
 use Adapter\Persistence\PdoRentalAgreementRepository;
 use Adapter\Persistence\PdoRentalUnitRepository;
 use Adapter\Persistence\PdoTenantRepository;
@@ -59,7 +59,7 @@ final readonly class RepositoryProvider implements ProviderInterface
             $c->get(RentalAgreementDocumentFactory::class)
         ));
 
-        $c->bind(PdoRentalAgreementPaymentRepository::class, fn($c) => new PdoRentalAgreementPaymentRepository(
+        $c->bind(PdoRentChargeRepository::class, fn($c) => new PdoRentChargeRepository(
             $c->get(PDO::class)
         ));
 

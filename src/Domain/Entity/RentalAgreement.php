@@ -20,4 +20,51 @@ final readonly class RentalAgreement
         public DateTimeImmutable $updatedAt
     ) {
     }
+
+    public function changeStatus(RentalAgreementStatus $newStatus): self
+    {
+        return new self(
+            id: $this->id,
+            rentalUnitId: $this->rentalUnitId,
+            startDate: $this->startDate,
+            endDate: $this->endDate,
+            status: $newStatus,
+            paymentInterval: $this->paymentInterval,
+            createdAt: $this->createdAt,
+            updatedAt: new DateTimeImmutable(),
+        );
+    }
+
+    public function extendEndDate(DateTimeImmutable $newEndDate): self
+    {
+        return new self(
+            id: $this->id,
+            rentalUnitId: $this->rentalUnitId,
+            startDate: $this->startDate,
+            endDate: $newEndDate,
+            status: $this->status,
+            paymentInterval: $this->paymentInterval,
+            createdAt: $this->createdAt,
+            updatedAt: new DateTimeImmutable(),
+        );
+    }
+
+    public function changePaymentInterval(PaymentInterval $newInterval): self
+    {
+        return new self(
+            id: $this->id,
+            rentalUnitId: $this->rentalUnitId,
+            startDate: $this->startDate,
+            endDate: $this->endDate,
+            status: $this->status,
+            paymentInterval: $newInterval,
+            createdAt: $this->createdAt,
+            updatedAt: new DateTimeImmutable(),
+        );
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === RentalAgreementStatus::ACTIVE;
+    }
 }

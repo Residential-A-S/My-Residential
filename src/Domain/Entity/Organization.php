@@ -14,4 +14,14 @@ final readonly class Organization
         public DateTimeImmutable $updatedAt
     ) {
     }
+
+    public function rename(string $newName): self
+    {
+        return new self(
+            id: $this->id,
+            name: $newName,
+            createdAt: $this->createdAt,
+            updatedAt: new DateTimeImmutable(),
+        );
+    }
 }

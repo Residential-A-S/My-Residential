@@ -2,22 +2,28 @@
 
 namespace Domain\Factory;
 
+use DateTimeImmutable;
 use Domain\Entity\Property;
+use Domain\ValueObject\Address;
+use Domain\ValueObject\OrganizationId;
+use Shared\Factory\UlidFactory;
 
 final readonly class PropertyFactory
 {
-    public function withId(Property $property, int $id): Property
+    public function __construct(
+        private UlidFactory $ulidFactory
+    ) {
+    }
+
+    public function create(Address $address, OrganizationId $organizationId): Property
     {
+        $now = new DateTimeImmutable();
         return new Property(
-            $id,
-            $property->organizationId,
-            $property->streetName,
-            $property->streetNumber,
-            $property->zipCode,
-            $property->city,
-            $property->country,
-            $property->createdAt,
-            $property->updatedAt
+            id: $this->ulidFactory->propertyId(),
+            organizationId: $organizationId,
+            address: $address,
+            createdAt: $now,
+            updatedAt: $now
         );
     }
 }

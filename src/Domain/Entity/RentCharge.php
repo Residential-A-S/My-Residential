@@ -17,4 +17,31 @@ final readonly class RentCharge
         public DateTimeImmutable $periodEnd,
     ) {
     }
+
+    public function changePeriod(DateTimeImmutable $newStart, DateTimeImmutable $newEnd): self
+    {
+        return new self(
+            id: $this->id,
+            rentalAgreementId: $this->rentalAgreementId,
+            paymentId: $this->paymentId,
+            periodStart: $newStart,
+            periodEnd: $newEnd,
+        );
+    }
+
+    public function reassignPayment(PaymentId $newPaymentId): self
+    {
+        return new self(
+            id: $this->id,
+            rentalAgreementId: $this->rentalAgreementId,
+            paymentId: $newPaymentId,
+            periodStart: $this->periodStart,
+            periodEnd: $this->periodEnd,
+        );
+    }
+
+    public function getPeriodDurationInDays(): int
+    {
+        return $this->periodStart->diff($this->periodEnd)->days;
+    }
 }

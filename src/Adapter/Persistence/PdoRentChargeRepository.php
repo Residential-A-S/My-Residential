@@ -13,7 +13,7 @@ use src\Entity\RentalAgreementPayment;
 use PDO;
 use Throwable;
 
-final readonly class PdoRentalAgreementPaymentRepository
+final readonly class PdoRentChargeRepository
 {
     public function __construct(
         private PDO $db

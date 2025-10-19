@@ -5,3 +5,5 @@ mysql_data
 config.php
 .phpunit.result.cache
 composer.lock
+.phpdoc
+docs

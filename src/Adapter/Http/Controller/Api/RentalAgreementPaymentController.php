@@ -12,12 +12,12 @@ use Shared\Exception\ServerException;
 use Adapter\Http\Exception\ValidationException;
 use Adapter\Http\Form\FormFactory;
 use Application\Service\AuthenticationService;
-use Application\Service\RentalAgreementPaymentService;
+use Application\Service\RentChargeService;
 
 final readonly class RentalAgreementPaymentController
 {
     public function __construct(
-        private RentalAgreementPaymentService $rentalAgreementPaymentService,
+        private RentChargeService $rentalAgreementPaymentService,
         private AuthenticationService $authService,
         private FormFactory $formFactory
     ) {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Adapter\Http;
 
 use Adapter\Auth\NativeSession;
+use Adapter\Exception\RequestException;
 use Application\Security\SessionInterface;
-use Domain\Exception\RequestException;
 use JsonException;
 
 final readonly class Request

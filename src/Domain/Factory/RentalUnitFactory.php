@@ -2,19 +2,27 @@
 
 namespace Domain\Factory;
 
+use DateTimeImmutable;
 use Domain\Entity\RentalUnit;
+use Domain\ValueObject\PropertyId;
+use Shared\Factory\UlidFactory;
 
 final readonly class RentalUnitFactory
 {
-    public function withId(RentalUnit $rentalUnit, int $id): RentalUnit
+    public function __construct(
+        private UlidFactory $ulidFactory
+    ) {
+    }
+
+    public function create(PropertyId $propertyId, string $name): RentalUnit
     {
+        $now = new DateTimeImmutable();
         return new RentalUnit(
-            $id,
-            $rentalUnit->propertyId,
-            $rentalUnit->name,
-            $rentalUnit->status,
-            $rentalUnit->createdAt,
-            $rentalUnit->updatedAt
+            id: $this->ulidFactory->rentalUnitId(),
+            propertyId: $propertyId,
+            name: $name,
+            createdAt: $now,
+            updatedAt: $now
         );
     }
 }

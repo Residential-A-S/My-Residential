@@ -2,36 +2,37 @@
 
 namespace Domain\Factory;
 
-use Adapter\Dto\Command\IssueCreateCommand;
+use DateTimeImmutable;
 use Domain\Entity\Issue;
+use Domain\Types\IssueStatus;
+use Domain\ValueObject\PaymentId;
+use Domain\ValueObject\RentalAgreementId;
+use Shared\Factory\UlidFactory;
 
 final readonly class IssueFactory
 {
-    public function withId(Issue $issue, int $id): Issue
-    {
-        return new Issue(
-            id: $id,
-            rentalAgreementId: $issue->rentalAgreementId,
-            paymentId: $issue->paymentId,
-            name: $issue->name,
-            description: $issue->description,
-            status: $issue->status,
-            createdAt: $issue->createdAt,
-            updatedAt: $issue->updatedAt
-        );
+    public function __construct(
+        private UlidFactory $ulidFactory,
+    ) {
     }
-
-    public function fromCreateCommand(IssueCreateCommand $cmd): Issue
+    public function create(
+        RentalAgreementId $rentalAgreementId,
+        ?PaymentId $paymentId,
+        string $name,
+        string $description,
+        IssueStatus $status
+    ): Issue
     {
+        $now = new DateTimeImmutable();
         return new Issue(
-            id: null,
+            id: $this->ulidFactory->issueId(),
             rentalAgreementId: $rentalAgreementId,
             paymentId: $paymentId,
             name: $name,
             description: $description,
             status: $status,
-            createdAt: new \DateTimeImmutable(),
-            updatedAt: new \DateTimeImmutable()
+            createdAt: $now,
+            updatedAt: $now
         );
     }
 }

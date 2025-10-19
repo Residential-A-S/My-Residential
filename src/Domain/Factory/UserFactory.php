@@ -4,50 +4,29 @@ namespace Domain\Factory;
 
 use DateTimeImmutable;
 use Domain\Entity\User;
+use Domain\ValueObject\Email;
+use Domain\ValueObject\PasswordHash;
+use Shared\Factory\UlidFactory;
 
 final readonly class UserFactory
 {
-    public function withId(User $user, int $id): User
-    {
-        return new User(
-            $id,
-            $user->email,
-            $user->passwordHash,
-            $user->name,
-            $user->createdAt,
-            $user->updatedAt,
-            $user->lastLoginAt,
-            $user->failedLoginAttempts
-        );
+    public function __construct(
+        private UlidFactory $ulidFactory
+    ) {
     }
 
-    public function withUpdatedPassword(User $user, string $passwordHash): User
+    public function create(string $name, Email $email, PasswordHash $passwordHash): User
     {
+        $now = new DateTimeImmutable();
         return new User(
-            $user->id,
-            $user->email,
-            $passwordHash,
-            $user->name,
-            $user->createdAt,
-            $user->updatedAt,
-            $user->lastLoginAt,
-            $user->failedLoginAttempts
-        );
-    }
-
-    public function withUpdatedInfo(User $user, ?string $name = null, ?string $email = null): User
-    {
-        $name = $name ?? $user->name;
-        $email = $email ?? $user->email;
-        return new User(
-            $user->id,
-            $email,
-            $user->passwordHash,
-            $name,
-            $user->createdAt,
-            new DateTimeImmutable(),
-            $user->lastLoginAt,
-            $user->failedLoginAttempts
+            id: $this->ulidFactory->userId(),
+            email: $email,
+            passwordHash: $passwordHash,
+            name: $name,
+            createdAt: $now,
+            updatedAt: $now,
+            lastLoginAt: $now,
+            failedLoginAttempts: 0
         );
     }
 }

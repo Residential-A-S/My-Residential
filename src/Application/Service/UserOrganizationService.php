@@ -2,17 +2,16 @@
 
 namespace Application\Service;
 
-use PDO;
-use Application\Service\AuthenticationService;
-use src\Types\Permission;
-use src\Types\Role;
-use Application\Exception\AuthenticationException;
-use Domain\Exception\OrganizationException;
-use Shared\Exception\ServerException;
-use Domain\Exception\UserException;
-use Adapter\Persistence\PdoOrganizationRepository;
+use Adapter\Persistence\Pdo\OrganizationRepository;
 use Adapter\Persistence\UserOrganizationRepository;
 use Adapter\Persistence\UserRepository;
+use Application\Exception\AuthenticationException;
+use Domain\Exception\OrganizationException;
+use Domain\Exception\UserException;
+use PDO;
+use Shared\Exception\ServerException;
+use src\Types\Permission;
+use src\Types\Role;
 use Throwable;
 
 final readonly class UserOrganizationService
@@ -20,7 +19,7 @@ final readonly class UserOrganizationService
     public function __construct(
         private UserOrganizationRepository $userOrgRepo,
         private UserRepository $userRepo,
-        private PdoOrganizationRepository $orgRepo,
+        private OrganizationRepository $orgRepo,
         private AuthenticationService $authService,
         private PDO $db
     ) {

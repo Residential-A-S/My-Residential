@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use Application\Port\UserRepository;
 use DateTimeImmutable;
@@ -14,7 +14,7 @@ use PDOException;
 use Shared\Exception\ServerException;
 use Throwable;
 
-final readonly class PdoUserRepository implements UserRepository
+final readonly class UserRepository implements UserRepository
 {
     public function __construct(
         private PDO $db,

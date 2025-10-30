@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use DateTimeImmutable;
-use PDOException;
 use Domain\Exception\RentalUnitException;
-use Shared\Exception\ServerException;
 use Domain\Factory\RentalUnitFactory;
-use src\Entity\RentalUnit;
 use PDO;
+use PDOException;
+use Shared\Exception\ServerException;
+use src\Entity\RentalUnit;
 use Throwable;
 
-final readonly class PdoRentalUnitRepository
+final readonly class RentalUnitRepository
 {
     public function __construct(
         private PDO $db,

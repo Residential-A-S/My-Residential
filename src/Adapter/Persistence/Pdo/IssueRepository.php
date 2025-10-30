@@ -2,22 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use Adapter\Exception\DatabaseException;
-use Application\Port\IssueRepository;
+use Application\Port\IssueRepository as IssueRepositoryInterface;
 use DateTimeImmutable;
+use Domain\Entity\Issue;
 use Domain\Types\IssueStatus;
 use Domain\ValueObject\IssueId;
 use Domain\ValueObject\PaymentId;
 use Domain\ValueObject\RentalAgreementId;
-use PDOException;
-use Domain\Entity\Issue;
 use PDO;
+use PDOException;
 use Throwable;
 
-final readonly class PdoIssueRepository implements IssueRepository
+/**
+ * PDO-backed implementation of the IssueRepository interface.
+ *
+ * Responsible for persisting and retrieving Issue entities using a relational database.
+ */
+final readonly class IssueRepository implements IssueRepositoryInterface
 {
+    /**
+     * @param PDO $db
+     */
     public function __construct(
         private PDO $db
     ) {
@@ -95,9 +103,6 @@ final readonly class PdoIssueRepository implements IssueRepository
             $stmt->bindValue(':updated_at', $issue->updatedAt->format('Y-m-d H:i:s'));
 
             $stmt->execute();
-            if ($stmt->rowCount() === 0) {
-                throw new DatabaseException(DatabaseException::QUERY_FAILED);
-            }
         } catch (PDOException) {
             throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }

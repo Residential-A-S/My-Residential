@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use Adapter\Exception\DatabaseException;
-use Application\Port\PasswordResetRepository;
+use Application\Port\PasswordResetRepository as PasswordResetRepositoryInterface;
 use DateTimeImmutable;
 use Domain\Entity\PasswordReset;
 use Domain\ValueObject\PasswordResetId;
@@ -15,14 +15,20 @@ use PDO;
 use PDOException;
 use Throwable;
 
-final readonly class PdoPasswordResetRepository implements PasswordResetRepository
+/**
+ *
+ */
+final readonly class PasswordResetRepository implements PasswordResetRepositoryInterface
 {
+    /**
+     * @param PDO $db
+     */
     public function __construct(private PDO $db) {}
 
     /**
      * @throws DatabaseException
      */
-    public function insertPasswordResetToken(PasswordReset $passwordReset): void
+    public function savePasswordResetToken(PasswordReset $passwordReset): void
     {
         try{
             $sql  = <<<'SQL'

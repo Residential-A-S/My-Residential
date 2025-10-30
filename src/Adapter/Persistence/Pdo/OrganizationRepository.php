@@ -1,18 +1,24 @@
 <?php
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use Adapter\Exception\DatabaseException;
-use Application\Port\OrganizationRepository;
+use Application\Port\OrganizationRepository as OrganizationRepositoryInterface;
 use DateTimeImmutable;
+use Domain\Entity\Organization;
 use Domain\ValueObject\OrganizationId;
 use PDO;
 use PDOException;
 use Throwable;
-use Domain\Entity\Organization;
 
-final readonly class PdoOrganizationRepository implements OrganizationRepository
+/**
+ *
+ */
+final readonly class OrganizationRepository implements OrganizationRepositoryInterface
 {
+    /**
+     * @param PDO $db
+     */
     public function __construct(
         private PDO $db
     ) {

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use DateTimeImmutable;
+use Domain\Exception\TenantException;
+use Domain\Factory\TenantFactory;
+use PDO;
 use PDOException;
 use Shared\Exception\BaseException;
 use Shared\Exception\ServerException;
-use Domain\Exception\TenantException;
-use Domain\Factory\TenantFactory;
 use src\Entity\Tenant;
-use PDO;
 use Throwable;
 
-final readonly class PdoTenantRepository
+final readonly class TenantRepository
 {
     public function __construct(
         private PDO $db,

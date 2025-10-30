@@ -1,11 +1,11 @@
 <?php
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use PDO;
 use src\Types\Role;
 
-final readonly class PdoTenantRentalAgreementRepository
+final readonly class TenantRentalAgreementRepository
 {
     public function __construct(
         private PDO $db

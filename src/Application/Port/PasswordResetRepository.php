@@ -5,14 +5,17 @@ namespace Application\Port;
 use Domain\Entity\PasswordReset;
 use Domain\ValueObject\PasswordResetToken;
 
+/**
+ *
+ */
 interface PasswordResetRepository
 {
     /**
-     * Insert a new password reset token.
+     * Saves a new password reset token.
      * @param PasswordReset $passwordReset
      * @return void
      */
-    public function insertPasswordResetToken(PasswordReset $passwordReset): void;
+    public function savePasswordResetToken(PasswordReset $passwordReset): void;
 
 
     /**

@@ -4,7 +4,7 @@ namespace Application\Service;
 
 use Adapter\Exception\MailException;
 use Adapter\Mail\Mailer;
-use Adapter\Persistence\PdoPasswordResetRepository;
+use Adapter\Persistence\Pdo\PasswordResetRepository;
 use Adapter\Persistence\UserRepository;
 use Application\Exception\AuthenticationException;
 use DateMalformedStringException;
@@ -21,7 +21,7 @@ final readonly class PasswordResetService
 {
     public function __construct(
         private UserRepository $userRepository,
-        private PdoPasswordResetRepository $passwordResetRepository,
+        private PasswordResetRepository $passwordResetRepository,
         private UserFactory $userFactory,
         private Mailer $mailService,
     ) {}

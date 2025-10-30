@@ -2,18 +2,17 @@
 
 namespace Application\Service;
 
-use DateTimeImmutable;
+use Adapter\Persistence\Pdo\RentalUnitRepository;
 use Application\Exception\AuthenticationException;
+use DateTimeImmutable;
 use Domain\Exception\RentalUnitException;
 use Shared\Exception\ServerException;
 use src\Entity\RentalUnit;
-use Adapter\Persistence\PdoRentalUnitRepository;
-use Application\Service\AuthenticationService;
 
 final readonly class RentalUnitService
 {
     public function __construct(
-        private PdoRentalUnitRepository $ruR,
+        private RentalUnitRepository $ruR,
         private AuthenticationService $authS,
     ) {
     }

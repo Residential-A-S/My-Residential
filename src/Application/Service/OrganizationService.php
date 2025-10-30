@@ -2,23 +2,21 @@
 
 namespace Application\Service;
 
-use Application\Service\UserOrganizationService;
-use DateTimeImmutable;
-use PDO;
-use Application\Service\AuthenticationService;
-use src\Types\Permission;
-use src\Types\Role;
+use Adapter\Persistence\Pdo\OrganizationRepository;
 use Application\Exception\AuthenticationException;
-use Shared\Exception\BaseException;
+use DateTimeImmutable;
 use Domain\Exception\OrganizationException;
+use PDO;
+use Shared\Exception\BaseException;
 use Shared\Exception\ServerException;
 use src\Entity\Organization;
-use Adapter\Persistence\PdoOrganizationRepository;
+use src\Types\Permission;
+use src\Types\Role;
 
 final readonly class OrganizationService
 {
     public function __construct(
-        private PdoOrganizationRepository $orgR,
+        private OrganizationRepository $orgR,
         private AuthenticationService $authS,
         private UserOrganizationService $userOrgS,
         private PDO $db

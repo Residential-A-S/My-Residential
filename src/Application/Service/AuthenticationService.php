@@ -9,8 +9,15 @@ use Application\Security\SessionInterface;
 use Domain\Entity\User;
 
 
+/**
+ *
+ */
 final readonly class AuthenticationService
 {
+    /**
+     * @param SessionInterface $session
+     * @param UserRepository $userRepository
+     */
     public function __construct(
         private SessionInterface $session,
         private UserRepository $userRepository

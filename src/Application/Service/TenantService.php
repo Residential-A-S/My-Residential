@@ -2,18 +2,17 @@
 
 namespace Application\Service;
 
-use DateTimeImmutable;
+use Adapter\Persistence\Pdo\TenantRepository;
 use Application\Exception\AuthenticationException;
-use Shared\Exception\ServerException;
+use DateTimeImmutable;
 use Domain\Exception\TenantException;
+use Shared\Exception\ServerException;
 use src\Entity\Tenant;
-use Adapter\Persistence\PdoTenantRepository;
-use Application\Service\AuthenticationService;
 
 final readonly class TenantService
 {
     public function __construct(
-        private PdoTenantRepository $tenantR,
+        private TenantRepository $tenantR,
         private AuthenticationService $authS,
     ) {
     }

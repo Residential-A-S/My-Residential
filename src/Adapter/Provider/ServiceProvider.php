@@ -2,33 +2,22 @@
 
 namespace Adapter\Provider;
 
-use Application\Port\UserRepository;
-use Domain\Factory\UserFactory;
-use PDO;
 use Adapter\Bootstrap\Container;
-use Domain\Factory\IssueFactory;
-use Domain\Factory\OrganizationFactory;
-use Domain\Factory\PaymentFactory;
-use Domain\Factory\PropertyFactory;
-use Domain\Factory\RentalAgreementDocumentFactory;
-use Domain\Factory\RentalAgreementFactory;
-use Domain\Factory\RentalUnitFactory;
-use Domain\Factory\TenantFactory;
-use Adapter\Persistence\PdoIssueRepository;
-use Adapter\Persistence\PdoOrganizationRepository;
-use Adapter\Persistence\PdoPasswordResetRepository;
-use Adapter\Persistence\PdoPaymentRepository;
-use Adapter\Persistence\PdoPropertyRepository;
+use Adapter\Mail\Mailer;
+use Adapter\Persistence\Pdo\IssueRepository;
+use Adapter\Persistence\Pdo\OrganizationRepository;
+use Adapter\Persistence\Pdo\PasswordResetRepository;
+use Adapter\Persistence\Pdo\PdoPaymentRepository;
+use Adapter\Persistence\Pdo\PropertyRepository;
+use Adapter\Persistence\Pdo\RentalAgreementRepository;
+use Adapter\Persistence\Pdo\RentalUnitRepository;
+use Adapter\Persistence\Pdo\TenantRepository;
+use Adapter\Persistence\Pdo\UserOrganizationRepository;
+use Adapter\Persistence\Pdo\UserRepository;
 use Adapter\Persistence\PdoRentalAgreementDocumentRepository;
-use Adapter\Persistence\PdoRentChargeRepository;
-use Adapter\Persistence\PdoRentalAgreementRepository;
-use Adapter\Persistence\PdoRentalUnitRepository;
-use Adapter\Persistence\PdoTenantRepository;
-use Adapter\Persistence\PdoUserOrganizationRepository;
-use Adapter\Persistence\PdoUserRepository;
+use Application\Port\UserRepository;
 use Application\Service\AuthenticationService;
 use Application\Service\IssueService;
-use Adapter\Mail\Mailer;
 use Application\Service\OrganizationService;
 use Application\Service\PasswordResetService;
 use Application\Service\PaymentService;
@@ -36,9 +25,11 @@ use Application\Service\PropertyService;
 use Application\Service\RentalAgreementService;
 use Application\Service\RentalUnitService;
 use Application\Service\TenantService;
-use Adapter\I18n\Translator;
 use Application\Service\UserOrganizationService;
 use Application\Service\UserService;
+use Domain\Factory\RentalAgreementDocumentFactory;
+use Domain\Factory\UserFactory;
+use PDO;
 use src\Providers\ProviderInterface;
 use Twig\Environment;
 
@@ -53,11 +44,11 @@ final readonly class ServiceProvider implements ProviderInterface
     {
         $c->bind(AuthenticationService::class, fn($c) => new AuthenticationService(
             $this->config['session'],
-            $c->get(PdoUserRepository::class)
+            $c->get(UserRepository::class)
         ));
 
         $c->bind(IssueService::class, fn($c) => new IssueService(
-            $c->get(PdoIssueRepository::class),
+            $c->get(IssueRepository::class),
             $c->get(AuthenticationService::class)
         ));
 
@@ -66,23 +57,23 @@ final readonly class ServiceProvider implements ProviderInterface
         ));
 
         $c->bind(UserOrganizationService::class, fn($c) => new UserOrganizationService(
-            $c->get(PdoUserOrganizationRepository::class),
-            $c->get(PdoUserRepository::class),
-            $c->get(PdoOrganizationRepository::class),
+            $c->get(UserOrganizationRepository::class),
+            $c->get(UserRepository::class),
+            $c->get(OrganizationRepository::class),
             $c->get(AuthenticationService::class),
             $c->get(PDO::class)
         ));
 
         $c->bind(OrganizationService::class, fn($c) => new OrganizationService(
-            $c->get(PdoOrganizationRepository::class),
+            $c->get(OrganizationRepository::class),
             $c->get(AuthenticationService::class),
             $c->get(UserOrganizationService::class),
             $c->get(PDO::class)
         ));
 
         $c->bind(PasswordResetService::class, fn($c) => new PasswordResetService(
-            $c->get(PdoUserRepository::class),
-            $c->get(PdoPasswordResetRepository::class),
+            $c->get(UserRepository::class),
+            $c->get(PasswordResetRepository::class),
             $c->get(UserFactory::class),
             $c->get(Mailer::class)
         ));
@@ -93,22 +84,22 @@ final readonly class ServiceProvider implements ProviderInterface
         ));
 
         $c->bind(PropertyService::class, fn($c) => new PropertyService(
-            $c->get(PdoPropertyRepository::class),
+            $c->get(PropertyRepository::class),
             $c->get(AuthenticationService::class)
         ));
 
         $c->bind(RentalAgreementService::class, fn($c) => new RentalAgreementService(
-            $c->get(PdoRentalAgreementRepository::class),
+            $c->get(RentalAgreementRepository::class),
             $c->get(AuthenticationService::class)
         ));
 
         $c->bind(RentalUnitService::class, fn($c) => new RentalUnitService(
-            $c->get(PdoRentalUnitRepository::class),
+            $c->get(RentalUnitRepository::class),
             $c->get(AuthenticationService::class)
         ));
 
         $c->bind(TenantService::class, fn($c) => new TenantService(
-            $c->get(PdoTenantRepository::class),
+            $c->get(TenantRepository::class),
             $c->get(AuthenticationService::class)
         ));
 

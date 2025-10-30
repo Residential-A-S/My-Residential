@@ -2,19 +2,18 @@
 
 namespace Application\Service;
 
-use DateTimeImmutable;
-use Application\Service\AuthenticationService;
-use src\Types\PaymentInterval;
+use Adapter\Persistence\Pdo\RentalAgreementRepository;
 use Application\Exception\AuthenticationException;
+use DateTimeImmutable;
 use Domain\Exception\RentalAgreementException;
 use Shared\Exception\ServerException;
 use src\Entity\RentalAgreement;
-use Adapter\Persistence\PdoRentalAgreementRepository;
+use src\Types\PaymentInterval;
 
 final readonly class RentalAgreementService
 {
     public function __construct(
-        private PdoRentalAgreementRepository $raR,
+        private RentalAgreementRepository $raR,
         private AuthenticationService $authS,
     ) {
     }

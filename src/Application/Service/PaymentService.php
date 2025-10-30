@@ -2,14 +2,13 @@
 
 namespace Application\Service;
 
-use DateTimeImmutable;
-use Application\Service\AuthenticationService;
-use src\Types\Currency;
+use Adapter\Persistence\Pdo\PdoPaymentRepository;
 use Application\Exception\AuthenticationException;
+use DateTimeImmutable;
 use Domain\Exception\PaymentException;
 use Shared\Exception\ServerException;
 use src\Entity\Payment;
-use Adapter\Persistence\PdoPaymentRepository;
+use src\Types\Currency;
 
 final readonly class PaymentService
 {

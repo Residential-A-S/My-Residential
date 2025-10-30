@@ -2,18 +2,17 @@
 
 namespace Application\Service;
 
-use DateTimeImmutable;
+use Adapter\Persistence\Pdo\PropertyRepository;
 use Application\Exception\AuthenticationException;
+use DateTimeImmutable;
 use Domain\Exception\PropertyException;
 use Shared\Exception\ServerException;
 use src\Entity\Property;
-use Adapter\Persistence\PdoPropertyRepository;
-use Application\Service\AuthenticationService;
 
 final readonly class PropertyService
 {
     public function __construct(
-        private PdoPropertyRepository $propR,
+        private PropertyRepository $propR,
         private AuthenticationService $authS,
     ) {
     }

@@ -2,21 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Adapter\Persistence;
+namespace Adapter\Persistence\Pdo;
 
 use Adapter\Exception\DatabaseException;
-use Application\Port\PaymentRepository;
+use Application\Port\PaymentRepository as PaymentRepositoryInterface;
 use DateTimeImmutable;
 use Domain\Entity\Payment;
 use Domain\Types\Currency;
 use Domain\ValueObject\Money;
 use Domain\ValueObject\PaymentId;
-use PDOException;
 use PDO;
+use PDOException;
 use Throwable;
 
-final readonly class PdoPaymentRepository implements PaymentRepository
+/**
+ *
+ */
+final readonly class PaymentRepository implements PaymentRepositoryInterface
 {
+    /**
+     * @param PDO $db
+     */
     public function __construct(
         private PDO $db
     ) {

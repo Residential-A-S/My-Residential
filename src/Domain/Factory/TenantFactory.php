@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use Domain\Entity\Tenant;
 use Domain\ValueObject\Email;
 use Domain\ValueObject\Phone;
-use Shared\Factory\UlidFactory;
 
 final readonly class TenantFactory
 {

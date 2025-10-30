@@ -2,47 +2,44 @@
 
 namespace Adapter\Persistence;
 
+use Adapter\Exception\DatabaseException;
 use Application\Port\OrganizationRepository;
 use DateTimeImmutable;
+use Domain\ValueObject\OrganizationId;
 use PDO;
 use PDOException;
-use Domain\Exception\OrganizationException;
-use Shared\Exception\ServerException;
-use Domain\Factory\OrganizationFactory;
-use src\Entity\Organization;
 use Throwable;
+use Domain\Entity\Organization;
 
 final readonly class PdoOrganizationRepository implements OrganizationRepository
 {
     public function __construct(
-        private PDO $db,
-        private OrganizationFactory $factory
+        private PDO $db
     ) {
     }
 
     /**
-     * @throws OrganizationException
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function findById(int $id): Organization
+    public function findById(OrganizationId $id): Organization
     {
         try {
             $stmt = $this->db->prepare('SELECT * FROM organizations WHERE id = :id');
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$data) {
-                throw new OrganizationException(OrganizationException::NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
             return $this->hydrate($data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
      * @return Organization[]
-     * @throws ServerException
+     * @throws DatabaseException
      */
     public function findAll(): array
     {
@@ -51,74 +48,58 @@ final readonly class PdoOrganizationRepository implements OrganizationRepository
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return array_map([$this, 'hydrate'], $data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws OrganizationException
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function save(Organization $organization): Organization
+    public function save(Organization $organization): void
     {
         try {
-            if ($organization->id === null) {
-                $sql = <<<'SQL'
-                INSERT INTO organizations
-                    (name, created_at, updated_at)
-                VALUES 
-                    (:name, :created_at, :updated_at)
-                SQL;
-            } else {
-                $sql = <<<'SQL'
-                UPDATE organizations
-                SET name = :name, 
-                    updated_at = :updated_at
-                WHERE id = :id
-                SQL;
-            }
+            $sql = <<<'SQL'
+            INSERT INTO organizations(
+              id, name, created_at, updated_at
+            ) VALUES (
+              :id, :name, :created_at, :updated_at
+            )
+            ON DUPLICATE KEY UPDATE 
+                name = :name,
+                updated_at = :updated_at
+            SQL;
 
             $stmt = $this->db->prepare($sql);
 
+            $stmt->bindValue(':id', $organization->id->toString());
             $stmt->bindValue(':name', $organization->name);
             $stmt->bindValue(':created_at', $organization->createdAt->format('Y-m-d H:i:s'));
             $stmt->bindValue(':updated_at', $organization->updatedAt->format('Y-m-d H:i:s'));
 
-            if ($organization->id !== null) {
-                $stmt->bindValue(':id', $organization->id, PDO::PARAM_INT);
-            }
-
             $stmt->execute();
             if ($stmt->rowCount() === 0) {
-                throw new OrganizationException(OrganizationException::CREATE_FAILED);
+                throw new DatabaseException(DatabaseException::QUERY_FAILED);
             }
-
-            if ($organization->id !== null) {
-                return $organization;
-            }
-            return $this->factory->withId($organization, (int)$this->db->lastInsertId());
-
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws OrganizationException
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function delete(int $id): void
+    public function delete(OrganizationId $id): void
     {
         try {
             $stmt = $this->db->prepare('DELETE FROM organizations WHERE id = :id');
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
             if ($stmt->rowCount() === 0) {
-                throw new OrganizationException(OrganizationException::DELETE_FAILED);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
@@ -126,25 +107,25 @@ final readonly class PdoOrganizationRepository implements OrganizationRepository
      * Hydrates an array of data into an CreateOrganizationCommand object.
      *
      * @param array{
-     *     id:int,
+     *     id:string,
      *     name:string,
      *     created_at:string,
      *     updated_at:string
      * } $data
-     * @return CreateOrganizationCommand
-     * @throws ServerException
+     * @return Organization
+     * @throws DatabaseException
      */
     private function hydrate(array $data): Organization
     {
         try {
             return new Organization(
-                $data['id'],
+                new OrganizationId($data['id']),
                 $data['name'],
                 new DateTimeImmutable($data['created_at']),
                 new DateTimeImmutable($data['updated_at'])
             );
-        } catch (Throwable $e) {
-            throw new ServerException($e->getMessage());
+        } catch (Throwable) {
+            throw new DatabaseException(DatabaseException::HYDRATION_FAILED);
         }
     }
 }

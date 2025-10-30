@@ -7,8 +7,7 @@
     "psr-4": {
       "Adapter\\": "src/Adapter/",
       "Application\\": "src/Application/",
-      "Domain\\": "src/Domain/",
-      "Shared\\": "src/Shared/"
+      "Domain\\": "src/Domain/"
     },
     "files": [
       "config.php"
@@ -28,7 +27,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "@stable",
-    "phpdocumentor/shim": "@stable"
+    "phpdocumentor/shim": "@stable",
+    "deptrac/deptrac": "^4.2"
   },
   "scripts": {
     "phpcs": "phpcs --standard=phpcs.xml"

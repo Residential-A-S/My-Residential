@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use Domain\Entity\User;
 use Domain\ValueObject\Email;
 use Domain\ValueObject\PasswordHash;
-use Shared\Factory\UlidFactory;
 
 final readonly class UserFactory
 {

@@ -2,13 +2,12 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Dto\Command\ChangePasswordCommand;
-use Adapter\Http\Exception\ValidationException;
-use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\MinRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 use Adapter\Http\Form\Validation\StrongPasswordRule;
+use Adapter\Http\RouteName;
+use Application\Dto\Command\ChangePasswordCommand;
 
 class ChangePasswordForm extends AbstractForm
 {

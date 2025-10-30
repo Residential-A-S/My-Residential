@@ -2,11 +2,11 @@
 
 namespace Adapter\Mail;
 
+use Adapter\Exception\MailException;
 use PHPMailer\PHPMailer\Exception;
-use Adapter\Mail\MailException;
+use PHPMailer\PHPMailer\PHPMailer;
 use Shared\Exception\ServerException;
 use Twig\Environment;
-use PHPMailer\PHPMailer\PHPMailer;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;

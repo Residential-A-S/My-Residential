@@ -4,47 +4,47 @@ declare(strict_types=1);
 
 namespace Adapter\Persistence;
 
+use Adapter\Exception\DatabaseException;
+use Application\Port\PaymentRepository;
 use DateTimeImmutable;
+use Domain\Entity\Payment;
+use Domain\Types\Currency;
+use Domain\ValueObject\Money;
+use Domain\ValueObject\PaymentId;
 use PDOException;
-use Domain\Exception\PaymentException;
-use Shared\Exception\ServerException;
-use Domain\Factory\PaymentFactory;
-use src\Entity\Payment;
 use PDO;
 use Throwable;
 
-final readonly class PdoPaymentRepository
+final readonly class PdoPaymentRepository implements PaymentRepository
 {
     public function __construct(
-        private PDO $db,
-        private PaymentFactory $factory,
+        private PDO $db
     ) {
     }
 
     /**
-     * @throws PaymentException
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function findById(int $id): Payment
+    public function findById(PaymentId $id): Payment
     {
         try {
             $stmt = $this->db->prepare('SELECT * FROM payments WHERE id = :id');
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
 
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$data) {
-                throw new PaymentException(PaymentException::NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
 
             return $this->hydrate($data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
+     * @throws DatabaseException
      */
     public function findAll(): array
     {
@@ -53,106 +53,82 @@ final readonly class PdoPaymentRepository
             $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return array_map([$this, 'hydrate'], $payments);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws PaymentException
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function create(Payment $payment): Payment
+    public function save(Payment $payment): void
     {
         try {
             $sql = <<<'SQL'
-                INSERT INTO payments 
-                    (amount, currency, created_at, due_at, paid_at)
-                VALUES 
-                    (:amount, :currency, :created_at, :due_at, paid_at)
+            INSERT INTO payments(
+                id, amount, currency, created_at, due_at, paid_at
+            )
+            VALUES(
+                :id, :amount, :currency, :created_at, :due_at, :paid_at
+            )
+            ON DUPLICATE KEY UPDATE 
+                amount = :amount,
+                currency = :currency,
+                created_at = :created_at,
+                due_at = :due_at,
+                paid_at = :paid_at
             SQL;
             $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(':amount', $payment->amount);
-            $stmt->bindValue(':currency', $payment->currency);
+            $stmt->bindValue(':id', $payment->id->toString());
+            $stmt->bindValue(':amount', $payment->amount->minorAmount, PDO::PARAM_INT);
+            $stmt->bindValue(':currency', $payment->amount->currency->value);
             $stmt->bindValue(':created_at', $payment->createdAt->format('Y-m-d H:i:s'));
             $stmt->bindValue(':due_at', $payment->dueAt?->format('Y-m-d H:i:s'));
             $stmt->bindValue(':paid_at', $payment->paidAt?->format('Y-m-d H:i:s'));
 
             $stmt->execute();
             if ($stmt->rowCount() === 0) {
-                throw new PaymentException(PaymentException::CREATE_FAILED);
+                throw new DatabaseException(DatabaseException::QUERY_FAILED);
             }
-            $paymentId = (int)$this->db->lastInsertId();
-            return $this->factory->withId($payment, $paymentId);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function update(Payment $payment): void
-    {
-        try {
-            $sql = <<<'SQL'
-                UPDATE payments
-                SET amount = :amount,
-                    currency = :currency,
-                    due_at = :due_at,
-                    paid_at = :paid_at
-                WHERE id = :id
-            SQL;
-            $stmt = $this->db->prepare($sql);
-
-            $stmt->bindValue(':id', $payment->id, PDO::PARAM_INT);
-            $stmt->bindValue(':amount', $payment->amount);
-            $stmt->bindValue(':currency', $payment->currency);
-            $stmt->bindValue(':due_at', $payment->dueAt?->format('Y-m-d H:i:s'));
-            $stmt->bindValue(':paid_at', $payment->paidAt?->format('Y-m-d H:i:s'));
-
-            $stmt->execute();
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
-        }
-    }
-
-    /**
-     * @throws ServerException
-     * @throws PaymentException
-     */
-    public function delete(int $id): void
+    public function delete(PaymentId $id): void
     {
         try {
             $stmt = $this->db->prepare('DELETE FROM payments WHERE id = :id');
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
-                throw new PaymentException(PaymentException::NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
+     * @throws DatabaseException
      */
     private function hydrate(array $data): Payment
     {
         try {
             return new Payment(
-                id:         $data['id'],
-                amount:     (float)$data['amount'],
-                currency:   $data['currency'],
+                id:         new PaymentId($data['id']),
+                amount:     new Money($data['amount'], Currency::from($data['currency'])),
                 createdAt:  new DateTimeImmutable($data['created_at']),
                 dueAt:      new DateTimeImmutable($data['due_at']),
-                paidAt:     new DateTimeImmutable($data['paid_at'])
+                paidAt:     $data['paid_at'] == null ? null : new DateTimeImmutable($data['paid_at'])
             );
-        } catch (Throwable $e) {
-            throw new ServerException($e->getMessage());
+        } catch (Throwable) {
+            throw new DatabaseException(DatabaseException::HYDRATION_FAILED);
         }
     }
 }

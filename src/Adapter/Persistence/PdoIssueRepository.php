@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Adapter\Persistence;
 
+use Adapter\Exception\DatabaseException;
 use Application\Port\IssueRepository;
 use DateTimeImmutable;
+use Domain\Types\IssueStatus;
+use Domain\ValueObject\IssueId;
+use Domain\ValueObject\PaymentId;
+use Domain\ValueObject\RentalAgreementId;
 use PDOException;
-use Domain\Exception\IssueException;
-use Shared\Exception\ServerException;
-use Domain\Factory\IssueFactory;
 use Domain\Entity\Issue;
 use PDO;
 use Throwable;
@@ -17,34 +19,32 @@ use Throwable;
 final readonly class PdoIssueRepository implements IssueRepository
 {
     public function __construct(
-        private PDO $db,
-        private IssueFactory $factory,
+        private PDO $db
     ) {
     }
 
     /**
-     * @throws IssueException
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function findById(int $id): Issue
+    public function findById(IssueId $id): Issue
     {
         try {
             $sql = 'SELECT * FROM issues WHERE id = :id';
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$data) {
-                throw new IssueException(IssueException::NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
             return $this->hydrate($data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
+     * @throws DatabaseException
      */
     public function findAll(): array
     {
@@ -54,44 +54,39 @@ final readonly class PdoIssueRepository implements IssueRepository
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return array_map([$this, 'hydrate'], $data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
-     * @throws IssueException
+     * @throws DatabaseException
      */
-    public function save(Issue $issue): Issue
+    public function save(Issue $issue): void
     {
         try {
-            if ($issue->id === null) {
-                $sql = <<<'SQL'
-                INSERT INTO issues
-                    (rental_agreement_id, payment_id, name, description, status, created_at, updated_at)
-                VALUES
-                    (:rental_agreement_id, :payment_id, :name, :description, :status, :created_at, :updated_at)
-                SQL;
-            } else {
-                $sql = <<<'SQL'
-                UPDATE issues
-                SET rental_agreement_id = :rental_agreement_id,
-                    payment_id = :payment_id,
-                    name = :name,
-                    description = :description,
-                    status = :status,
-                    updated_at = :updated_at
-                WHERE id = :id
-                SQL;
-            }
+            $sql = <<<'SQL'
+            INSERT INTO issues (
+                id, rental_agreement_id, payment_id, name, description, status, created_at, updated_at
+            ) VALUES (
+                :id, :rental_agreement_id, :payment_id, :name, :description, :status, :created_at, :updated_at
+            )
+            ON DUPLICATE KEY UPDATE
+                rental_agreement_id = VALUES(rental_agreement_id),
+                payment_id = VALUES(payment_id),
+                name = VALUES(name),
+                description = VALUES(description),
+                status = VALUES(status),
+                updated_at = VALUES(updated_at)
+            SQL;
             $stmt = $this->db->prepare($sql);
 
-            $stmt->bindValue(':rental_agreement_id', $issue->rentalAgreementId, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $issue->id->toString());
+            $stmt->bindValue(':rental_agreement_id', $issue->rentalAgreementId->toString());
             $stmt->bindValue(
                 ':payment_id',
-                $issue->paymentId,
-                $issue->paymentId === null ? PDO::PARAM_NULL : PDO::PARAM_INT
+                $issue->paymentId?->toString(),
+                $issue->paymentId === null ? PDO::PARAM_NULL : PDO::PARAM_STR
             );
             $stmt->bindValue(':name', $issue->name);
             $stmt->bindValue(':description', $issue->description);
@@ -99,73 +94,63 @@ final readonly class PdoIssueRepository implements IssueRepository
             $stmt->bindValue(':created_at', $issue->createdAt->format('Y-m-d H:i:s'));
             $stmt->bindValue(':updated_at', $issue->updatedAt->format('Y-m-d H:i:s'));
 
-            if ($issue->id !== null) {
-                $stmt->bindValue(':id', $issue->id, PDO::PARAM_INT);
-            }
-
             $stmt->execute();
             if ($stmt->rowCount() === 0) {
-                throw new IssueException(IssueException::SAVE_FAILED);
+                throw new DatabaseException(DatabaseException::QUERY_FAILED);
             }
-            if ($issue->id !== null) {
-                return $issue;
-            }
-            return $this->factory->withId($issue, (int)$this->db->lastInsertId());
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
-     * @throws IssueException
+     * @throws DatabaseException
      */
-    public function delete(int $id): void
+    public function delete(IssueId $id): void
     {
         try {
             $sql = 'DELETE FROM issues WHERE id = :id';
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
             if ($stmt->rowCount() === 0) {
-                throw new IssueException(IssueException::NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * Hydrates an array of data into an CreateIssueCommand object.
      *
      * @param array{
-     *     id:int,
-     *     rental_agreement_id:int,
-     *     payment_id:int|null,
+     *     id:string,
+     *     rental_agreement_id:string,
+     *     payment_id:string|null,
      *     name:string,
      *     description:string,
      *     status:string,
      *     created_at:string,
      *     updated_at:string
      * } $data
-     * @return CreateIssueCommand
-     * @throws ServerException
+     * @return Issue
+     * @throws DatabaseException
      */
     private function hydrate(array $data): Issue
     {
         try {
             return new Issue(
-                id:                 $data['id'],
-                rentalAgreementId:  $data['rental_agreement_id'],
-                paymentId:          $data['payment_id'] === null ? null : (int)$data['payment_id'],
+                id:                 new IssueId($data['id']),
+                rentalAgreementId:  new RentalAgreementId($data['rental_agreement_id']),
+                paymentId:          $data['payment_id'] === null ? null : new PaymentId($data['payment_id']),
                 name:               $data['name'],
                 description:        $data['description'],
-                status:             $data['status'],
+                status:             IssueStatus::from($data['status']),
                 createdAt:          new DateTimeImmutable($data['created_at']),
                 updatedAt:          new DateTimeImmutable($data['updated_at'])
             );
-        } catch (Throwable $e) {
-            throw new ServerException($e->getMessage());
+        } catch (Throwable) {
+            throw new DatabaseException(DatabaseException::HYDRATION_FAILED);
         }
     }
 }

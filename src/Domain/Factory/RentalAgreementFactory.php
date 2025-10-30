@@ -7,7 +7,6 @@ use Domain\Entity\RentalAgreement;
 use Domain\Types\PaymentInterval;
 use Domain\Types\RentalAgreementStatus;
 use Domain\ValueObject\RentalUnitId;
-use Shared\Factory\UlidFactory;
 
 final readonly class RentalAgreementFactory
 {

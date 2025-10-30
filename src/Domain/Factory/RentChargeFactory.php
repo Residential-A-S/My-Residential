@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use Domain\Entity\RentCharge;
 use Domain\ValueObject\PaymentId;
 use Domain\ValueObject\RentalAgreementId;
-use Shared\Factory\UlidFactory;
 
 final readonly class RentChargeFactory
 {

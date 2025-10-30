@@ -3,6 +3,7 @@
 namespace Adapter\Http;
 
 use Adapter\Bootstrap\Container;
+use Adapter\Exception\ResponseException;
 
 use function call_user_func;
 

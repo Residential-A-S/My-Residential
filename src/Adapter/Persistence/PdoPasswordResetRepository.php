@@ -4,117 +4,113 @@ declare(strict_types=1);
 
 namespace Adapter\Persistence;
 
-use Application\DTO\PasswordReset;
-use DateMalformedStringException;
+use Adapter\Exception\DatabaseException;
+use Application\Port\PasswordResetRepository;
 use DateTimeImmutable;
-use Domain\Exception\PasswordResetException;
+use Domain\Entity\PasswordReset;
+use Domain\ValueObject\PasswordResetId;
+use Domain\ValueObject\PasswordResetToken;
+use Domain\ValueObject\UserId;
 use PDO;
 use PDOException;
-use Shared\Exception\ServerException;
+use Throwable;
 
-final readonly class PdoPasswordResetRepository
+final readonly class PdoPasswordResetRepository implements PasswordResetRepository
 {
-    public function __construct(private PDO $db)
-    {
-    }
+    public function __construct(private PDO $db) {}
 
     /**
-     * @throws PasswordResetException
-     * @throws ServerException
+     * @throws DatabaseException
      */
-    public function insertPasswordResetToken(
-        int $userId,
-        string $hashedToken,
-        DateTimeImmutable $expiresAt,
-        DateTimeImmutable $createdAt
-    ): void {
-        try {
-            $sql = <<<'SQL'
-            INSERT INTO password_resets (user_id, token, expires_at, created_at)
-            VALUES (:userId, :hashedToken, :expiresAt, :createdAt)
+    public function insertPasswordResetToken(PasswordReset $passwordReset): void
+    {
+        try{
+            $sql  = <<<'SQL'
+            INSERT INTO password_resets (id, user_id, token, expires_at, created_at)
+            VALUES (:id, :userId, :hashedToken, :expiresAt, :createdAt)
             SQL;
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
-            $stmt->bindValue(':hashedToken', $hashedToken);
-            $stmt->bindValue(':expiresAt', $expiresAt->format('Y-m-d H:i:s'));
-            $stmt->bindValue(':createdAt', $createdAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':id', $passwordReset->id->toString());
+            $stmt->bindValue(':userId', $passwordReset->userId->toString());
+            $stmt->bindValue(':hashedToken', $passwordReset->token);
+            $stmt->bindValue(':expiresAt', $passwordReset->expiresAt->format('Y-m-d H:i:s'));
+            $stmt->bindValue(':createdAt', $passwordReset->createdAt->format('Y-m-d H:i:s'));
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
-                throw new PasswordResetException(PasswordResetException::INSERT_FAILED);
+                throw new DatabaseException(DatabaseException::QUERY_FAILED);
             }
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        }catch (PDOException){
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @param string $token
+     * @param PasswordResetToken $token
+     *
      * @return PasswordReset
-     * @throws ServerException
-     * @throws PasswordResetException
+     * @throws DatabaseException
      */
-    public function findByToken(string $token): PasswordReset
+    public function findByToken(PasswordResetToken $token): PasswordReset
     {
-        try {
-            $sql = <<<'SQL'
+        try{
+            $sql  = <<<'SQL'
             SELECT user_id, token, expires_at, created_at
             FROM password_resets
             WHERE token = :token
             SQL;
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':token', $token);
+            $stmt->bindValue(':token', $token->value);
             $stmt->execute();
 
-
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (!$data) {
-                throw new PasswordResetException(PasswordResetException::INVALID_TOKEN);
+            if ( ! $data) {
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
 
             return $this->hydrate($data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        }catch (PDOException){
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
-     * @throws PasswordResetException
+     * @throws DatabaseException
      */
-    public function deleteByToken(string $hashedToken): void
+    public function deleteByToken(PasswordResetToken $token): void
     {
-        try {
-            $sql = <<<'SQL'
+        try{
+            $sql  = <<<'SQL'
             DELETE FROM password_resets
-            WHERE token = :hashedToken
+            WHERE token = :token
             SQL;
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':hashedToken', $hashedToken);
+            $stmt->bindValue(':token', $token->value);
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
-                throw new PasswordResetException(PasswordResetException::DELETE_FAILED);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        }catch (PDOException){
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
+     * @throws DatabaseException
      */
     private function hydrate(array $data): PasswordReset
     {
-        try {
+        try{
             return new PasswordReset(
-                userId: (int)$data['user_id'],
-                token: $data['token'],
+                id: new PasswordResetId($data['id']),
+                userId: new UserId($data['user_id']),
+                token: new PasswordResetToken($data['token']),
                 expiresAt: new DateTimeImmutable($data['expires_at']),
                 createdAt: new DateTimeImmutable($data['created_at']),
             );
-        } catch (DateMalformedStringException $e) {
-            throw new ServerException($e->getMessage());
+        }catch (Throwable){
+            throw new DatabaseException(DatabaseException::HYDRATION_FAILED);
         }
     }
 }

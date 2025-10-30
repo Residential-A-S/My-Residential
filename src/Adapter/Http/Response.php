@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Adapter\Http;
 
-use Adapter\Http\ResponseException;
+use Adapter\Exception\ResponseException;
 use JsonException;
 
 final class Response

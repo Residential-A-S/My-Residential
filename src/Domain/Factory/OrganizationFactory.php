@@ -4,7 +4,6 @@ namespace Domain\Factory;
 
 use DateTimeImmutable;
 use Domain\Entity\Organization;
-use Shared\Factory\UlidFactory;
 
 final readonly class OrganizationFactory
 {

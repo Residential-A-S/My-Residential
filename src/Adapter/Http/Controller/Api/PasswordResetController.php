@@ -2,19 +2,19 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Exception\MailException;
+use Adapter\Exception\ResponseException;
+use Adapter\Exception\ValidationException;
 use Adapter\Http\Form\FormFactory;
-use DateMalformedStringException;
-use Random\RandomException;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
-use Adapter\Mail\MailException;
-use Domain\Exception\PasswordResetException;
-use Adapter\Http\ResponseException;
-use Shared\Exception\ServerException;
-use Domain\Exception\UserException;
-use Adapter\Http\Exception\ValidationException;
 use Application\Service\PasswordResetService;
+use DateMalformedStringException;
+use Domain\Exception\PasswordResetException;
+use Domain\Exception\UserException;
+use Random\RandomException;
+use Shared\Exception\ServerException;
 
 final readonly class PasswordResetController
 {

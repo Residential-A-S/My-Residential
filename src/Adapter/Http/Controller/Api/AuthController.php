@@ -2,12 +2,12 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Exception\ResponseException;
+use Adapter\Exception\ValidationException;
+use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
-use Adapter\Http\ResponseException;
-use Adapter\Http\Exception\ValidationException;
-use Adapter\Http\Form\FormFactory;
 use Application\Service\AuthenticationService;
 
 final readonly class AuthController

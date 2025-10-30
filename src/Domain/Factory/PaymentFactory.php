@@ -5,7 +5,6 @@ namespace Domain\Factory;
 use DateTimeImmutable;
 use Domain\Entity\Payment;
 use Domain\ValueObject\Money;
-use Shared\Factory\UlidFactory;
 
 final readonly class PaymentFactory
 {

@@ -2,17 +2,20 @@
 
 namespace Application\Port;
 
-use Domain\Exception\OrganizationException;
-use src\Entity\Organization;
+use Domain\Entity\Organization;
+use Domain\ValueObject\OrganizationId;
 
 interface OrganizationRepository
 {
     /**
      * Find an CreateOrganizationCommand by its ID.
      * Throws an OrganizationException if the organization is not found.
-     * @throws OrganizationException
+     *
+     * @param OrganizationId $id
+     *
+     * @return Organization
      */
-    public function findById(int $id): Organization;
+    public function findById(OrganizationId $id): Organization;
 
     /**
      * Find all organizations.
@@ -22,14 +25,13 @@ interface OrganizationRepository
 
     /**
      * Create a new organization.
-     * @throws OrganizationException
      */
-    public function save(Organization $organization): Organization;
+    public function save(Organization $organization): void;
 
     /**
      * Delete an organization by its ID.
      * Throws an OrganizationException if the organization is not found.
-     * @throws OrganizationException
+     * @param OrganizationId $id
      */
-    public function delete(int $id): void;
+    public function delete(OrganizationId $id): void;
 }

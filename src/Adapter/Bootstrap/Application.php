@@ -2,9 +2,9 @@
 
 namespace Adapter\Bootstrap;
 
+use Adapter\Exception\ResponseException;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
-use Adapter\Http\ResponseException;
 use Adapter\Http\Router;
 use Adapter\Provider\ControllerProvider;
 use Adapter\Provider\DatabaseProvider;

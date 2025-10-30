@@ -2,9 +2,7 @@
 
 namespace Application\Exception;
 
-use Shared\Exception\BaseException;
-
-final class AuthenticationException extends BaseException
+final class AuthenticationException extends ApplicationException
 {
     public const int USER_NOT_FOUND = 1;
     public const int INVALID_PASSWORD = 2;

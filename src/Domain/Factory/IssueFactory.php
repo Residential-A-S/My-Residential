@@ -7,7 +7,6 @@ use Domain\Entity\Issue;
 use Domain\Types\IssueStatus;
 use Domain\ValueObject\PaymentId;
 use Domain\ValueObject\RentalAgreementId;
-use Shared\Factory\UlidFactory;
 
 final readonly class IssueFactory
 {

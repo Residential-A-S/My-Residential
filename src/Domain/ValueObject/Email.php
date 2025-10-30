@@ -2,17 +2,17 @@
 
 namespace Domain\ValueObject;
 
-use Adapter\Http\Exception\ValidationException;
+use Domain\Exception\EmailException;
 
 final readonly class Email
 {
     /**
-     * @throws ValidationException
+     * @throws EmailException
      */
     public function __construct(public string $value)
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            throw new ValidationException(ValidationException::EMAIL_INVALID);
+            throw new EmailException(EmailException::EMAIL_INVALID);
         }
     }
 

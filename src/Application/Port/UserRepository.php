@@ -3,23 +3,18 @@
 namespace Application\Port;
 
 use Domain\Entity\User;
-use Domain\Exception\UserException;
 
 interface UserRepository
 {
     /**
      * Find a user by their ID.
-     * Throws a UserException if the user is not found.
-     * @throws UserException
      */
-    public function findById(int $id): User;
+    public function findById(int $id): ?User;
 
     /**
      * Find a user by their email.
-     * Throws a UserException if the user is not found.
-     * @throws UserException
      */
-    public function findByEmail(string $email): User;
+    public function findByEmail(string $email): ?User;
 
     /**
      * Find all users.
@@ -29,14 +24,11 @@ interface UserRepository
 
     /**
      * Create a new user or update an existing one.
-     * @throws UserException
      */
     public function save(User $user): User;
 
     /**
      * Delete a user by their ID.
-     * Throws a UserException if the user is not found.
-     * @throws UserException
      */
     public function delete(int $id): void;
 

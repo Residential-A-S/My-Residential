@@ -2,10 +2,10 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Dto\Command\RentChargeCreateCommand;
-use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
+use Adapter\Http\RouteName;
+use Application\Dto\Command\RentChargeCreateCommand;
 
 class RentChargeCreateForm extends AbstractForm
 {

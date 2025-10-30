@@ -2,23 +2,23 @@
 
 namespace Tests;
 
-use PDO;
-use PHPUnit\Framework\TestCase;
+use Adapter\Auth\NativeSession;
+use Adapter\Exception\ResponseException;
+use Adapter\Exception\ValidationException;
 use Adapter\Http\Controllers\Api\AuthController as AuthController;
 use Adapter\Http\Controllers\Api\UserController;
-use Adapter\Auth\NativeSession;
 use Adapter\Http\Request;
-use Application\Exception\AuthenticationException;
-use Adapter\Http\ResponseException;
-use Shared\Exception\ServerException;
-use Domain\Exception\UserException;
-use Adapter\Http\Exception\ValidationException;
-use Domain\Factory\UserFactory;
+use Adapter\Mail\Mailer;
 use Adapter\Persistence\UserOrganizationRepository;
 use Adapter\Persistence\UserRepository;
+use Application\Exception\AuthenticationException;
 use Application\Service\AuthenticationService;
-use Adapter\Mail\Mailer;
 use Application\Service\UserService;
+use Domain\Exception\UserException;
+use Domain\Factory\UserFactory;
+use PDO;
+use PHPUnit\Framework\TestCase;
+use Shared\Exception\ServerException;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 

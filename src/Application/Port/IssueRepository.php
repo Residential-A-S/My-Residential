@@ -2,17 +2,22 @@
 
 namespace Application\Port;
 
-use Domain\Exception\IssueException;
 use Domain\Entity\Issue;
+use Domain\ValueObject\IssueId;
 
+/**
+ *
+ */
 interface IssueRepository
 {
     /**
      * Find an issue by its ID.
-     * Throws an IssueException if the issue is not found.
-     * @throws IssueException
+     *
+     * @param IssueId $id
+     *
+     * @return Issue
      */
-    public function findById(int $id): Issue;
+    public function findById(IssueId $id): Issue;
 
     /**
      * Find all issues.
@@ -22,14 +27,13 @@ interface IssueRepository
 
     /**
      * Create a new issue.
-     * @throws IssueException
+     * @param Issue $issue
      */
-    public function save(Issue $issue): Issue;
+    public function save(Issue $issue): void;
 
     /**
      * Delete an issue by its ID.
-     * Throws an IssueException if the issue is not found.
-     * @throws IssueException
+     * @param IssueId $id
      */
-    public function delete(int $id): void;
+    public function delete(IssueId $id): void;
 }

@@ -3,29 +3,34 @@
 namespace Application\Port;
 
 use Domain\Entity\PasswordReset;
-use Domain\Exception\PasswordResetException;
+use Domain\ValueObject\PasswordResetToken;
 
 interface PasswordResetRepository
 {
     /**
      * Insert a new password reset token.
-     * @throws PasswordResetException
+     * @param PasswordReset $passwordReset
+     * @return void
      */
-    public function insertPasswordResetToken(PasswordReset $passwordReset): PasswordReset;
+    public function insertPasswordResetToken(PasswordReset $passwordReset): void;
 
 
     /**
      * Find a password reset by its token.
      * Throws a PasswordResetException if the token is not found.
-     * @throws PasswordResetException
+     *
+     * @param PasswordResetToken $token
+     *
+     * @return PasswordReset
      */
-    public function findByToken(string $token): PasswordReset;
+    public function findByToken(PasswordResetToken $token): PasswordReset;
 
 
     /**
      * Delete a password reset by its token.
      * Throws a PasswordResetException if the token is not found.
-     * @throws PasswordResetException
+     * @param PasswordResetToken $token
+     * @return void
      */
-    public function deleteByToken(string $token): PasswordReset;
+    public function deleteByToken(PasswordResetToken $token): void;
 }

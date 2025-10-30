@@ -2,12 +2,12 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Dto\Command\UserRegisterCommand;
-use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\MinRule;
 use Adapter\Http\Form\Validation\RequiredRule;
 use Adapter\Http\Form\Validation\StrongPasswordRule;
+use Adapter\Http\RouteName;
+use Application\Dto\Command\UserRegisterCommand;
 
 class RegisterForm extends AbstractForm
 {

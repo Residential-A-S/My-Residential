@@ -2,7 +2,7 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Http\Exception\ValidationException;
+use Adapter\Exception\ValidationException;
 
 final readonly class FormFactory
 {

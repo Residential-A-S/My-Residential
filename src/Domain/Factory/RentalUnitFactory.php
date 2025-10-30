@@ -5,7 +5,6 @@ namespace Domain\Factory;
 use DateTimeImmutable;
 use Domain\Entity\RentalUnit;
 use Domain\ValueObject\PropertyId;
-use Shared\Factory\UlidFactory;
 
 final readonly class RentalUnitFactory
 {

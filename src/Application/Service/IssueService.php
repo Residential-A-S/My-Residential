@@ -1,43 +1,36 @@
 <?php
 
 namespace Application\Service;
-
-use Adapter\Dto\Command\IssueCreateCommand;
-use DateTimeImmutable;
+use Application\Dto\Command\IssueCreateCommand;
 use Application\Exception\AuthenticationException;
-use Domain\Exception\IssueException;
-use Shared\Exception\ServerException;
-use src\Entity\Issue;
-use Adapter\Persistence\PdoIssueRepository;
-use Application\Service\AuthenticationService;
+use Application\Port\IssueRepository;
+use DateTimeImmutable;
+use Domain\Factory\IssueFactory;
+use Domain\Types\IssueStatus;
+use Domain\ValueObject\RentalAgreementId;
 
 final readonly class IssueService
 {
     public function __construct(
-        private PdoIssueRepository $issueR,
-        private AuthenticationService $authS,
+        private IssueRepository $issueRepository,
+        private AuthenticationService $authenticationService,
+        private IssueFactory $issueFactory
     ) {
     }
 
     /**
      * @throws AuthenticationException
-     * @throws IssueException
-     * @throws ServerException
      */
     public function create(IssueCreateCommand $cmd): void {
-        $this->authS->requireUser();
-        $now = new DateTimeImmutable();
-        $issue = new Issue(
-            id: 0,
-            rentalAgreementId: $rentalAgreementId,
-            paymentId: $paymentId,
-            name: $name,
-            description: $description,
-            status: $status,
-            createdAt: $now,
-            updatedAt: $now,
+        $this->authenticationService->requireUser();
+        $issue = $this->issueFactory->create(
+            rentalAgreementId: new RentalAgreementId($cmd->rentalAgreementId),
+            paymentId: $cmd->paymentId,
+            name: $cmd->name,
+            description: $cmd->description,
+            status: IssueStatus::from($cmd->status)
         );
-        $this->issueR->create($issue);
+        $this->issueRepository->save($issue);
     }
 
     /**

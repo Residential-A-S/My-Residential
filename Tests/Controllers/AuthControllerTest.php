@@ -2,8 +2,8 @@
 
 namespace Tests\Controllers;
 
+use Adapter\Exception\ValidationException;
 use Adapter\Http\Request;
-use Adapter\Http\Exception\ValidationException;
 use Tests\BaseTest;
 
 class AuthControllerTest extends BaseTest

@@ -2,20 +2,18 @@
 
 namespace Application\Service;
 
-use Adapter\Dto\Command\UserLoginCommand;
+use Application\Dto\Command\UserLoginCommand;
 use Application\Exception\AuthenticationException;
 use Application\Port\UserRepository;
 use Application\Security\SessionInterface;
 use Domain\Entity\User;
-use Domain\Exception\UserException;
-use Shared\Exception\BaseException;
 
 
 final readonly class AuthenticationService
 {
     public function __construct(
         private SessionInterface $session,
-        private UserRepository $userR
+        private UserRepository $userRepository
     ) {
     }
 
@@ -28,11 +26,7 @@ final readonly class AuthenticationService
         if ($id === null) {
             return null;
         }
-        try {
-            return $this->userR->findById((int)$id);
-        } catch (UserException) {
-            return null;
-        }
+        return $this->userRepository->findById((int)$id);
     }
 
     /**
@@ -43,7 +37,7 @@ final readonly class AuthenticationService
     public function requireUser(): User
     {
         $user = $this->getCurrentUser();
-        if (! $user) {
+        if (!$user) {
             throw new AuthenticationException(AuthenticationException::MUST_BE_LOGGED_IN);
         }
         return $user;
@@ -54,13 +48,12 @@ final readonly class AuthenticationService
      */
     public function login(UserLoginCommand $cmd): User
     {
-        try {
-            $user = $this->userR->findByEmail($email);
-        } catch (BaseException) {
+        $user = $this->userRepository->findByEmail($cmd->email);
+        if (!$user) {
             throw new AuthenticationException(AuthenticationException::USER_NOT_FOUND);
         }
 
-        if (!password_verify($password, $user->passwordHash)) {
+        if (!$user->passwordHash->verify($cmd->password)) {
             throw new AuthenticationException(AuthenticationException::INVALID_PASSWORD);
         }
         return $user;
@@ -71,10 +64,10 @@ final readonly class AuthenticationService
     /**
      * @throws AuthenticationException
      */
-    public function logout(SessionInterface $session): void
+    public function logout(): void
     {
         $this->requireUser();
-        $session->clear();
-        $session->regenerate();
+        $this->session->clear();
+        $this->session->regenerate();
     }
 }

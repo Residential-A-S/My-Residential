@@ -2,9 +2,9 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Http\RouteName;
-use Adapter\Http\Exception\ValidationException;
+use Adapter\Exception\ValidationException;
 use Adapter\Http\Form\Validation\AbstractRule;
+use Adapter\Http\RouteName;
 
 abstract class AbstractForm
 {

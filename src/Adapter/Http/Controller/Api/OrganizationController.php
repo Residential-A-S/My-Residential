@@ -2,17 +2,17 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Exception\ResponseException;
+use Adapter\Exception\ValidationException;
 use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
-use Shared\Exception\BaseException;
-use Domain\Exception\OrganizationException;
-use Adapter\Http\ResponseException;
-use Shared\Exception\ServerException;
-use Adapter\Http\Exception\ValidationException;
 use Application\Service\AuthenticationService;
 use Application\Service\OrganizationService;
+use Domain\Exception\OrganizationException;
+use Shared\Exception\BaseException;
+use Shared\Exception\ServerException;
 
 final readonly class OrganizationController
 {

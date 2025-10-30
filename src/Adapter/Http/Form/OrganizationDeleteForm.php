@@ -2,10 +2,10 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Dto\Command\OrganizationDeleteCommand;
-use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
+use Adapter\Http\RouteName;
+use Application\Dto\Command\OrganizationDeleteCommand;
 
 class OrganizationDeleteForm extends AbstractForm
 {

@@ -2,12 +2,12 @@
 
 namespace Domain\ValueObject;
 
-use Adapter\Http\Exception\ValidationException;
+use Domain\Exception\PhoneException;
 
 final class Phone
 {
     /**
-     * @throws ValidationException
+     * @throws PhoneException
      */
     public function __construct(private string $number)
     {
@@ -21,12 +21,12 @@ final class Phone
     }
 
     /**
-     * @throws ValidationException
+     * @throws PhoneException
      */
     private function assertValid(string $number): void
     {
         if (!preg_match('/^\+?[0-9]{6,15}$/', $number)) {
-            throw new ValidationException(ValidationException::Phone);
+            throw new PhoneException(PhoneException::PHONE_INVALID);
         }
     }
 

@@ -2,9 +2,7 @@
 
 namespace Domain\Exception;
 
-use Shared\Exception\BaseException;
-
-final class PasswordResetException extends BaseException
+final class PasswordResetException extends DomainException
 {
     public const int TOKEN_NOT_SECURE = 1;
 

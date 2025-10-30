@@ -1,0 +1,15 @@
+<?php
+
+namespace Application\Dto\Command;
+
+final readonly class RentalAgreementCreateCommand implements CommandInterface
+{
+    public function __construct(
+        public int $rentalUnitId,
+        public string $startDate,
+        public ?string $endDate,
+        public string $status,
+        public string $paymentInterval
+    ) {
+    }
+}

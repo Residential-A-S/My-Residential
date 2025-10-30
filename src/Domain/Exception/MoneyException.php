@@ -2,9 +2,7 @@
 
 namespace Domain\Exception;
 
-use Shared\Exception\BaseException;
-
-final class MoneyException extends BaseException
+final class MoneyException extends DomainException
 {
     public const int ARITHMETIC_ON_DIFFERENT_CURRENCIES  = 1;
 

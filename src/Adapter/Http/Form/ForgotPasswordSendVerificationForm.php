@@ -2,10 +2,10 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Dto\Command\ForgotPasswordSendVerificationCommand;
-use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\MaxRule;
 use Adapter\Http\Form\Validation\RequiredRule;
+use Adapter\Http\RouteName;
+use Application\Dto\Command\ForgotPasswordSendVerificationCommand;
 
 class ForgotPasswordSendVerificationForm extends AbstractForm
 {

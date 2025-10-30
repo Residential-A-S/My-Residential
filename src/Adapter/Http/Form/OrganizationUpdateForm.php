@@ -2,11 +2,11 @@
 
 namespace Adapter\Http\Form;
 
-use Adapter\Dto\Command\OrganizationUpdateCommand;
-use Adapter\Http\RouteName;
 use Adapter\Http\Form\Validation\AlphaNumericRule;
 use Adapter\Http\Form\Validation\IntegerRule;
 use Adapter\Http\Form\Validation\RequiredRule;
+use Adapter\Http\RouteName;
+use Application\Dto\Command\OrganizationUpdateCommand;
 
 class OrganizationUpdateForm extends AbstractForm
 {

@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use Domain\Entity\Property;
 use Domain\ValueObject\Address;
 use Domain\ValueObject\OrganizationId;
-use Shared\Factory\UlidFactory;
 
 final readonly class PropertyFactory
 {

@@ -2,7 +2,7 @@
 
 namespace Adapter\Http\Form\Validation;
 
-use Adapter\Http\Exception\ValidationException;
+use Adapter\Exception\ValidationException;
 
 final class NumberRule extends AbstractRule
 {

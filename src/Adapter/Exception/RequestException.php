@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Adapter\Exception;
 
-use Shared\Exception\BaseException;
-
 /**
  * Represents a 400 Bad Request error.
  */
-final class RequestException extends BaseException
+final class RequestException extends AdapterException
 {
     public const int INVALID_JSON_FORMAT = 1;
 

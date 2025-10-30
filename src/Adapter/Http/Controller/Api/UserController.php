@@ -2,15 +2,15 @@
 
 namespace Adapter\Http\Controller\Api;
 
+use Adapter\Exception\ResponseException;
+use Adapter\Exception\ValidationException;
 use Adapter\Http\Form\FormFactory;
 use Adapter\Http\Request;
 use Adapter\Http\Response;
 use Application\Exception\AuthenticationException;
-use Adapter\Http\ResponseException;
-use Domain\Exception\UserException;
-use Adapter\Http\Exception\ValidationException;
 use Application\Service\AuthenticationService;
 use Application\Service\UserService;
+use Domain\Exception\UserException;
 
 final readonly class UserController
 {

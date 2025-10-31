@@ -3,36 +3,59 @@
 namespace Application\Port;
 
 use Domain\Entity\User;
+use Domain\ValueObject\Email;
+use Domain\ValueObject\UserId;
 
+/**
+ *
+ */
 interface UserRepository
 {
-    /**
-     * Find a user by their ID.
-     */
-    public function findById(int $id): ?User;
 
     /**
-     * Find a user by their email.
+     * @param UserId $id
+     *
+     * @return User
      */
-    public function findByEmail(string $email): ?User;
+    public function findById(UserId $id): User;
 
     /**
-     * Find all users.
-     * @return User[]
+     * @param Email $email
+     *
+     * @return User
+     */
+    public function findByEmail(Email $email): User;
+
+    /**
+     * @return array
      */
     public function findAll(): array;
 
     /**
-     * Create a new user or update an existing one.
+     * @param User $user
+     *
+     * @return void
      */
-    public function save(User $user): User;
+    public function save(User $user): void;
 
     /**
-     * Delete a user by their ID.
+     * @param UserId $id
+     *
+     * @return void
      */
-    public function delete(int $id): void;
+    public function delete(UserId $id): void;
 
-    public function existsByEmail(string $email): bool;
+    /**
+     * @param Email $email
+     *
+     * @return bool
+     */
+    public function existsByEmail(Email $email): bool;
 
-    public function existsById(int $id): bool;
+    /**
+     * @param UserId $id
+     *
+     * @return bool
+     */
+    public function existsById(UserId $id): bool;
 }

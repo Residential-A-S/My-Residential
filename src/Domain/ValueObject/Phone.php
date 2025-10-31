@@ -4,17 +4,25 @@ namespace Domain\ValueObject;
 
 use Domain\Exception\PhoneException;
 
+/**
+ *
+ */
 final class Phone
 {
     /**
      * @throws PhoneException
      */
-    public function __construct(private string $number)
+    public function __construct(public string $value)
     {
-        $this->number = $this->normalize($number);
-        $this->assertValid($this->number);
+        $this->value = $this->normalize($value);
+        $this->assertValid($this->value);
     }
 
+    /**
+     * @param string $number
+     *
+     * @return string
+     */
     private function normalize(string $number): string
     {
         return preg_replace('/\s+/', '', $number);
@@ -30,13 +38,13 @@ final class Phone
         }
     }
 
-    public function value(): string
-    {
-        return $this->number;
-    }
-
+    /**
+     * @param Phone $other
+     *
+     * @return bool
+     */
     public function equals(self $other): bool
     {
-        return $this->number === $other->number;
+        return $this->value === $other->value;
     }
 }

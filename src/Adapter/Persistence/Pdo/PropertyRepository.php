@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Adapter\Persistence\Pdo;
 
 use Adapter\Exception\DatabaseException;
-use Adapter\Persistence\PropertyException;
-use Application\Port\PropertyRepository;
+use Application\Port\PropertyRepository as PropertyRepositoryInterface;
 use DateTimeImmutable;
 use Domain\Entity\Property;
+use Domain\ValueObject\Address;
+use Domain\ValueObject\OrganizationId;
 use Domain\ValueObject\PropertyId;
 use PDO;
 use PDOException;
@@ -17,7 +18,7 @@ use Throwable;
 /**
  *
  */
-final readonly class PropertyRepository implements PropertyRepository
+final readonly class PropertyRepository implements PropertyRepositoryInterface
 {
     /**
      * @param PDO $db
@@ -27,7 +28,11 @@ final readonly class PropertyRepository implements PropertyRepository
     ) {
     }
 
+
     /**
+     * @param PropertyId $id
+     *
+     * @return Property
      * @throws DatabaseException
      */
     public function findById(PropertyId $id): Property
@@ -47,7 +52,9 @@ final readonly class PropertyRepository implements PropertyRepository
         }
     }
 
+
     /**
+     * @return Property[]
      * @throws DatabaseException
      */
     public function findAll(): array
@@ -63,7 +70,11 @@ final readonly class PropertyRepository implements PropertyRepository
         }
     }
 
+
     /**
+     * @param Property $property
+     *
+     * @return void
      * @throws DatabaseException
      */
     public function save(Property $property): void
@@ -105,6 +116,12 @@ final readonly class PropertyRepository implements PropertyRepository
         }
     }
 
+    /**
+     * @param PropertyId $id
+     *
+     * @return void
+     * @throws DatabaseException
+     */
     public function delete(PropertyId $id): void
     {
         try {
@@ -113,24 +130,36 @@ final readonly class PropertyRepository implements PropertyRepository
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             if ($stmt->rowCount() === 0) {
-                throw new PropertyException(PropertyException::NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
         } catch (PDOException) {
             throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
+    /**
+     * @param array{
+     *     id: string,
+     *     organization_id: string,
+     *     street_name: string,
+     *     street_number: string,
+     *     zip_code: string,
+     *     city: string,
+     *     country: string,
+     *     created_at: string,
+     *     updated_at: string
+     * } $data
+     *
+     * @return Property
+     * @throws DatabaseException
+     */
     private function hydrate(array $data): Property
     {
         try {
             return new Property(
-                id: (int)$data['id'],
-                organizationId: (int)$data['organization_id'],
-                streetName: $data['street_name'],
-                streetNumber: $data['street_number'],
-                zipCode: $data['zip_code'],
-                city: $data['city'],
-                country: $data['country'],
+                id: new PropertyId($data['id']),
+                organizationId: new OrganizationId($data['organization_id']),
+                address: new Address($data['street_name'], $data['street_number'], $data['zip_code'], $data['city'], $data['country']),
                 createdAt: new DateTimeImmutable($data['created_at']),
                 updatedAt: new DateTimeImmutable($data['updated_at'])
             );

@@ -119,8 +119,17 @@ final readonly class PaymentRepository implements PaymentRepositoryInterface
             throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
-
     /**
+     * @param array{
+     *     id: string,
+     *     amount: int,
+     *     currency: string,
+     *     created_at: string,
+     *     due_at: string,
+     *     paid_at: string|null
+     * } $data
+     *
+     * @return Payment
      * @throws DatabaseException
      */
     private function hydrate(array $data): Payment

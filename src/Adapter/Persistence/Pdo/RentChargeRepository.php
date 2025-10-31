@@ -4,66 +4,105 @@ declare(strict_types=1);
 
 namespace Adapter\Persistence\Pdo;
 
+use Adapter\Exception\DatabaseException;
+use Application\Port\RentChargeRepository as RentChargeRepositoryInterface;
 use DateTimeImmutable;
-use Domain\Exception\RentalAgreementException;
+use Domain\Entity\RentCharge;
+use Domain\ValueObject\PaymentId;
+use Domain\ValueObject\RentalAgreementId;
+use Domain\ValueObject\RentChargeId;
 use PDO;
 use PDOException;
-use PDOStatement;
-use Shared\Exception\ServerException;
-use src\Entity\RentalAgreementPayment;
 use Throwable;
 
-final readonly class RentChargeRepository
+/**
+ *
+ */
+final readonly class RentChargeRepository implements RentChargeRepositoryInterface
 {
+    /**
+     * @param PDO $db
+     */
     public function __construct(
         private PDO $db
     ) {
     }
 
     /**
-     * @throws RentalAgreementException
-     * @throws ServerException
+     * @param RentChargeId $id
+     *
+     * @return RentCharge
+     * @throws DatabaseException
      */
-    public function findByPaymentId(int $id): RentalAgreementPayment
+    public function findById(RentChargeId $id): RentCharge
     {
         try {
-            $stmt = $this->db->prepare('SELECT * FROM rental_agreements_payments WHERE payment_id = :id');
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt = $this->db->prepare('SELECT * FROM rental_agreements_payments WHERE id = :id');
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
 
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$data) {
-                throw new RentalAgreementException(RentalAgreementException::RENTAL_AGREEMENT_PAYMENT_NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
 
             return $this->hydrate($data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
+     * @param PaymentId $paymentId
+     *
+     * @return RentCharge
+     * @throws DatabaseException
      */
-    public function findByRentalAgreementId(int $rentalAgreementId): array
+    public function findByPaymentId(PaymentId $paymentId): RentCharge
+    {
+        try {
+            $stmt = $this->db->prepare('SELECT * FROM rental_agreements_payments WHERE payment_id = :id');
+            $stmt->bindValue(':id', $paymentId->toString());
+            $stmt->execute();
+
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$data) {
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
+            }
+
+            return $this->hydrate($data);
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
+        }
+    }
+
+    /**
+     * @param RentalAgreementId $rentalAgreementId
+     *
+     * @return RentCharge[]
+     * @throws DatabaseException
+     */
+    public function findByRentalAgreementId(RentalAgreementId $rentalAgreementId): array
     {
         try {
             $sql = 'SELECT * FROM rental_agreements_payments WHERE rental_agreement_id = :rentalAgreementId';
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':rentalAgreementId', $rentalAgreementId, PDO::PARAM_INT);
+            $stmt->bindValue(':rentalAgreementId', $rentalAgreementId->toString());
             $stmt->execute();
 
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return array_map([$this, 'hydrate'], $data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
     /**
-     * @throws ServerException
+     * @return RentCharge[]
+     * @throws DatabaseException
      */
     public function findAll(): array
     {
@@ -72,112 +111,94 @@ final readonly class RentChargeRepository
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return array_map([$this, 'hydrate'], $data);
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
+
     /**
-     * @throws RentalAgreementException
-     * @throws ServerException
+     * @param RentCharge $rentCharge
+     *
+     * @return void
+     * @throws DatabaseException
      */
-    public function create(RentalAgreementPayment $rentalAgreementPayment): RentalAgreementPayment
+    public function save(RentCharge $rentCharge): void
     {
         try {
             $sql = <<<'SQL'
             INSERT INTO rental_agreements_payments (
-                                                    rental_agreement_id, 
-                                                    payment_id,
-                                                    period_start,
-                                                    period_end
+                id, rental_agreement_id, payment_id, period_start, period_end
             ) VALUES (
-                      :rental_agreement_id, 
-                      :payment_id,
-                      :period_start,
-                      :period_end
+                :id, :rental_agreement_id, :payment_id, :period_start, :period_end
             )
-            SQL;
-
-            $stmt = $this->db->prepare($sql);
-            $this->bindRentalAgreementPaymentValues($stmt, $rentalAgreementPayment);
-            $stmt->execute();
-
-            if ($stmt->rowCount() === 0) {
-                throw new RentalAgreementException(RentalAgreementException::RENTAL_AGREEMENT_PAYMENT_CREATE_FAILED);
-            }
-
-            return $rentalAgreementPayment;
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
-        }
-    }
-
-    /**
-     * @throws ServerException
-     */
-    public function update(RentalAgreementPayment $rentalAgreementPayment): void
-    {
-        try {
-            $sql = <<<'SQL'
-            UPDATE rental_agreements_payments
-            SET rental_agreement_id = :rental_agreement_id,
+            ON DUPLICATE KEY UPDATE 
+                rental_agreement_id = :rental_agreement_id,
                 payment_id = :payment_id,
                 period_start = :period_start,
                 period_end = :period_end
-            WHERE payment_id = :payment_id
             SQL;
 
             $stmt = $this->db->prepare($sql);
-            $this->bindRentalAgreementPaymentValues($stmt, $rentalAgreementPayment);
+            $stmt->bindValue(':id', $rentCharge->id->toString());
+            $stmt->bindValue(':rental_agreement_id', $rentCharge->rentalAgreementId->toString());
+            $stmt->bindValue(':payment_id', $rentCharge->paymentId->toString());
+            $stmt->bindValue(':period_start', $rentCharge->periodStart->format('Y-m-d'));
+            $stmt->bindValue(':period_end', $rentCharge->periodEnd->format('Y-m-d'));
+
             $stmt->execute();
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
+
     /**
-     * @throws RentalAgreementException
-     * @throws ServerException
+     * @param RentChargeId $id
+     *
+     * @return void
+     * @throws DatabaseException
      */
-    public function delete(int $id): void
+    public function delete(RentChargeId $id): void
     {
         try {
-            $stmt = $this->db->prepare('DELETE FROM rental_agreements_payments WHERE payment_id = :id');
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt = $this->db->prepare('DELETE FROM rental_agreements_payments WHERE id = :id');
+            $stmt->bindValue(':id', $id->toString());
             $stmt->execute();
 
             if ($stmt->rowCount() === 0) {
-                throw new RentalAgreementException(RentalAgreementException::RENTAL_AGREEMENT_PAYMENT_NOT_FOUND);
+                throw new DatabaseException(DatabaseException::RECORD_NOT_FOUND);
             }
-        } catch (PDOException $e) {
-            throw new ServerException($e->getMessage());
+        } catch (PDOException) {
+            throw new DatabaseException(DatabaseException::QUERY_FAILED);
         }
     }
 
+
     /**
-     * @throws ServerException
+     * @param array{
+     *     id: string,
+     *     rental_agreement_id: string,
+     *     payment_id: string,
+     *     period_start: string,
+     *     period_end: string,
+     * } $data
+     *
+     * @return RentCharge
+     * @throws DatabaseException
      */
-    private function hydrate(array $data): RentalAgreementPayment
+    private function hydrate(array $data): RentCharge
     {
         try {
-            return new RentalAgreementPayment(
-                rentalAgreementId: (int)$data['rental_agreement_id'],
-                paymentId: (int)$data['payment_id'],
+            return new RentCharge(
+                id: new RentChargeId($data['id']),
+                rentalAgreementId: new RentalAgreementId($data['rental_agreement_id']),
+                paymentId: new PaymentId($data['payment_id']),
                 periodStart: new DateTimeImmutable($data['period_start']),
                 periodEnd: new DateTimeImmutable($data['period_end'])
             );
-        } catch (Throwable $e) {
-            throw new ServerException($e->getMessage());
+        } catch (Throwable) {
+            throw new DatabaseException(DatabaseException::HYDRATION_FAILED);
         }
-    }
-
-    private function bindRentalAgreementPaymentValues(
-        PDOStatement $stmt,
-        RentalAgreementPayment $rentalAgreementPayment
-    ): void {
-        $stmt->bindValue(':rental_agreement_id', $rentalAgreementPayment->rentalAgreementId, PDO::PARAM_INT);
-        $stmt->bindValue(':payment_id', $rentalAgreementPayment->paymentId, PDO::PARAM_INT);
-        $stmt->bindValue(':period_start', $rentalAgreementPayment->periodStart->format('Y-m-d H:i:s'));
-        $stmt->bindValue(':period_end', $rentalAgreementPayment->periodEnd->format('Y-m-d H:i:s'));
     }
 }

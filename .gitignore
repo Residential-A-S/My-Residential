@@ -7,3 +7,4 @@ config.php
 composer.lock
 .phpdoc
 docs
+.deptrac.cache
